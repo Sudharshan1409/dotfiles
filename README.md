@@ -41,9 +41,7 @@ This repository contains configuration files for various tools and applications.
 
 ## Installation
 
-To manage your dotfiles efficiently, we recommend using `stow`. Below are the installation instructions for both macOS and Linux.
-
-### macOS
+To manage your dotfiles efficiently, we recommend using `stow`. Below are the installation instructions.
 
 You can install `stow` using Homebrew:
 
