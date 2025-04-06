@@ -28,12 +28,15 @@ To clone the configuration repository and set it up, use the following commands:
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 stow .config/sketchybar
+```
 
 ### For SSH
 
+```bash
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 stow .config/sketchybar
+```
 
 ## Resources
 
@@ -47,4 +50,7 @@ stow .config/sketchybar
 - Ensure all scripts referenced in the configuration are executable and located in the specified directories.
 
 Enjoy your customized SketchyBar setup!
+
+```
+
 ```
