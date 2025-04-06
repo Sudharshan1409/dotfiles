@@ -6,34 +6,34 @@ This repository contains configuration files for various tools and applications.
 
 - **Aerospace**: Configuration files for aerospace-related tools.
 
-  - [README.md](.config/aerospace/README.md)
+  - [Aerospace README](.config/aerospace/README.md)
 
 - **Git**: Configuration files for Git version control system.
 
-  - [README.md](.config/git/README.md)
+  - [Git README](.config/git/README.md)
 
 - **Neovim**: Configuration files for Neovim, a highly customizable text editor.
 
-  - [README.md](.config/nvim/README.md)
+  - [Neovim README](.config/nvim/README.md)
 
 - **SketchyBar**: Configuration files for SketchyBar, a customizable status bar for macOS.
 
-  - [README.md](.config/sketchybar/README.md)
+  - [SketchyBar README](.config/sketchybar/README.md)
 
 - **Tmux**: Configuration files for Tmux, a terminal multiplexer.
 
-  - [README.md](.config/tmux/README.md)
+  - [Tmux README](.config/tmux/README.md)
 
 - **WezTerm**: Configuration files for WezTerm, a GPU-accelerated terminal emulator.
 
-  - [README.md](.config/wezterm/README.md)
+  - [WezTerm README](.config/wezterm/README.md)
 
 - **Yazi**: Configuration files for Yazi, a terminal file manager.
 
-  - [README.md](.config/yazi/README.md)
+  - [Yazi README](.config/yazi/README.md)
 
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
-  - [README.md](.config/zsh/README.md)
+  - [Zsh README](.config/zsh/README.md)
 
 ## Usage
 
