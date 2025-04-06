@@ -35,8 +35,6 @@ This repository contains configuration files for various tools and applications.
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
   - [README.md](.config/zsh/README.md)
 
-<<<<<<< HEAD
-
 ## Usage
 
 # To use these configurations, clone the repository and copy the desired configuration files to your home directory. Make sure to back up your existing configuration files before replacing them.
@@ -49,14 +47,13 @@ To manage your dotfiles efficiently, we recommend using `stow`. Below are the in
 
 You can install `stow` using Homebrew:
 
-````bash
+```bash
 brew install stow
 
-```bash
 # Using SSH
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 
 # Or using HTTPS
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 
-````
+```
