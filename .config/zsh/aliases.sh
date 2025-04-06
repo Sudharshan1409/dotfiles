@@ -31,6 +31,7 @@ alias y="yazi"
 alias credconf="cd ~/.config/creds"
 alias aeroconf="cd ~/.config/aerospace"
 alias sketchyconf="cd ~/.config/sketchybar"
+alias dotfiles="cd ~/dotfiles"
 
 # Git aliases
 alias g="git"
@@ -95,6 +96,8 @@ function aliases() {
             echo "y --> yazi"
             echo "credconf --> cd ~/.config/creds"
             echo "aerospace --> cd ~/.config/aerospace"
+            echo "sketchyconf --> cd ~/.config/sketchybar"
+            echo "dotfiles --> cd ~/dotfiles"
             ;;
         gwt)
             echo "Git Worktree aliases:"
@@ -102,6 +105,7 @@ function aliases() {
             echo "gwa --> git worktree add"
             echo "gwl --> git worktree list"
             echo "gwr --> git worktree remove"
+            echo "gwc --> git worktree change"
             ;;
         basic)
             echo "Basic aliases:"
