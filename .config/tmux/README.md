@@ -28,7 +28,7 @@ For HTTPS
 ```sh
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow tmux
+stow .config/tmux
 ```
 
 For SSH
@@ -36,7 +36,7 @@ For SSH
 ```sh
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow tmux
+stow .config/tmux
 ```
 
 ### TPM (Tmux Plugin Manager)

@@ -19,7 +19,7 @@ Ensure you have the following software installed on your system:
    ```sh
    git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
    cd ~/dotfiles
-   stow yazi
+   stow .config/yazi
    ```
 
    For SSH
@@ -27,7 +27,7 @@ Ensure you have the following software installed on your system:
    ```sh
    git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
    cd ~/dotfiles
-   stow yazi
+   stow .config/yazi
    ```
 
 2. **Install Yazi Theme**

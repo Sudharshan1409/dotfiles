@@ -11,7 +11,7 @@ Clone the repository to the `~/.config/zsh` folder using the following command:
 ```bash
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow zsh
+stow .config/zsh
 ```
 
 ### For SSH

@@ -20,7 +20,7 @@ Ensure you have the following software installed on your system:
    ```sh
    git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
    cd ~/dotfiles
-   stow nvim
+   stow .config/nvim
    ```
 
    For SSH
@@ -28,7 +28,7 @@ Ensure you have the following software installed on your system:
    ```sh
    git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
    cd ~/dotfiles
-   stow nvim
+   stow .config/nvim
    ```
 
 2. **Install Plugins**

@@ -61,6 +61,24 @@ This configuration file, `aerospace.toml`, is used to customize the behavior of 
 2. **Edit as Needed**: Customize the configuration to suit your preferences by editing `~/.aerospace.toml`.
 3. **Refer to Documentation**: For a complete list of available commands and options, refer to the [AeroSpace documentation](https://nikitabobko.github.io/AeroSpace/commands).
 
+### Cloning Configuration
+
+To clone the configuration repository and set it up, use the following commands:
+
+#### Using HTTPS
+
+````bash
+git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow .config/aerospace
+
+### For SSH
+
+```bash
+git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow .config/aerospace
+
 ## Additional Resources
 
 - [AeroSpace Guide](https://nikitabobko.github.io/AeroSpace/guide)
@@ -68,3 +86,4 @@ This configuration file, `aerospace.toml`, is used to customize the behavior of 
 - [AeroSpace Goodies](https://nikitabobko.github.io/AeroSpace/goodies)
 
 This README provides a comprehensive overview of the `aerospace.toml` configuration file, helping users to effectively customize their AeroSpace environment.
+````

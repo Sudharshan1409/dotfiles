@@ -11,7 +11,7 @@ Clone the repository to the `~/.config/git` folder using the following command:
 ```bash
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow git
+stow .config/git
 ```
 
 ### For SSH
@@ -19,7 +19,7 @@ stow git
 ```bash
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow git
+stow .config/git
 ```
 
 ## Step 2: Update the Main `~/.gitconfig` File
