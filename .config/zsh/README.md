@@ -19,7 +19,7 @@ stow .config/zsh
 ```bash
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow zsh
+stow .config/zsh
 ```
 
 ## Step 2: Update the Main `~/.zshrc` File
