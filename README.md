@@ -45,13 +45,26 @@ To manage your dotfiles efficiently, we recommend using `stow`. Below are the in
 
 You can install `stow` using Homebrew:
 
+### Install stow
+
 ```bash
 brew install stow
+```
 
-# Using SSH
+### Using SSH
+
+```bash
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+```
 
-# Or using HTTPS
+### Using HTTPS
+
+```bash
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+```
 
+### Refer configs
+
+```bash
+stow .
 ```
