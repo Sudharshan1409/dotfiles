@@ -7,16 +7,23 @@ Follow the steps below to set up your Shell configuration:
 Clone the repository to the `~/.config/zsh` folder using the following command:
 
 ### For HTTPS
+
 ```bash
-git clone https://github.com/Sudharshan1409/shell-config.git ~/.config/zsh
+git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow zsh
 ```
 
 ### For SSH
+
 ```bash
-git clone git@github.com:Sudharshan1409/shell-config.git ~/.config/zsh
+git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow zsh
 ```
 
 ## Step 2: Update the Main `~/.zshrc` File
+
 ```plaintext
 export TMUX_PATH="Path of your tmux"
 source ~/.config/zsh/init.sh

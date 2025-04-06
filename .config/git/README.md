@@ -7,16 +7,23 @@ Follow the steps below to set up your Git configuration:
 Clone the repository to the `~/.config/git` folder using the following command:
 
 ### For HTTPS
+
 ```bash
-git clone https://github.com/Sudharshan1409/git-config.git ~/.config/git
+git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow git
 ```
 
 ### For SSH
+
 ```bash
-git clone git@github.com:Sudharshan1409/git-config.git ~/.config/git
+git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow git
 ```
 
 ## Step 2: Update the Main `~/.gitconfig` File
+
 ```plaintext
 [include]
     path = ~/.config/git/.gitconfig

@@ -1,6 +1,5 @@
 # Neovim Configuration Setup
 
-
 This repository contains my Neovim configuration written in Lua. Follow the steps below to clone the repository and set up your Neovim environment.
 
 ## Prerequisites
@@ -19,13 +18,17 @@ Ensure you have the following software installed on your system:
    For HTTPS
 
    ```sh
-   git clone https://github.com/Sudharshan1409/NVIM-Config-LUA.git ~/.config/nvim
+   git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   stow nvim
    ```
 
    For SSH
 
    ```sh
-   git clone git@github.com:Sudharshan1409/NVIM-Config-LUA.git ~/.config/nvim
+   git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   stow nvim
    ```
 
 2. **Install Plugins**

@@ -5,11 +5,12 @@ This repository contains my custom configuration for [WezTerm](https://wezfurlon
 ## Installation
 
 ### Prerequisites
+
 Make sure you have `wezterm` installed on your system. You can install `wezterm` using the package manager of your choice. For example:
 
 ```sh
 # On Debian/Ubuntu
-sudo apt install flatpak -y && flatpak install flathub org.wezfurlong.wezterm   
+sudo apt install flatpak -y && flatpak install flathub org.wezfurlong.wezterm
 flatpak run org.wezfurlong.wezterm
 ```
 
@@ -25,13 +26,17 @@ Clone this repository to your local machine:
 For HTTPS
 
 ```sh
-git clone https://github.com/Sudharshan1409/wezterm-config.git ~/.config/wezterm
+git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow wezterm
 ```
 
 For SSH
 
 ```sh
-git clone git@github.com:Sudharshan1409/wezterm-config.git ~/.config/wezterm
+git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow wezterm
 ```
 
 ## Starting WezTerm

@@ -17,15 +17,19 @@ Ensure you have the following software installed on your system:
    For HTTPS
 
    ```sh
-   git clone https://github.com/Sudharshan1409/yazi-config.git ~/.config/yazi
+   git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   stow yazi
    ```
 
    For SSH
-   
+
    ```sh
-   git clone git@github.com:Sudharshan1409/yazi-config.git ~/.config/yazi
+   git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   stow yazi
    ```
-   
+
 2. **Install Yazi Theme**
 
    Open Terminal and run the following command to install Yazi Theme:
@@ -36,5 +40,4 @@ Ensure you have the following software installed on your system:
 
 3. **Customization**
 
-    You can customize the configuration as you like. Change the appearance, or add new key bindings to suit your workflow.
-
+   You can customize the configuration as you like. Change the appearance, or add new key bindings to suit your workflow.

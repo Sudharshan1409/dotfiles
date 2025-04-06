@@ -26,13 +26,17 @@ Clone this repository to your local machine:
 For HTTPS
 
 ```sh
-git clone https://github.com/Sudharshan1409/tmux-config.git ~/.config/tmux
+git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow tmux
 ```
 
 For SSH
 
 ```sh
-git clone git@github.com:Sudharshan1409/tmux-config.git ~/.config/tmux
+git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow tmux
 ```
 
 ### TPM (Tmux Plugin Manager)
