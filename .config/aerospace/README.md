@@ -67,14 +67,13 @@ To clone the configuration repository and set it up, use the following commands:
 
 #### Using HTTPS
 
-````bash
+```bash
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 stow .config/aerospace
 
 ### For SSH
 
-```bash
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 stow .config/aerospace
@@ -86,4 +85,4 @@ stow .config/aerospace
 - [AeroSpace Goodies](https://nikitabobko.github.io/AeroSpace/goodies)
 
 This README provides a comprehensive overview of the `aerospace.toml` configuration file, helping users to effectively customize their AeroSpace environment.
-````
+```
