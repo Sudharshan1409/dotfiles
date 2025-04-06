@@ -37,7 +37,7 @@ This repository contains configuration files for various tools and applications.
 
 ## Usage
 
-# To use these configurations, clone the repository and copy the desired configuration files to your home directory. Make sure to back up your existing configuration files before replacing them.
+To use these configurations, clone the repository and copy the desired configuration files to your home directory. Make sure to back up your existing configuration files before replacing them.
 
 ## Installation
 
