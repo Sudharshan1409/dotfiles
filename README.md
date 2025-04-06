@@ -32,6 +32,10 @@ This repository contains configuration files for various tools and applications.
 
   - [Yazi README](.config/yazi/README.md)
 
+- **Zellij**: Configuration files for Zellij, a terminal workspace and multiplexer.
+
+  - [Zellij README](.config/zellij/README.md)
+
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
   - [Zsh README](.config/zsh/README.md)
 
