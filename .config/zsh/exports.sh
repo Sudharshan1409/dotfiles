@@ -1,6 +1,10 @@
 #!/bin/bash
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --zsh)"
+eval "$(starship init zsh)"
+
+# Starship exports
+export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 # Override fzf commands
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "

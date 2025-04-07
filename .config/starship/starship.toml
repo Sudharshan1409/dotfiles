@@ -1,0 +1,22 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Prompt symbol
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+
+# Customize the directory module
+[directory]
+style = "cyan"
+truncation_length = 3
+truncate_to_repo = false
+
+# Git branch info
+[git_branch]
+style = "bold purple"
+
+# Add Node.js version
+[nodejs]
+symbol = "⬢ "
+style = "bold green"
