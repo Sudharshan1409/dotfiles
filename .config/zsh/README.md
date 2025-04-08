@@ -91,7 +91,18 @@ A cat clone with syntax highlighting and Git integration.
 brew install bat
 ```
 
-## Customize `bat` with Themes
+### git-delta
+
+A syntax-highlighting pager for git and diff output.
+
+#### Installation
+
+```bash
+# Using Homebrew
+brew install git-delta
+```
+
+## Step 4: Customize `bat` with Themes
 
 `bat` allows you to use and customize themes for syntax highlighting. Here's how you can explore and install themes:
 
@@ -143,16 +154,5 @@ export BAT_THEME=tokyonight_night
 Replace `tokyonight_night` with the name of the theme you would like to use.
 
 After saving the changes, make sure to source it or restart your terminal session to apply the changes.
-
-### git-delta
-
-A syntax-highlighting pager for git and diff output.
-
-#### Installation
-
-```bash
-# Using Homebrew
-brew install git-delta
-```
 
 ## You're All Set!
