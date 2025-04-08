@@ -37,7 +37,11 @@ This repository contains configuration files for various tools and applications.
   - [Zellij README](.config/zellij/README.md)
 
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
+
   - [Zsh README](.config/zsh/README.md)
+
+- **Bat**: Configuration files for Bat, a better alternative for Cat command.
+  - [Bat README](.config/bat/README.md)
 
 ## Usage
 
