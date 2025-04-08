@@ -1,6 +1,6 @@
 #!/bin/bash
 # Basic aliases
-alias ls="lsd"
+alias ls="eza --color=always --git --icons=always"
 alias vim="nvim"
 alias vi="nvim"
 alias refresh="source ~/.zshrc"
@@ -14,24 +14,25 @@ alias sudo="sudo -E -s"
 alias cl="clear;clear"
 alias time="sh ~/.config/zsh/time.sh"
 alias memory="sh ~/.config/zsh/memory.sh"
+alias y="yazi"
+alias cd="z"
 
 # Navigation aliases
-alias desk="cd ~/Desktop"
-alias down="cd ~/Downloads"
-alias ohmyzsh="cd ~/.oh-my-zsh"
-alias vimconf="cd ~/.config/nvim"
-alias tmuxconf="cd ~/.config/tmux"
-alias gitconf="cd ~/.config/git"
-alias home="cd ~"
-alias proj="cd ~/projects"
-alias shellconf="cd ~/.config/zsh"
-alias wezconf="cd ~/.config/wezterm"
-alias yaziconf="cd ~/.config/yazi"
-alias y="yazi"
-alias credconf="cd ~/.config/creds"
-alias aeroconf="cd ~/.config/aerospace"
-alias sketchyconf="cd ~/.config/sketchybar"
-alias dotfiles="cd ~/dotfiles"
+alias desk="z ~/Desktop"
+alias down="z ~/Downloads"
+alias ohmyzsh="z ~/.oh-my-zsh"
+alias vimconf="z ~/.config/nvim"
+alias tmuxconf="z ~/.config/tmux"
+alias gitconf="z ~/.config/git"
+alias home="z ~"
+alias proj="z ~/projects"
+alias shellconf="z ~/.config/zsh"
+alias wezconf="z ~/.config/wezterm"
+alias yaziconf="z ~/.config/yazi"
+alias credconf="z ~/.config/creds"
+alias aeroconf="z ~/.config/aerospace"
+alias sketchyconf="z ~/.config/sketchybar"
+alias dotfiles="z ~/dotfiles"
 
 # Git aliases
 alias g="git"
@@ -57,7 +58,7 @@ alias gwl="git worktree list"
 alias gwr="git worktree remove"
 
 gwc() {
-    cd "$(git worktree list | grep "\[$1\]" | awk '{print $1}')"
+    z "$(git worktree list | grep "\[$1\]" | awk '{print $1}')"
 }
 
 alias getrepo="~/.config/zsh/getrepo.sh"
