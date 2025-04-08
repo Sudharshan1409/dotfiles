@@ -155,4 +155,6 @@ Replace `tokyonight_night` with the name of the theme you would like to use.
 
 After saving the changes, make sure to source it or restart your terminal session to apply the changes.
 
-## You're All Set!
+## Reference for fzf-git
+
+For more detailed information on configuring and using `fzf-git`, please refer to the [fzf-git README](.fzf/FZF-GIT-README.md).
