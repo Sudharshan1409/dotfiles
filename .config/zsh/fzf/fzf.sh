@@ -11,7 +11,7 @@ export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git
 # export FZF_COMPLETION_TRIGGER="**"
 
 
-export FZF_DEFAULT_OPTS="--height 50% --layout=default --border --color=hl:#2dd4bf --reverse"
+export FZF_DEFAULT_OPTS="--height 50% --layout=reverse --border --color=hl:#2dd4bf"
 
 # fzf default for tmux
 export FZF_TMUX_OPTS=" -p90%,70% "
