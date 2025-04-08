@@ -27,6 +27,7 @@ function aliases() {
         nav)
             echo "Navigation aliases:"
             echo "desk --> cd ~/Desktop"
+            echo "down --> cd ~/Downloads"
             echo "ohmyzsh --> cd ~/.oh-my-zsh"
             echo "vimconf --> cd ~/.config/nvim"
             echo "tmuxconf --> cd ~/.config/tmux"
@@ -37,10 +38,10 @@ function aliases() {
             echo "wezconf --> cd ~/.config/wezterm"
             echo "yaziconf --> cd ~/.config/yazi"
             echo "credconf --> cd ~/.config/creds"
-            echo "aerospace --> cd ~/.config/aerospace"
+            echo "aeroconf --> cd ~/.config/aerospace"
             echo "sketchyconf --> cd ~/.config/sketchybar"
             echo "dotfiles --> cd ~/dotfiles"
-            echo "config --> z ~/.config"
+            echo "config --> cd ~/.config"
             ;;
         gwt)
             echo "Git Worktree aliases:"
@@ -52,21 +53,23 @@ function aliases() {
             ;;
         basic)
             echo "Basic aliases:"
-            echo "ls --> exa"
+            echo "ls --> eza --color=always --git --icons=always"
             echo "vim --> nvim"
             echo "vi --> nvim"
             echo "refresh --> source ~/.zshrc"
-            echo "la --> exa -a"
-            echo "ll --> exa -l"
-            echo "lla --> exa -la"
+            echo "src --> source ~/.zshrc"
+            echo "la --> lsd -a"
+            echo "ll --> lsd -l"
+            echo "lla --> lsd -la"
             echo "zshconf --> vim ~/.zshrc"
             echo "pyglobalenv --> source ~/venv/bin/activate"
             echo "sudo --> sudo -E -s"
-            echo "cl --> clear"
-            echo "time --> display time"
-            echo "memory --> display memory allocation"
+            echo "cl --> clear;clear"
+            echo "time --> sh ~/.config/zsh/time.sh"
+            echo "memory --> sh ~/.config/zsh/memory.sh"
             echo "y --> yazi"
             echo "cd --> z"
+            echo "cat --> bat"
             ;;
         *)
             echo "Usage: aliases"
@@ -75,6 +78,8 @@ function aliases() {
             echo "nav --> Navigation aliases"
             echo "gwt --> Git Worktree aliases"
             echo "basic --> Basic aliases"
+            echo "ff --> Aerospace go to window"
+            echo "tmux-run-all-panes --> Run a command in all the panes in a tmux window"
             ;;
     esac
 }
