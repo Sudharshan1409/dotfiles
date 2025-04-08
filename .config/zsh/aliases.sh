@@ -35,6 +35,7 @@ alias aeroconf="z ~/.config/aerospace"
 alias sketchyconf="z ~/.config/sketchybar"
 alias dotfiles="z ~/dotfiles"
 alias config="z ~/.config"
+alias batconf='z "$(bat --config-dir)"'
 
 # Git aliases
 alias g="git"

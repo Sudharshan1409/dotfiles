@@ -42,6 +42,7 @@ function aliases() {
             echo "sketchyconf --> cd ~/.config/sketchybar"
             echo "dotfiles --> cd ~/dotfiles"
             echo "config --> cd ~/.config"
+            echo "batconf --> cd '$(bat --config-dir)'"
             ;;
         gwt)
             echo "Git Worktree aliases:"
