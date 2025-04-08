@@ -16,6 +16,7 @@ alias time="sh ~/.config/zsh/time.sh"
 alias memory="sh ~/.config/zsh/memory.sh"
 alias y="yazi"
 alias cd="z"
+alias cat="bat"
 
 # Navigation aliases
 alias desk="z ~/Desktop"
