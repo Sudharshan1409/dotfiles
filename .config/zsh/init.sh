@@ -8,6 +8,9 @@ source "$HOME/.config/zsh/exports.sh"
 # shellcheck source=/Users/enigma/.config/zsh/aliases.sh
 source "$HOME/.config/zsh/aliases.sh"
 
+# shellcheck source=/Users/enigma/.config/zsh/functions.sh
+source "$HOME/.config/zsh/functions.sh"
+
 # shellcheck source=/Users/enigma/.config/zsh/tmux.sh
 source "$HOME/.config/zsh/tmux.sh"
 
