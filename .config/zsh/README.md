@@ -157,4 +157,4 @@ After saving the changes, make sure to source it or restart your terminal sessio
 
 ## Reference for fzf-git
 
-For more detailed information on configuring and using `fzf-git`, please refer to the [fzf-git README](.fzf/FZF-GIT-README.md).
+For more detailed information on configuring and using `fzf-git`, please refer to the [fzf-git README](./fzf/FZF-GIT-README.md).
