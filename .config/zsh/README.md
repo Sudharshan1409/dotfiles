@@ -91,6 +91,8 @@ A cat clone with syntax highlighting and Git integration.
 brew install bat
 ```
 
+Refer [Bat Customization](../bat/FZF-GIT-README.md) for customization options.
+
 ### git-delta
 
 A syntax-highlighting pager for git and diff output.
