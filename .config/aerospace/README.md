@@ -81,6 +81,34 @@ cd ~/dotfiles
 stow .config/aerospace
 ```
 
+## Installation
+
+### Installing Junkyborders
+
+To install `junkyborders`, you can use Homebrew:
+
+```bash
+brew install junkyborders
+```
+
+For more information, refer to the [Junkyborders GitHub repository](https://github.com/username/junkyborders).
+
+### Installing Sketchybar
+
+To install `sketchybar`, you can use Homebrew as well:
+
+```bash
+brew install sketchybar
+```
+
+After installation, you can start `sketchybar` using:
+
+```bash
+sketchybar --start
+```
+
+For more details, visit the [Sketchybar GitHub repository](https://github.com/username/sketchybar).
+
 ## Additional Resources
 
 - [AeroSpace Guide](https://nikitabobko.github.io/AeroSpace/guide)
