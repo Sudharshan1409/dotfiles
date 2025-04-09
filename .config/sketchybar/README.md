@@ -12,6 +12,15 @@ This is a basic configuration for SketchyBar, a customizable status bar for macO
 
 ## Setup
 
+### Make Scripts Executable
+
+Ensure all scripts in the `plugins` and `items` directories are executable. Run the following commands:
+
+```bash
+chmod +x ~/.config/sketchybar/plugins/*
+chmod +x ~/.config/sketchybar/items/*
+```
+
 1. **Install SketchyBar**: Follow the installation instructions on the [SketchyBar GitHub page](https://github.com/FelixKratz/SketchyBar).
 2. **Clone or Copy Configuration**: Place this configuration in your SketchyBar config directory, typically `~/.config/sketchybar/`.
 3. **Customize**: Modify the configuration to suit your preferences. Refer to the [SketchyBar documentation](https://felixkratz.github.io/SketchyBar/) for more options and customization tips.
@@ -30,7 +39,7 @@ cd ~/dotfiles
 stow .config/sketchybar
 ```
 
-### For SSH
+#### For SSH
 
 ```bash
 git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
