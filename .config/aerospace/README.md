@@ -83,9 +83,9 @@ stow .config/aerospace
 
 ## Installation
 
-### Installing Junkyborders
+### Installing Jankyborders
 
-To install `junkyborders`, you can use Homebrew:
+To install `jankyborders`, you can use Homebrew:
 
 ```bash
 brew tap FelixKratz/formulae
