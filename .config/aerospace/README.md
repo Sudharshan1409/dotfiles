@@ -88,10 +88,11 @@ stow .config/aerospace
 To install `junkyborders`, you can use Homebrew:
 
 ```bash
-brew install junkyborders
+brew tap FelixKratz/formulae
+brew install borders
 ```
 
-For more information, refer to the [Junkyborders GitHub repository](https://github.com/username/junkyborders).
+For more information, refer to the [Jankyborders GitHub repository](https://github.com/FelixKratz/JankyBorders).
 
 ### Installing Sketchybar
 
@@ -107,7 +108,7 @@ After installation, you can start `sketchybar` using:
 sketchybar --start
 ```
 
-For more details, visit the [Sketchybar GitHub repository](https://github.com/username/sketchybar).
+For more details, visit the [Sketchybar GitHub repository](https://github.com/FelixKratz/SketchyBar).
 
 ## Additional Resources
 

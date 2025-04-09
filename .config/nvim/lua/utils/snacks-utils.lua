@@ -464,7 +464,7 @@ M.opts = {
 					["<a-d>"] = { "inspect", mode = { "n", "i" } },
 					["<a-f>"] = { "toggle_follow", mode = { "i", "n" } },
 					["<c-h>"] = { "toggle_hidden", mode = { "i", "n" } },
-					["<c-i>"] = { "toggle_ignored", mode = { "i", "n" } },
+					["<a-i>"] = { "toggle_ignored", mode = { "i", "n" } },
 					["<a-m>"] = { "toggle_maximize", mode = { "i", "n" } },
 					["<a-p>"] = { "toggle_preview", mode = { "i", "n" } },
 					["<a-w>"] = { "cycle_win", mode = { "i", "n" } },
@@ -506,10 +506,12 @@ M.opts = {
 		sources = {
 			files = {
 				hidden = true,
+				exclude = { "venv", "node_modules" },
 			},
 			explorer = {
 				auto_close = false,
-				hidden = true,
+				exclude = { "oil:" },
+				hidden = false,
 				jump = {
 					close = true,
 				},
