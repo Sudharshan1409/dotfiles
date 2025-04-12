@@ -77,7 +77,7 @@ automatically-unhide-macos-hidden-apps = false
 
 # [workspace-to-monitor-force-assignment]
 #     T = 'main'
-#     B = 'secondary'
+#     B = 'builtin'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -159,6 +159,7 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
+    alt-shift-w = 'mode window'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -166,19 +167,28 @@ automatically-unhide-macos-hidden-apps = false
     esc = ['reload-config', 'mode main']
     r = ['flatten-workspace-tree', 'mode main'] # reset layout
     f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
-    backspace = ['close-all-windows-but-current', 'mode main']
 
     # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
     #s = ['layout sticky tiling', 'mode main']
 
+    down = 'volume down'
+    up = 'volume up'
+    shift-down = ['volume set 0', 'mode main']
+
+
+[mode.window.binding]
+    esc = ['reload-config', 'mode main']
+    backspace = ['close-all-windows-but-current', 'mode main']
+    c = ['close', 'mode main']
+    m = [ 'mode main', 'macos-native-minimize']
+    equal = ['balance-sizes']
     alt-shift-h = ['join-with left', 'mode main']
     alt-shift-j = ['join-with down', 'mode main']
     alt-shift-k = ['join-with up', 'mode main']
     alt-shift-l = ['join-with right', 'mode main']
-
-    down = 'volume down'
-    up = 'volume up'
-    shift-down = ['volume set 0', 'mode main']
+    alt-h = ['move-node-to-monitor left', 'mode main']
+    alt-l = ['move-node-to-monitor right', 'mode main']
+    
 
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
