@@ -54,5 +54,45 @@ vim.api.nvim_set_keymap(
 	{ noremap = true, silent = true, expr = false }
 )
 
+-- Required for creating directories and files
+local fn = vim.fn
+
+-- Function to create a file in a directory named after the current working directory
+function M.create_file_in_cwd_directory()
+	-- Prompt for file name
+	local file_name = fn.input("Enter file name (with extension): ")
+	if file_name == "" then
+		print("No file name provided.")
+		return
+	end
+
+	-- Get the current working directory name
+	local cwd = fn.fnamemodify(fn.getcwd(), ":t")
+
+	-- Construct the path
+	local dir_path = fn.expand("~/.nvimfiles/") .. cwd
+	local file_path = dir_path .. "/" .. file_name
+
+	-- Create the directory if it doesn't exist
+	if fn.isdirectory(dir_path) == 0 then
+		fn.mkdir(dir_path, "p")
+	end
+
+	-- Create the file
+	fn.writefile({}, file_path)
+	print("Created file: " .. file_path)
+
+	-- Open the file in a buffer for editing
+	vim.cmd("edit " .. file_path)
+end
+
+-- Keymap to create a file in a directory named after the current working directory
+vim.keymap.set(
+	"n",
+	"<leader>tf",
+	':lua require("core.functions").create_file_in_cwd_directory()<CR>',
+	{ desc = "Create file in CWD directory" }
+)
+
 -- Return the module table
 return M

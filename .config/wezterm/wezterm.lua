@@ -8,7 +8,7 @@
 -- A GPU-accelerated cross-platform terminal emulator
 -- https://wezfurlong.org/wezterm/
 
-local dark_opacity = 0.8
+local dark_opacity = 0.65
 local light_opacity = 0.9
 
 local wallpapers_glob = os.getenv("HOME") .. "/wezterm-wallpapers/*.{jpeg,jpg,png,gif}"
