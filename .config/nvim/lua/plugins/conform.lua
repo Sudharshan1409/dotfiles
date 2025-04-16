@@ -1,4 +1,3 @@
--- luacheck: globals vim
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },
@@ -20,7 +19,7 @@ return {
 				graphql = { "prettier" },
 				lua = { "stylua" },
 				python = { "isort", "black" },
-				toml = { "prettier" },
+				toml = { "pyproject-fmt" },
 			},
 			format_on_save = {
 				lsp_fallback = true,

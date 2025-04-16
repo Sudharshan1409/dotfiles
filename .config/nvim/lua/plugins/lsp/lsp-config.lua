@@ -1,6 +1,5 @@
 -- luacheck: globals vim
 local basicUtils = require("utils.basic")
-local lspUtils = require("utils.lsp")
 
 return {
 	{
@@ -29,7 +28,7 @@ return {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "saghen/blink.cmp" },
 		},
-		config = function(_, opts)
+		config = function(_, _)
 			-- This is where all the LSP shenanigans will live
 			local lsp_zero = require("lsp-zero")
 			lsp_zero.extend_lspconfig()
@@ -45,7 +44,7 @@ return {
 			}
 			lsp_zero.set_sign_icons(sign_icons)
 
-			lsp_zero.on_attach(function(client, bufnr)
+			lsp_zero.on_attach(function(_, bufnr)
 				-- see :help lsp-zero-keybindings
 				-- to learn the available actions
 

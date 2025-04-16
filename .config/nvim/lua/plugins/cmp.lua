@@ -6,6 +6,7 @@ return {
 		"hrsh7th/cmp-buffer", -- source for text in buffer
 		"hrsh7th/cmp-path", -- source for file system path
 		"L3MON4D3/LuaSnip", -- snippet engine
+		"hrsh7th/cmp-nvim-lsp",
 		"saadparwaiz1/cmp_luasnip", -- for autocompletion
 		"rafamadriz/friendly-snippets", -- useful snippets
 	},
@@ -17,14 +18,15 @@ return {
 		-- And you can configure cmp even more, if you want to.
 		local cmp = require("cmp")
 		local cmp_action = lsp_zero.cmp_action()
+		require("luasnip.loaders.from_vscode").lazy_load()
 
 		cmp.setup({
 			completion = {
 				completeopt = "menu,menuone,preview,noselect",
 			},
 			sources = {
-				{ name = "luasnip" },
 				{ name = "nvim_lsp" },
+				{ name = "luasnip" },
 				{ name = "buffer" },
 				{ name = "path" },
 			},

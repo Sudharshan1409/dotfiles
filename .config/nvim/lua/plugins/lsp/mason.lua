@@ -5,6 +5,8 @@ return {
 	dependencies = {
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		"williamboman/mason-lspconfig.nvim",
+		"hrsh7th/cmp-nvim-lsp",
+		"VonHeikemen/lsp-zero.nvim",
 	},
 	lazy = false,
 	config = function()
@@ -22,7 +24,9 @@ return {
 		-- mason lspconfig setup
 
 		local mason_lspconfig = require("mason-lspconfig")
+		local lspconfig = require("lspconfig")
 		local lsp_zero = require("lsp-zero")
+		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 		mason_lspconfig.setup({
 			ensure_installed = lspUtils.lspconfig_ensure_installed,
 			automatic_installation = true,
@@ -30,10 +34,10 @@ return {
 				lsp_zero.default_setup,
 				lua_ls = function()
 					-- (Optional) Configure lua language server for neovim
-					local lua_opts = lsp_zero.nvim_lua_ls()
-					require("lspconfig").lua_ls.setup(lua_opts)
-					require("lspconfig").yamlls.setup(lspUtils.yamlls_setup)
-					require("lspconfig").pylsp.setup(lspUtils.pylsp_setup)
+					lspconfig.lua_ls.setup(lspUtils.lua_opts)
+					lspconfig.yamlls.setup(lspUtils.yamlls_setup)
+					lspconfig.pylsp.setup(lspUtils.pylsp_setup)
+					lspconfig.ts_ls.setup({ capabilities = capabilities, on_attach = require("lsp-zero").on_attach })
 				end,
 			},
 		})

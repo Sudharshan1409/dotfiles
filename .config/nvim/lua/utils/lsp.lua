@@ -1,4 +1,6 @@
+-- luacheck: globals vim
 local M = {}
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 M.mason_tools_ensure_installed = {
 	"prettier",
@@ -12,6 +14,7 @@ M.mason_tools_ensure_installed = {
 	"jsonlint",
 	"shellcheck",
 	"yamllint",
+	"pyproject-fmt",
 }
 
 M.lspconfig_ensure_installed = {
@@ -28,6 +31,20 @@ M.lspconfig_ensure_installed = {
 	"yamlls",
 	"cssls",
 	"graphql",
+	"taplo",
+}
+
+M.lua_opts = {
+	capabilities = capabilities,
+	settings = {
+		Lua = {
+			diagnostics = { globals = { "vim" } },
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true),
+				checkThirdParty = false,
+			},
+		},
+	},
 }
 
 M.yamlls_setup = {
