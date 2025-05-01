@@ -236,3 +236,7 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-id = 'net.freemacsoft.AppCleaner'
 run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'us.zoom.xos'
+run = 'layout floating'

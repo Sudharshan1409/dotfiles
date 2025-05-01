@@ -56,7 +56,6 @@ alias gds="git diff --staged"
 # Git Worktree aliases
 
 alias gw="git worktree"
-alias gwa="git worktree add"
 alias gwl="git worktree list"
 alias gwr="git worktree remove"
 

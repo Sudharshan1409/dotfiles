@@ -1,5 +1,6 @@
 #!/bin/bash
 # eval "$(starship init zsh)"
+# eval "$(ssh-agent -s)"
 
 # Starship exports
 export STARSHIP_CONFIG=~/.config/starship/starship.toml

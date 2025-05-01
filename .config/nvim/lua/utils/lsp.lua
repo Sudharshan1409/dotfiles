@@ -158,24 +158,20 @@ M.pylsp_setup = {
 	settings = {
 		pylsp = {
 			plugins = {
-				-- formatter options
-				black = { enabled = true },
-				autopep8 = { enabled = true },
-				yapf = { enabled = false },
-				-- linter options
-				-- pylint = { enabled = true, executable = "pylint" },
 				pyflakes = { enabled = false },
 				pycodestyle = {
-					enabled = true,
+					enabled = false,
 					ignore = { "W391" },
 					maxLineLength = 120,
 				},
-				-- type checker
-				pylsp_mypy = { enabled = true },
-				-- auto-completion options
+				autopep8 = { enabled = false },
+				yapf = { enabled = false },
+				mccabe = { enabled = false },
+				black = { enabled = false },
+				pylsp_mypy = { enabled = false },
+				pylsp_black = { enabled = false },
 				jedi_completion = { fuzzy = true },
-				-- import sorting
-				pyls_isort = { enabled = true },
+				pyls_isort = { enabled = false },
 			},
 		},
 	},
