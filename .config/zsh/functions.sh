@@ -79,7 +79,7 @@ function aliases() {
             echo "gwt --> Git Worktree aliases"
             echo "basic --> Basic aliases"
             echo "ff --> Aerospace go to window"
-            echo "tmux-run-all-panes --> Run a command in all the panes in a tmux window"
+            echo "tmux-all --> Run a command in all the panes in a tmux window"
             ;;
     esac
 }
@@ -88,9 +88,9 @@ function ff() {
     aerospace list-windows --all | fzf --bind 'enter:execute(bash -c "aerospace focus --window-id {1}")+abort'
 }
 
-tmux-run-all-panes() {
+tmux-all() {
   if [ -z "$1" ]; then
-    echo "Usage: tmux-run-all-panes '<command>'"
+    echo "Usage: tmux-all '<command>'"
     return 1
   fi
 
@@ -129,7 +129,7 @@ function gwa() {
 
     # Check if inside a tmux session
     if [ -n "$TMUX" ]; then
-        tmux-run-all-panes "$bare_repo_path/$worktree_name"
+        tmux-all "$bare_repo_path/$worktree_name"
         return 1
     fi
     z "$bare_repo_path/$worktree_name"
