@@ -77,7 +77,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions sudo web-search dirhistory history jsontools zsh-interactive-cd)
+plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo web-search dirhistory history jsontools zsh-interactive-cd)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -118,8 +118,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export TMUX_PATH="/opt/homebrew/bin/tmux"
-
-source /Users/enigma/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 source ~/.config/zsh/init.sh
 

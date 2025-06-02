@@ -50,6 +50,7 @@ stow .config/sketchybar
 ## Resources
 
 - [SketchyBar Documentation](https://felixkratz.github.io/SketchyBar/)
+- [Josean Documentation](https://www.josean.com/posts/sketchybar-setup)
 - [Color Picker](https://felixkratz.github.io/SketchyBar/config/tricks#color-picker)
 - [FelixKratz's Dotfiles](https://github.com/FelixKratz/dotfiles) for advanced configuration examples.
 
