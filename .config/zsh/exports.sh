@@ -14,3 +14,7 @@ export OPENAI_API_KEY GOOGLE_SEARCH_API_KEY GOOGLE_SEARCH_ENGINE_ID
 
 # Bat theme
 export BAT_THEME=tokyonight_night
+
+# ssh commands
+eval "$(ssh-agent -s)" > /dev/null 2>&1
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1
