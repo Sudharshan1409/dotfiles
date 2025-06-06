@@ -1,0 +1,62 @@
+{
+    "Basic": {
+        "cat": "bat",
+        "cd": "z",
+        "cl": "clear;clear",
+        "la": "lsd -a",
+        "ll": "lsd -l",
+        "lla": "lsd -la",
+        "ls": "eza --color",
+        "memory": "sh ~/.config/zsh/memory.sh",
+        "pyglobalenv": "source ~/venv/bin/activate",
+        "refresh": "source ~/.zshrc",
+        "src": "source ~/.zshrc",
+        "sudo": "sudo -E -s",
+        "time": "sh ~/.config/zsh/time.sh",
+        "vi": "nvim",
+        "vim": "nvim",
+        "y": "yazi",
+        "zshconf": "vim ~/.zshrc"
+    },
+    "Git": {
+        "g": "git",
+        "ga": "git add",
+        "gc": "git commit",
+        "gcb": "git checkout -b",
+        "gcm": "git commit -m",
+        "gco": "git checkout",
+        "gd": "git diff",
+        "gds": "git diff --staged",
+        "gi": "git init",
+        "gl": "git log",
+        "gls": "git log --show-signature",
+        "gp": "git push",
+        "gpl": "git pull",
+        "gs": "git status"
+    },
+    "Git Worktree": {
+        "getrepo": "~/.config/zsh/getrepo.sh",
+        "gw": "git worktree",
+        "gwl": "git worktree list",
+        "gwr": "git worktree remove"
+    },
+    "Navigation": {
+        "aeroconf": "z ~/.config/aerospace",
+        "batconf": "'z \"$(bat --config-dir)\"'",
+        "config": "z ~/.config",
+        "credconf": "z ~/.config/creds",
+        "desk": "z ~/Desktop",
+        "dotfiles": "z ~/dotfiles",
+        "down": "z ~/Downloads",
+        "gitconf": "z ~/.config/git",
+        "home": "z ~",
+        "ohmyzsh": "z ~/.oh-my-zsh",
+        "proj": "z ~/projects",
+        "shellconf": "z ~/.config/zsh",
+        "sketchyconf": "z ~/.config/sketchybar",
+        "tmuxconf": "z ~/.config/tmux",
+        "vimconf": "z ~/.config/nvim",
+        "wezconf": "z ~/.config/wezterm",
+        "yaziconf": "z ~/.config/yazi"
+    }
+}
