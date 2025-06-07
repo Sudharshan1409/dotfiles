@@ -4,6 +4,9 @@ import json
 import os
 import sys
 
+from InquirerPy import inquirer
+from InquirerPy.base.control import Choice
+from InquirerPy.separator import Separator
 from rich import box
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
@@ -11,6 +14,7 @@ from rich.table import Table
 
 # Define the path to the JSON registry file
 ALIAS_JSON_PATH = os.path.expanduser("~/.config/zsh/aliases.json")
+CONSOLE = Console()
 
 
 def read_registry():
@@ -19,7 +23,8 @@ def read_registry():
         return {}
     try:
         with open(ALIAS_JSON_PATH, "r") as f:
-            return json.load(f)
+            data = json.load(f)
+            return data if data else {}
     except (json.JSONDecodeError, IOError):
         return {}
 
@@ -38,12 +43,54 @@ def find_alias(data, alias_name):
     return None
 
 
+def _get_group_selection(data):
+    """
+    Presents an interactive dropdown menu for group selection.
+    """
+    existing_groups = sorted(list(data.keys()))
+    CREATE_NEW = "[Create New Group]"
+
+    # Build the list of choices for the interactive menu
+    choices = [Choice(value=group, name=group) for group in existing_groups]
+    choices.extend(
+        [
+            Separator(),
+            Choice(value=CREATE_NEW, name="Create a new group..."),
+        ]
+    )
+
+    selection = inquirer.select(
+        message="Select a group:",
+        choices=choices,
+        default=choices[0].value if existing_groups else CREATE_NEW,
+    ).execute()
+
+    if selection == CREATE_NEW:
+        new_group = inquirer.text(
+            message="Enter the new group name:",
+            validate=lambda result: len(result) > 0,
+            invalid_message="Group name cannot be empty.",
+        ).execute()
+
+        while new_group in existing_groups:
+            CONSOLE.print(
+                f"[yellow]Group '[bold]{new_group}[/bold]' already exists.[/yellow]"
+            )
+            new_group = inquirer.text(
+                message="Enter a different group name:",
+                validate=lambda result: len(result) > 0,
+                invalid_message="Group name cannot be empty.",
+            ).execute()
+        return new_group
+    else:
+        return selection
+
+
 def list_aliases(args):
     """Handler for the 'list' command, using rich for beautiful table output."""
-    console = Console()
     data = read_registry()
     if not data:
-        console.print("[yellow]Alias registry is empty.[/yellow]")
+        CONSOLE.print("[yellow]Alias registry is empty.[/yellow]")
         return
     groups_to_display = {}
     if args.group:
@@ -53,7 +100,7 @@ def list_aliases(args):
         if canonical_group:
             groups_to_display = {canonical_group: data[canonical_group]}
         else:
-            console.print(
+            CONSOLE.print(
                 f"[red]❌ Error:[/red] Group '[b]{args.group}[/b]' not found."
             )
             return
@@ -65,6 +112,7 @@ def list_aliases(args):
             box=box.ROUNDED,
             border_style="bright_blue",
             title_style="bold bright_blue",
+            show_lines=True,
         )
         table.add_column("Alias", style="cyan", no_wrap=True, min_width=5)
         table.add_column("Command", style="white")
@@ -73,32 +121,33 @@ def list_aliases(args):
         else:
             for name, command in sorted(aliases.items()):
                 table.add_row(name, command)
-        console.print(table)
+        CONSOLE.print(table)
 
 
 def add_alias(args):
     """Handler for the interactive 'add' command."""
-    console = Console()
     data = read_registry()
     alias_name = args.name
     if find_alias(data, alias_name):
-        console.print(
+        CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' already exists. Use 'edit'."
         )
         return 1
+
     alias_command = Prompt.ask(
         f"Enter the command for the alias '[bold cyan]{alias_name}[/bold cyan]'"
     )
-    group_name = Prompt.ask("Enter the group name", default="Uncategorized")
+
+    group_name = _get_group_selection(data)
+
     if group_name not in data:
         data[group_name] = {}
     data[group_name][alias_name] = alias_command
     write_registry(data)
-    console.print(
+    CONSOLE.print(
         f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' added to group '[blue]{group_name}[/blue]'."
     )
 
-    # If an output file is provided, write the shell command to it.
     if args.outfile:
         with open(args.outfile, "w") as f:
             command_quoted = alias_command.replace("'", "'\\''")
@@ -107,12 +156,11 @@ def add_alias(args):
 
 def edit_alias(args):
     """Handler for the 'edit' command."""
-    console = Console()
     data = read_registry()
     alias_name = args.name
     group = find_alias(data, alias_name)
     if not group:
-        console.print(
+        CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
         )
         return 1
@@ -121,11 +169,10 @@ def edit_alias(args):
     )
     data[group][alias_name] = new_command
     write_registry(data)
-    console.print(
+    CONSOLE.print(
         f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' updated successfully."
     )
 
-    # If an output file is provided, write the shell command to it.
     if args.outfile:
         with open(args.outfile, "w") as f:
             command_quoted = new_command.replace("'", "'\\''")
@@ -134,29 +181,27 @@ def edit_alias(args):
 
 def remove_alias(args):
     """Handler for the 'rm' command."""
-    console = Console()
     data = read_registry()
     alias_name = args.name
     group = find_alias(data, alias_name)
     if not group:
-        console.print(
+        CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
         )
         return 1
     if not Confirm.ask(
         f"Are you sure you want to remove the alias '[bold cyan]{alias_name}[/bold cyan]'?"
     ):
-        console.print("Deletion cancelled.")
+        CONSOLE.print("Deletion cancelled.")
         return
     del data[group][alias_name]
     if not data[group]:
         del data[group]
     write_registry(data)
-    console.print(
+    CONSOLE.print(
         f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' removed successfully."
     )
 
-    # If an output file is provided, write the shell command to it.
     if args.outfile:
         with open(args.outfile, "w") as f:
             f.write(f"unalias {alias_name}\n")
@@ -176,7 +221,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="A group-aware alias manager using a JSON registry."
     )
-    # Add a hidden argument to get the output file path from our shell wrapper
     parser.add_argument("--outfile", help=argparse.SUPPRESS)
     subparsers = parser.add_subparsers(
         dest="command", required=True, help="Available commands"
