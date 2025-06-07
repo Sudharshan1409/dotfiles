@@ -131,3 +131,8 @@ export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# Created by `pipx` on 2025-06-07 07:32:28
+export PATH="$PATH:/Users/globallogic/.local/bin"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

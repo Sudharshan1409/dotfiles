@@ -2,7 +2,7 @@
     "Basic": {
         "cat": "bat",
         "cd": "z",
-        "cl": "clear;clear",
+        "cl": "clear && printf \"\\e[3J\"",
         "la": "lsd -a",
         "ll": "lsd -l",
         "lla": "lsd -la",
