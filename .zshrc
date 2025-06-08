@@ -117,22 +117,24 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export TMUX_PATH="/opt/homebrew/bin/tmux"
+# Detect OS
+OS_TYPE=$(uname)
+
+if [[ "$OS_TYPE" == "Darwin" ]]; then
+    # macOS-specific configuration
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    export TMUX_PATH="/opt/homebrew/bin/tmux"
+    # other mac-specific settings
+
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    # Linux-specific configuration
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+else
+  echo "Unknown OS: $OS_TYPE"
+fi
 
 source ~/.config/zsh/init.sh
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-# openjdk config from homebrew
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
-
-# Android studio
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-
 # Created by `pipx` on 2025-06-07 07:32:28
-export PATH="$PATH:/Users/globallogic/.local/bin"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="$PATH:$HOME/.local/bin"
