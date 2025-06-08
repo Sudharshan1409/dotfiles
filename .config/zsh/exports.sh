@@ -30,7 +30,7 @@ if [[ "$OS_TYPE" == "Darwin" ]]; then
 elif [[ "$OS_TYPE" == "Linux" ]]; then
     # Linux-specific configuration
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    ssh-add ~/.ssh/id_ed25519
+    ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1
 
 else
   echo "Unknown OS: $OS_TYPE"
