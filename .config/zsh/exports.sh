@@ -6,9 +6,9 @@ export STARSHIP_CONFIG=~/.config/starship/starship.toml
 export PATH=~/.npm-global/bin:$PATH
 
 # API keys
-OPENAI_API_KEY=$(pass show work/code/ai/openai)
-GOOGLE_SEARCH_API_KEY=$(pass show work/code/ai/google/apiKey)
-GOOGLE_SEARCH_ENGINE_ID=$(pass show work/code/ai/google/engineId)
+OPENAI_API_KEY=$(pass show work/code/ai/openai 2>/dev/null || echo "")
+GOOGLE_SEARCH_API_KEY=$(pass show work/code/ai/google/apiKey 2>/dev/null || echo "")
+GOOGLE_SEARCH_ENGINE_ID=$(pass show work/code/ai/google/engineId 2>/dev/null || echo "")
 
 export OPENAI_API_KEY GOOGLE_SEARCH_API_KEY GOOGLE_SEARCH_ENGINE_ID
 
