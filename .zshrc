@@ -117,23 +117,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Detect OS
-OS_TYPE=$(uname)
-
-if [[ "$OS_TYPE" == "Darwin" ]]; then
-    # macOS-specific configuration
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    export TMUX_PATH="/opt/homebrew/bin/tmux"
-    # other mac-specific settings
-
-elif [[ "$OS_TYPE" == "Linux" ]]; then
-    # Linux-specific configuration
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-else
-  echo "Unknown OS: $OS_TYPE"
-fi
-
 source ~/.config/zsh/init.sh
 
 # Created by `pipx` on 2025-06-07 07:32:28

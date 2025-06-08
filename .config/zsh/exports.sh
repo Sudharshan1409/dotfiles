@@ -17,4 +17,21 @@ export BAT_THEME=tokyonight_night
 
 # ssh commands
 eval "$(ssh-agent -s)" > /dev/null 2>&1
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1
+
+# Detect OS
+OS_TYPE=$(uname)
+
+if [[ "$OS_TYPE" == "Darwin" ]]; then
+    # macOS-specific configuration
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    export TMUX_PATH="/opt/homebrew/bin/tmux"
+    ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1
+
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    # Linux-specific configuration
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    ssh-add ~/.ssh/id_ed25519
+
+else
+  echo "Unknown OS: $OS_TYPE"
+fi
