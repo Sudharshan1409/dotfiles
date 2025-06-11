@@ -1,24 +1,60 @@
 {
     "Aerospace": {
-        "ff": "aerospace list-windows --all | fzf --bind 'enter:execute(bash -c \"aerospace focus --window-id {1}\")+abort'"
+        "ff": {
+            "body": "aerospace list-windows --all | fzf --bind 'enter:execute(bash -c \"aerospace focus --window-id {1}\")+abort'",
+            "type": "zsh"
+        }
     },
     "Git": {
-        "gch": "# Interactively checkout a git branch using fzf, sorted by most recent\nif ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then\n    echo \"Error: Not in a git repository.\" >&2\n    return 1\nfi\n\nlocal branch\nbranch=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf --height=30% --reverse)\n\nif [[ -n \"$branch\" ]]; then\n    git checkout \"$branch\"\nfi",
-        "glogf": "# Display git log with fzf and a preview window showing the commit diff.\nif ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then\n    echo \"Error: Not in a git repository.\" >&2\n    return 1\nfi\n\ngit log --graph --color=always \\\n    --format=\"%C(auto)%h%d %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)\" \"$@\" |\nfzf --ansi --no-sort --reverse --tiebreak=index --height=80% \\\n    --preview \"echo {} | grep -o '[a-f0-9]\\{7\\}' | head -1 | xargs -I@ git show --color=always @\""
+        "gch": {
+            "body": "# Interactively checkout a git branch using fzf, sorted by most recent\nif ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then\n    echo \"Error: Not in a git repository.\" >&2\n    return 1\nfi\n\nlocal branch\nbranch=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf --height=30% --reverse)\n\nif [[ -n \"$branch\" ]]; then\n    git checkout \"$branch\"\nfi",
+            "type": "zsh"
+        },
+        "glogf": {
+            "body": "# Display git log with fzf and a preview window showing the commit diff.\nif ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then\n    echo \"Error: Not in a git repository.\" >&2\n    return 1\nfi\n\ngit log --graph --color=always \\\n    --format=\"%C(auto)%h%d %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)\" \"$@\" |\nfzf --ansi --no-sort --reverse --tiebreak=index --height=80% \\\n    --preview \"echo {} | grep -o '[a-f0-9]\\{7\\}' | head -1 | xargs -I@ git show --color=always @\"",
+            "type": "zsh"
+        }
     },
     "Git Worktree": {
-        "gwa": "# Check if the current directory is a git repository\n    if ! git rev-parse --is-inside-work-tree &>/dev/null; then\n        echo \"Not inside a git repository.\"\n        return 1\n    fi\n\n    # Get the bare repository path\n    local bare_repo_path\n    bare_repo_path=$(git worktree list | grep bare | awk '{print $1}')\n\n    # Check if the bare repository path is empty\n    if [ -z \"$bare_repo_path\" ]; then\n        echo \"Bare repository not found.\"\n        return 1\n    fi\n\n    # Check if the worktree name is provided\n    local worktree_name=\"$1\"\n    if [ -z \"$worktree_name\" ]; then\n        echo -n \"Enter the worktree name: \"\n        read worktree_name\n    fi\n\n    # Create a new worktree\n    git worktree add \"$bare_repo_path/$worktree_name\"\n\n    # Check if inside a tmux session\n    if [ -n \"$TMUX\" ]; then\n        tmux-all \"$bare_repo_path/$worktree_name\"\n        return 1\n    fi\n    z \"$bare_repo_path/$worktree_name\"",
-        "gwc": "z \"$(git worktree list | grep \"\\[$1\\]\" | awk '{print $1}')\""
+        "gwa": {
+            "body": "# Check if the current directory is a git repository\n    if ! git rev-parse --is-inside-work-tree &>/dev/null; then\n        echo \"Not inside a git repository.\"\n        return 1\n    fi\n\n    # Get the bare repository path\n    local bare_repo_path\n    bare_repo_path=$(git worktree list | grep bare | awk '{print $1}')\n\n    # Check if the bare repository path is empty\n    if [ -z \"$bare_repo_path\" ]; then\n        echo \"Bare repository not found.\"\n        return 1\n    fi\n\n    # Check if the worktree name is provided\n    local worktree_name=\"$1\"\n    if [ -z \"$worktree_name\" ]; then\n        echo -n \"Enter the worktree name: \"\n        read worktree_name\n    fi\n\n    # Create a new worktree\n    git worktree add \"$bare_repo_path/$worktree_name\"\n\n    # Check if inside a tmux session\n    if [ -n \"$TMUX\" ]; then\n        tmux-all \"$bare_repo_path/$worktree_name\"\n        return 1\n    fi\n    z \"$bare_repo_path/$worktree_name\"",
+            "type": "zsh"
+        },
+        "gwc": {
+            "body": "z \"$(git worktree list | grep \"\\[$1\\]\" | awk '{print $1}')\"",
+            "type": "zsh"
+        }
     },
     "System Utilities": {
-        "fcd": "# Use fd and fzf to fuzzy-find a directory and cd into it.\nlocal dir\ndir=$(fd --type d --hidden --exclude .git . | fzf --height=50% --reverse)\n\nif [[ -n \"$dir\" ]]; then\n    cd \"$dir\" || return\nfi",
-        "fkill": "# Interactively find and kill a process using fzf.\nlocal pid\npid=$(ps -ef | sed 1d | fzf -m --height=50% --reverse | awk '{print $2}')\n\nif [[ -n \"$pid\" ]]; then\n    # Convert the newline-separated pids into a space-separated list\n    local pids_to_kill\n    pids_to_kill=$(echo \"$pid\" | xargs)\n    \n    echo \"You are about to kill the following process(es):\"\n    # Get the process names for confirmation\n    ps -o comm= -p $pids_to_kill\n    \n    # Ask for confirmation\n    read -q \"choice?Are you sure? (y/n) \"\n    echo # Move to the next line\n    if [[ \"$choice\" == \"y\" ]]; then\n        # Use xargs to kill all selected pids\n        echo \"$pid\" | xargs kill -9\n        echo \"Process(es) killed.\"\n    else\n        echo \"Kill operation cancelled.\"\n    fi\nfi",
-        "memory": "#!/bin/bash\n\nif [[ \"$OSTYPE\" == \"darwin\"* ]]; then\n    echo \"Memory Usage by Application (macOS):\"\n    ps -axo %mem,pid,comm | sort -nr | head -10 | awk '{print $2, $1, $3}' | while read pid mem process; do\n        app_name=$(basename \"$process\") # Extract only the application name\n        [[ -z \"$app_name\" ]] && app_name=\"Unknown\"\n        printf \"PID: %s | Memory: %s%% | Process: %s\\n\" \"$pid\" \"$mem\" \"$app_name\"\n    done\nelse\n    echo \"Memory Usage by Application (Linux):\"\n    ps -eo pid,%mem,comm --sort=-%mem | head -11 | awk '{print $1, $2, $3}' | while read pid mem process; do\n        app_name=$(basename \"$process\") # Extract only the application name\n        [[ -z \"$app_name\" ]] && app_name=\"Unknown\"\n        printf \"PID: %s | Memory: %s%% | Process: %s\\n\" \"$pid\" \"$mem\" \"$app_name\"\n    done\nfi",
-        "mkcd": "# Create a new directory and change into it.\nif [[ -z \"$1\" ]]; then\n    echo \"Usage: mkcd <directory-name>\" >&2\n    return 1\nfi\nmkdir -p \"$1\" && cd \"$1\"",
-        "now": "echo \"$(date '+%d %b %Y, %I:%M %p')\"",
-        "serve": "# Start a simple Python web server in the current directory.\nlocal port=\"${1:-8000}\"\nlocal ip\nip=$(ifconfig en0 | grep \"inet \" | cut -d \" \" -f 2)\necho \"Serving HTTP on http://${ip}:${port}/ and http://0.0.0.0:${port}/ ...\"\necho \"Press Ctrl-C to stop.\"\n# The -u flag ensures output is not buffered, so it stops cleanly.\npython3 -u -m http.server \"$port\""
+        "fcd": {
+            "body": "# Use fd and fzf to fuzzy-find a directory and cd into it.\nlocal dir\ndir=$(fd --type d --hidden --exclude .git . | fzf --height=50% --reverse)\n\nif [[ -n \"$dir\" ]]; then\n    cd \"$dir\" || return\nfi",
+            "type": "zsh"
+        },
+        "fkill": {
+            "body": "# Interactively find and kill a process using fzf.\nlocal pid\npid=$(ps -ef | sed 1d | fzf -m --height=50% --reverse | awk '{print $2}')\n\nif [[ -n \"$pid\" ]]; then\n    # Convert the newline-separated pids into a space-separated list\n    local pids_to_kill\n    pids_to_kill=$(echo \"$pid\" | xargs)\n    \n    echo \"You are about to kill the following process(es):\"\n    # Get the process names for confirmation\n    ps -o comm= -p $pids_to_kill\n    \n    # Ask for confirmation\n    read -q \"choice?Are you sure? (y/n) \"\n    echo # Move to the next line\n    if [[ \"$choice\" == \"y\" ]]; then\n        # Use xargs to kill all selected pids\n        echo \"$pid\" | xargs kill -9\n        echo \"Process(es) killed.\"\n    else\n        echo \"Kill operation cancelled.\"\n    fi\nfi",
+            "type": "zsh"
+        },
+        "memory": {
+            "body": "#!/bin/bash\n\nif [[ \"$OSTYPE\" == \"darwin\"* ]]; then\n    echo \"Memory Usage by Application (macOS):\"\n    ps -axo %mem,pid,comm | sort -nr | head -10 | awk '{print $2, $1, $3}' | while read pid mem process; do\n        app_name=$(basename \"$process\") # Extract only the application name\n        [[ -z \"$app_name\" ]] && app_name=\"Unknown\"\n        printf \"PID: %s | Memory: %s%% | Process: %s\\n\" \"$pid\" \"$mem\" \"$app_name\"\n    done\nelse\n    echo \"Memory Usage by Application (Linux):\"\n    ps -eo pid,%mem,comm --sort=-%mem | head -11 | awk '{print $1, $2, $3}' | while read pid mem process; do\n        app_name=$(basename \"$process\") # Extract only the application name\n        [[ -z \"$app_name\" ]] && app_name=\"Unknown\"\n        printf \"PID: %s | Memory: %s%% | Process: %s\\n\" \"$pid\" \"$mem\" \"$app_name\"\n    done\nfi",
+            "type": "zsh"
+        },
+        "mkcd": {
+            "body": "# Create a new directory and change into it.\nif [[ -z \"$1\" ]]; then\n    echo \"Usage: mkcd <directory-name>\" >&2\n    return 1\nfi\nmkdir -p \"$1\" && cd \"$1\"",
+            "type": "zsh"
+        },
+        "now": {
+            "body": "echo \"$(date '+%d %b %Y, %I:%M %p')\"",
+            "type": "zsh"
+        },
+        "serve": {
+            "body": "# Start a simple Python web server in the current directory.\nlocal port=\"${1:-8000}\"\nlocal ip\nip=$(ifconfig en0 | grep \"inet \" | cut -d \" \" -f 2)\necho \"Serving HTTP on http://${ip}:${port}/ and http://0.0.0.0:${port}/ ...\"\necho \"Press Ctrl-C to stop.\"\n# The -u flag ensures output is not buffered, so it stops cleanly.\npython3 -u -m http.server \"$port\"",
+            "type": "zsh"
+        }
     },
     "Tmux": {
-        "tmux-all": "if [ -z \"$1\" ]; then\n    echo \"Usage: tmux-all '<command>'\"\n    return 1\nfi\n\nlocal cmd=\"$1\"\ntmux list-panes -F '#{pane_id}' | while read -r pane; do\ntmux send-keys -t \"$pane\" \"$cmd\" C-m\ndone"
+        "tmux-all": {
+            "body": "if [ -z \"$1\" ]; then\n    echo \"Usage: tmux-all '<command>'\"\n    return 1\nfi\n\nlocal cmd=\"$1\"\ntmux list-panes -F '#{pane_id}' | while read -r pane; do\ntmux send-keys -t \"$pane\" \"$cmd\" C-m\ndone",
+            "type": "zsh"
+        }
     }
 }

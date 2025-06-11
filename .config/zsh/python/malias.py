@@ -14,7 +14,7 @@ from rich.table import Table
 
 # Define the path to the JSON registry file
 ALIAS_JSON_PATH = os.path.expanduser("~/.config/zsh/aliases.json")
-CONSOLE = Console()
+CONSOLE = Console(stderr=True)
 
 
 def read_registry():
@@ -50,7 +50,6 @@ def _get_group_selection(data):
     existing_groups = sorted(list(data.keys()))
     CREATE_NEW = "[Create New Group]"
 
-    # Build the list of choices for the interactive menu
     choices = [Choice(value=group, name=group) for group in existing_groups]
     choices.extend(
         [
@@ -87,7 +86,7 @@ def _get_group_selection(data):
 
 
 def list_aliases(args):
-    """Handler for the 'list' command, using rich for beautiful table output."""
+    """Handler for the 'ls' command, using rich for beautiful table output."""
     data = read_registry()
     if not data:
         CONSOLE.print("[yellow]Alias registry is empty.[/yellow]")
@@ -226,11 +225,13 @@ def main():
         dest="command", required=True, help="Available commands"
     )
 
-    parser_list = subparsers.add_parser(
-        "list", help="Show all aliases, optionally filtered by group"
+    # --- vvv THIS IS THE CHANGED LINE vvv ---
+    parser_ls = subparsers.add_parser(
+        "ls", help="Show all aliases, optionally filtered by group"
     )
-    parser_list.add_argument("group", nargs="?", help="The group to filter by")
-    parser_list.set_defaults(func=list_aliases)
+    # --- ^^^ THIS IS THE CHANGED LINE ^^^ ---
+    parser_ls.add_argument("group", nargs="?", help="The group to filter by")
+    parser_ls.set_defaults(func=list_aliases)
 
     parser_add = subparsers.add_parser("add", help="Interactively create a new alias")
     parser_add.add_argument("name", help="The name of the alias to create")
