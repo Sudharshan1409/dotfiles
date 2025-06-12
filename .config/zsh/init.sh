@@ -8,6 +8,7 @@ source "$HOME/.config/zsh/aliases.sh"
 source "$HOME/.config/zsh/functions.sh"
 source "$HOME/.config/zsh/tmux.sh"
 source "$HOME/.config/zsh/fzf/fzf.sh"
+source "$HOME/.config/zsh/snippets.sh" # <--- ADD THIS LINE
 
 # Source the master command dispatcher
 source "$HOME/.config/zsh/dispatcher.sh"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse  # Import argparse here
+import argparse
 import json
 import os
 import sys
@@ -11,10 +11,13 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
-CONSOLE = Console(stderr=True)
+# --- vvv THIS IS THE CORRECTED LINE vvv ---
+# Use the default Console, which prints to standard output (stdout).
+# This allows the terminal to correctly render all rich styles.
+CONSOLE = Console()
+# --- ^^^ END OF CORRECTED LINE ^^^ ---
 
 
-# --- vvv NEW CLASS vvv ---
 class StyledArgumentParser(argparse.ArgumentParser):
     """A custom ArgumentParser that uses rich to print styled error messages."""
 
@@ -24,20 +27,20 @@ class StyledArgumentParser(argparse.ArgumentParser):
         """
         error_text = Text()
         error_text.append("Usage: ", style="bold")
-        # self.prog is the script name, and self.usage is the generated usage string
         error_text.append(f"{self.prog} {self.usage or ''}\n\n", style="cyan")
         error_text.append("Error: ", style="bold red")
         error_text.append(message, style="red")
 
-        CONSOLE.print(error_text)
+        # We explicitly print error messages to stderr here
+        Console(stderr=True).print(error_text)
         sys.exit(2)
 
 
-# --- ^^^ END OF NEW CLASS ^^^ ---
-
-
 def read_registry(path):
-    """Reads a JSON registry file from the given path."""
+    """
+    Reads a JSON registry file from the given path.
+    Creates the file and parent directory if they don't exist.
+    """
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as f:
@@ -45,7 +48,8 @@ def read_registry(path):
         return {}
     try:
         with open(path, "r") as f:
-            return json.load(f)
+            data = json.load(f)
+            return data if data else {}
     except (json.JSONDecodeError, IOError):
         CONSOLE.print(
             f"[red]Error: Could not read or parse {os.path.basename(path)}.[/red]"
@@ -54,7 +58,10 @@ def read_registry(path):
 
 
 def write_registry(data, path):
-    """Writes a dictionary back to the specified JSON registry file."""
+    """
+    Writes a dictionary back to the specified JSON registry file.
+    Ensures the parent directory exists.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
     try:
         with open(path, "w") as f:
@@ -64,7 +71,10 @@ def write_registry(data, path):
 
 
 def find_item(data, item_name):
-    """Generic function to find which group an item belongs to."""
+    """
+    Generic function to find which group an item belongs to.
+    Returns the group name and the item object itself.
+    """
     for group, items in data.items():
         if item_name in items:
             return group, items[item_name]
@@ -72,7 +82,10 @@ def find_item(data, item_name):
 
 
 def get_group_selection(data):
-    """Presents an interactive dropdown menu for group selection."""
+    """
+    Presents an interactive dropdown menu for group selection.
+    This is used by malias and mfunc.
+    """
     existing_groups = sorted(list(data.keys()))
     CREATE_NEW = "[Create New Group]"
     choices = [Choice(value=group, name=group) for group in existing_groups]
@@ -96,7 +109,9 @@ def get_group_selection(data):
 
 
 def print_help_panel(title, command_name, commands):
-    """Prints a standardized, colorful help panel using rich."""
+    """
+    Prints a standardized, colorful help panel using rich.
+    """
     help_text = Text()
     help_text.append("Usage: ", style="bold")
     help_text.append(f"{command_name} <command> [arguments]\n\n", style="cyan")

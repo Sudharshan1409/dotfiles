@@ -2,7 +2,6 @@
 
 function enigma() {
     local sub_command="$1"
-    local action="$2"
 
     if [[ -z "$sub_command" ]]; then
         print -P "%BUsage:%b enigma %F{cyan}<command>%f [options]"
@@ -13,6 +12,7 @@ function enigma() {
         print -P "  %F{yellow}alias%f     Manage shell aliases"
         print -P "  %F{yellow}func%f      Manage shell functions"
         print -P "  %F{yellow}env%f       Manage environment variables"
+        print -P "  %F{yellow}snip%f      Manage code snippets" # <--- ADD THIS LINE
         print ""
         print -P "Run 'enigma %F{cyan}<command>%f help' for more information on a specific command."
         return 1
@@ -27,6 +27,9 @@ function enigma() {
             ;;
         env)
             _menv_cmd "${@:2}"
+            ;;
+        snip) # <--- ADD THIS BLOCK
+            _msnip_cmd "${@:2}"
             ;;
         *)
             echo "Error: Unknown command '$sub_command'." >&2
