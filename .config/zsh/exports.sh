@@ -1,37 +1,37 @@
 #!/bin/bash
-# Starship configuration
-export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
-# npm global path
-export PATH=~/.npm-global/bin:$PATH
+_PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
+_MENV_PY_SCRIPT="$HOME/.config/zsh/python/menv.py"
 
-# API keys
-OPENAI_API_KEY=$(pass show work/code/ai/openai 2>/dev/null || echo "")
-GOOGLE_SEARCH_API_KEY=$(pass show work/code/ai/google/apiKey 2>/dev/null || echo "")
-GOOGLE_SEARCH_ENGINE_ID=$(pass show work/code/ai/google/engineId 2>/dev/null || echo "")
+# On shell startup, execute the python script's 'load' command.
+eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" load)"
 
-export OPENAI_API_KEY GOOGLE_SEARCH_API_KEY GOOGLE_SEARCH_ENGINE_ID
+# --- vvv THIS IS THE UPDATED FUNCTION vvv ---
+function menv() {
+    local command="$1"
 
-# Bat theme
-export BAT_THEME=tokyonight_night
+    case "$command" in
+        add|rm)
+            # For commands that modify the shell, use a temp file
+            local tmpfile
+            tmpfile=$(mktemp) || return 1
 
-# ssh commands
-eval "$(ssh-agent -s)" > /dev/null 2>&1
+            # Execute the python script, telling it to write shell commands
+            # (e.g., `export FOO=bar` or `unset FOO`) to our temp file.
+            "$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" --outfile "$tmpfile" "$@"
+            local exit_code=$?
 
-# Detect OS
-OS_TYPE=$(uname)
+            # If the script ran successfully AND wrote content, source it.
+            if [[ $exit_code -eq 0 && -s "$tmpfile" ]]; then
+                # shellcheck source=/dev/null
+                source "$tmpfile"
+            fi
 
-if [[ "$OS_TYPE" == "Darwin" ]]; then
-    # macOS-specific configuration
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    export TMUX_PATH="/opt/homebrew/bin/tmux"
-    ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1
-
-elif [[ "$OS_TYPE" == "Linux" ]]; then
-    # Linux-specific configuration
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1
-
-else
-  echo "Unknown OS: $OS_TYPE"
-fi
+            rm -f "$tmpfile"
+            ;;
+        *)
+            # For 'ls' or help, just run the script directly.
+            "$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" "$@"
+            ;;
+    esac
+}

@@ -16,7 +16,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 # Define the path to the JSON registry file
-FUNCTION_JSON_PATH = os.path.expanduser("~/.config/zsh/functions.json")
+FUNCTION_JSON_PATH = os.path.expanduser("~/.config/zsh/data/functions.json")
 CONSOLE = Console(stderr=True)
 
 

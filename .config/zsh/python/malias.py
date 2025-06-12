@@ -13,7 +13,7 @@ from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
 # Define the path to the JSON registry file
-ALIAS_JSON_PATH = os.path.expanduser("~/.config/zsh/aliases.json")
+ALIAS_JSON_PATH = os.path.expanduser("~/.config/zsh/data/aliases.json")
 CONSOLE = Console(stderr=True)
 
 
