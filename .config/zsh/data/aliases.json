@@ -1,12 +1,7 @@
 {
     "Basic": {
         "cat": "bat",
-        "cd": "z",
         "cl": "clear && printf \"\\e[3J\"",
-        "la": "lsd -a",
-        "ll": "lsd -l",
-        "lla": "lsd -la",
-        "ls": "eza --color",
         "pyglobalenv": "source ~/venv/bin/activate",
         "refresh": "source ~/.zshrc",
         "src": "source ~/.zshrc",
@@ -15,6 +10,13 @@
         "vim": "nvim",
         "y": "yazi",
         "zshconf": "vim ~/.zshrc"
+    },
+    "File System": {
+        "cd": "z",
+        "la": "lsd -a",
+        "ll": "lsd -l",
+        "lla": "lsd -la",
+        "ls": "eza --color"
     },
     "Git": {
         "g": "git",
@@ -25,6 +27,7 @@
         "gco": "git checkout",
         "gd": "git diff",
         "gds": "git diff --staged",
+        "getrepo": "~/.config/zsh/getrepo.sh",
         "gi": "git init",
         "gl": "git log",
         "gls": "git log --show-signature",
@@ -33,7 +36,6 @@
         "gs": "git status"
     },
     "Git Worktree": {
-        "getrepo": "~/.config/zsh/getrepo.sh",
         "gw": "git worktree",
         "gwl": "git worktree list",
         "gwr": "git worktree remove"

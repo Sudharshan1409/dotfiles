@@ -1,97 +1,45 @@
 #!/usr/bin/env python3
 import argparse
-import json
 import os
 import sys
 
-from InquirerPy import inquirer
-from InquirerPy.base.control import Choice
-from InquirerPy.separator import Separator
+# Import our custom parser and other helpers
+from lib.common import (
+    CONSOLE,
+    StyledArgumentParser,
+    find_item,
+    get_group_selection,
+    print_help_panel,
+    read_registry,
+    write_registry,
+)
 from rich import box
-from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
-# Define the path to the JSON registry file
 ALIAS_JSON_PATH = os.path.expanduser("~/.config/zsh/data/aliases.json")
-CONSOLE = Console(stderr=True)
 
 
-def read_registry():
-    """Reads the JSON registry file and returns it as a dictionary."""
-    if not os.path.exists(ALIAS_JSON_PATH):
-        return {}
-    try:
-        with open(ALIAS_JSON_PATH, "r") as f:
-            data = json.load(f)
-            return data if data else {}
-    except (json.JSONDecodeError, IOError):
-        return {}
-
-
-def write_registry(data):
-    """Writes the dictionary back to the JSON registry file with pretty printing."""
-    with open(ALIAS_JSON_PATH, "w") as f:
-        json.dump(data, f, indent=4, sort_keys=True)
-
-
-def find_alias(data, alias_name):
-    """Finds which group an alias belongs to."""
-    for group, aliases in data.items():
-        if alias_name in aliases:
-            return group
-    return None
-
-
-def _get_group_selection(data):
-    """
-    Presents an interactive dropdown menu for group selection.
-    """
-    existing_groups = sorted(list(data.keys()))
-    CREATE_NEW = "[Create New Group]"
-
-    choices = [Choice(value=group, name=group) for group in existing_groups]
-    choices.extend(
-        [
-            Separator(),
-            Choice(value=CREATE_NEW, name="Create a new group..."),
-        ]
-    )
-
-    selection = inquirer.select(
-        message="Select a group:",
-        choices=choices,
-        default=choices[0].value if existing_groups else CREATE_NEW,
-    ).execute()
-
-    if selection == CREATE_NEW:
-        new_group = inquirer.text(
-            message="Enter the new group name:",
-            validate=lambda result: len(result) > 0,
-            invalid_message="Group name cannot be empty.",
-        ).execute()
-
-        while new_group in existing_groups:
-            CONSOLE.print(
-                f"[yellow]Group '[bold]{new_group}[/bold]' already exists.[/yellow]"
-            )
-            new_group = inquirer.text(
-                message="Enter a different group name:",
-                validate=lambda result: len(result) > 0,
-                invalid_message="Group name cannot be empty.",
-            ).execute()
-        return new_group
-    else:
-        return selection
+def show_help(args):
+    """Displays the custom help panel for the alias manager."""
+    title = "Alias Manager"
+    command_name = "enigma alias"
+    commands = {
+        "ls": "Lists all aliases, grouped by category.",
+        "add": "Interactively adds a new alias.",
+        "edit": "Interactively edits an existing alias.",
+        "rm": "Removes an alias.",
+        "mv": "Moves an alias to a different group.",
+    }
+    print_help_panel(title, command_name, commands)
 
 
 def list_aliases(args):
-    """Handler for the 'ls' command, using rich for beautiful table output."""
-    data = read_registry()
+    data = read_registry(ALIAS_JSON_PATH)
     if not data:
         CONSOLE.print("[yellow]Alias registry is empty.[/yellow]")
         return
-    groups_to_display = {}
+    groups_to_display = data
     if args.group:
         canonical_group = next(
             (g for g in data if g.lower() == args.group.lower()), None
@@ -103,8 +51,6 @@ def list_aliases(args):
                 f"[red]❌ Error:[/red] Group '[b]{args.group}[/b]' not found."
             )
             return
-    else:
-        groups_to_display = data
     for group_name, aliases in sorted(groups_to_display.items()):
         table = Table(
             title=group_name,
@@ -124,29 +70,24 @@ def list_aliases(args):
 
 
 def add_alias(args):
-    """Handler for the interactive 'add' command."""
-    data = read_registry()
+    data = read_registry(ALIAS_JSON_PATH)
     alias_name = args.name
-    if find_alias(data, alias_name):
+    if find_item(data, alias_name)[0]:
         CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' already exists. Use 'edit'."
         )
         return 1
-
     alias_command = Prompt.ask(
         f"Enter the command for the alias '[bold cyan]{alias_name}[/bold cyan]'"
     )
-
-    group_name = _get_group_selection(data)
-
+    group_name = get_group_selection(data)
     if group_name not in data:
         data[group_name] = {}
     data[group_name][alias_name] = alias_command
-    write_registry(data)
+    write_registry(data, ALIAS_JSON_PATH)
     CONSOLE.print(
         f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' added to group '[blue]{group_name}[/blue]'."
     )
-
     if args.outfile:
         with open(args.outfile, "w") as f:
             command_quoted = alias_command.replace("'", "'\\''")
@@ -154,10 +95,9 @@ def add_alias(args):
 
 
 def edit_alias(args):
-    """Handler for the 'edit' command."""
-    data = read_registry()
+    data = read_registry(ALIAS_JSON_PATH)
     alias_name = args.name
-    group = find_alias(data, alias_name)
+    group, _ = find_item(data, alias_name)
     if not group:
         CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
@@ -167,48 +107,70 @@ def edit_alias(args):
         f"Enter the new command for '[bold cyan]{alias_name}[/bold cyan]'"
     )
     data[group][alias_name] = new_command
-    write_registry(data)
+    write_registry(data, ALIAS_JSON_PATH)
     CONSOLE.print(
         f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' updated successfully."
     )
-
     if args.outfile:
         with open(args.outfile, "w") as f:
             command_quoted = new_command.replace("'", "'\\''")
             f.write(f"alias {alias_name}='{command_quoted}'\n")
 
 
-def remove_alias(args):
-    """Handler for the 'rm' command."""
-    data = read_registry()
+def move_alias(args):
+    data = read_registry(ALIAS_JSON_PATH)
     alias_name = args.name
-    group = find_alias(data, alias_name)
+    original_group, alias_body = find_item(data, alias_name)
+    if not original_group:
+        CONSOLE.print(f"[red]Error: Alias '[cyan]{alias_name}[/cyan]' not found.[/red]")
+        return 1
+    CONSOLE.print(
+        f"Moving alias '[cyan]{alias_name}[/cyan]' from group '[blue]{original_group}[/blue]'."
+    )
+    new_group = get_group_selection(data)
+    if new_group == original_group:
+        CONSOLE.print(
+            "[yellow]New group is the same as the old group. No changes made.[/yellow]"
+        )
+        return
+    del data[original_group][alias_name]
+    if not data[original_group]:
+        del data[original_group]
+    if new_group not in data:
+        data[new_group] = {}
+    data[new_group][alias_name] = alias_body
+    write_registry(data, ALIAS_JSON_PATH)
+    CONSOLE.print(
+        f"✅ Alias '[cyan]{alias_name}[/cyan]' successfully moved to group '[blue]{new_group}[/blue]'."
+    )
+
+
+def remove_alias(args):
+    data = read_registry(ALIAS_JSON_PATH)
+    alias_name = args.name
+    group, _ = find_item(data, alias_name)
     if not group:
         CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
         )
         return 1
-    if not Confirm.ask(
+    if Confirm.ask(
         f"Are you sure you want to remove the alias '[bold cyan]{alias_name}[/bold cyan]'?"
     ):
-        CONSOLE.print("Deletion cancelled.")
-        return
-    del data[group][alias_name]
-    if not data[group]:
-        del data[group]
-    write_registry(data)
-    CONSOLE.print(
-        f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' removed successfully."
-    )
-
-    if args.outfile:
-        with open(args.outfile, "w") as f:
-            f.write(f"unalias {alias_name}\n")
+        del data[group][alias_name]
+        if not data[group]:
+            del data[group]
+        write_registry(data, ALIAS_JSON_PATH)
+        CONSOLE.print(
+            f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' removed successfully."
+        )
+        if args.outfile:
+            with open(args.outfile, "w") as f:
+                f.write(f"unalias {alias_name}\n")
 
 
 def load_for_shell(args):
-    """Handler for the 'load' command. Prints aliases for shell to eval."""
-    data = read_registry()
+    data = read_registry(ALIAS_JSON_PATH)
     for group, aliases in data.items():
         for name, command in aliases.items():
             command_quoted = command.replace("'", "'\\''")
@@ -217,43 +179,52 @@ def load_for_shell(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="A group-aware alias manager using a JSON registry."
+    # Use our new StyledArgumentParser
+    parser = StyledArgumentParser(
+        description="A group-aware alias manager.",
+        add_help=False,
+        usage="<command> [options]",
     )
     parser.add_argument("--outfile", help=argparse.SUPPRESS)
-    subparsers = parser.add_subparsers(
-        dest="command", required=True, help="Available commands"
-    )
+    subparsers = parser.add_subparsers(dest="command")
 
-    # --- vvv THIS IS THE CHANGED LINE vvv ---
-    parser_ls = subparsers.add_parser(
-        "ls", help="Show all aliases, optionally filtered by group"
-    )
-    # --- ^^^ THIS IS THE CHANGED LINE ^^^ ---
-    parser_ls.add_argument("group", nargs="?", help="The group to filter by")
-    parser_ls.set_defaults(func=list_aliases)
+    parser_ls = subparsers.add_parser("ls", help="Show all aliases.", add_help=False)
+    parser_ls.add_argument("group", nargs="?")
 
-    parser_add = subparsers.add_parser("add", help="Interactively create a new alias")
-    parser_add.add_argument("name", help="The name of the alias to create")
-    parser_add.set_defaults(func=add_alias)
+    parser_add = subparsers.add_parser(
+        "add", help="Create a new alias.", add_help=False
+    )
+    parser_add.add_argument("name")
 
     parser_edit = subparsers.add_parser(
-        "edit", help="Interactively edit an existing alias"
+        "edit", help="Edit an existing alias.", add_help=False
     )
-    parser_edit.add_argument("name", help="The name of the alias to edit")
+    parser_edit.add_argument("name")
+
+    parser_rm = subparsers.add_parser("rm", help="Remove an alias.", add_help=False)
+    parser_rm.add_argument("name")
+
+    parser_mv = subparsers.add_parser("mv", help="Move an alias.", add_help=False)
+    parser_mv.add_argument("name")
+
+    subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False)
+    subparsers.add_parser("help", help="Show this help message.", add_help=False)
+
+    parser.set_defaults(func=show_help)
+    parser_ls.set_defaults(func=list_aliases)
+    parser_add.set_defaults(func=add_alias)
     parser_edit.set_defaults(func=edit_alias)
-
-    parser_rm = subparsers.add_parser("rm", help="Interactively remove an alias")
-    parser_rm.add_argument("name", help="The name of the alias to remove")
     parser_rm.set_defaults(func=remove_alias)
+    parser_mv.set_defaults(func=move_alias)
+    subparsers.choices["load"].set_defaults(func=load_for_shell)
+    subparsers.choices["help"].set_defaults(func=show_help)
 
-    parser_load = subparsers.add_parser(
-        "load", help="(Internal) Generates alias commands for the shell"
-    )
-    parser_load.set_defaults(func=load_for_shell)
+    if len(sys.argv) == 1:
+        show_help(None)
+        sys.exit(0)
 
     args = parser.parse_args()
-    sys.exit(args.func(args) or 0)
+    args.func(args)
 
 
 if __name__ == "__main__":

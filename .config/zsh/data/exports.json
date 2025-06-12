@@ -3,70 +3,82 @@
         "google_api_key": {
             "os": "any",
             "type": "dynamic",
-            "value": "export GOOGLE_SEARCH_API_KEY=$(pass show work/code/ai/google/apiKey 2>/dev/null || echo \"\")"
+            "value": "pass show work/code/ai/google/apiKey 2>/dev/null || echo \"\"",
+            "var_name": "GOOGLE_SEARCH_API_KEY"
         },
         "google_engine_id": {
             "os": "any",
             "type": "dynamic",
-            "value": "export GOOGLE_SEARCH_ENGINE_ID=$(pass show work/code/ai/google/engineId 2>/dev/null || echo \"\")"
+            "value": "pass show work/code/ai/google/engineId 2>/dev/null || echo \"\"",
+            "var_name": "GOOGLE_SEARCH_ENGINE_ID"
         },
         "openai_api_key": {
             "os": "any",
             "type": "dynamic",
-            "value": "export OPENAI_API_KEY=$(pass show work/code/ai/openai 2>/dev/null || echo \"\")"
+            "value": "pass show work/code/ai/openai 2>/dev/null || echo \"\"",
+            "var_name": "OPENAI_API_KEY"
         }
     },
     "General": {
         "bat_theme": {
             "os": "any",
             "type": "variable",
-            "value": "export BAT_THEME=tokyonight_night"
+            "value": "tokyonight_night",
+            "var_name": "BAT_THEME"
         },
         "npm_global_path": {
             "os": "any",
             "type": "path",
-            "value": "export PATH=~/.npm-global/bin:$PATH"
+            "value": "~/.npm-global/bin",
+            "var_name": "PATH"
         },
         "starship_config": {
             "os": "any",
             "type": "variable",
-            "value": "export STARSHIP_CONFIG=~/.config/starship/starship.toml"
+            "value": "~/.config/starship/starship.toml",
+            "var_name": "STARSHIP_CONFIG"
         }
     },
     "System (Linux)": {
         "brew_shellenv_linux": {
             "os": "Linux",
             "type": "eval",
-            "value": "eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\""
+            "value": "/home/linuxbrew/.linuxbrew/bin/brew shellenv",
+            "var_name": ""
         },
         "ssh_add_linux": {
             "os": "Linux",
             "type": "run",
-            "value": "ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1"
+            "value": "ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1",
+            "var_name": ""
         }
     },
     "System (any)": {
         "ssh_agent": {
             "os": "any",
             "type": "eval",
-            "value": "eval \"$(ssh-agent -s | grep '^SSH_')\""
+            "value": "ssh-agent -s | grep '^SSH_'",
+            "var_name": ""
         }
     },
     "System (macOS)": {
         "brew_shellenv_mac": {
             "os": "Darwin",
             "type": "eval",
-            "value": "eval \"$(/opt/homebrew/bin/brew shellenv)\""
+            "value": "/opt/homebrew/bin/brew shellenv",
+            "var_name": ""
         },
         "ssh_add_mac": {
             "os": "Darwin",
             "type": "run",
-            "value": "ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1"
+            "value": "ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1",
+            "var_name": ""
         },
         "tmux_path_mac": {
             "os": "Darwin",
             "type": "variable",
-            "value": "export TMUX_PATH=\"/opt/homebrew/bin/tmux\""
+            "value": "/opt/homebrew/bin/tmux",
+            "var_name": "TMUX_PATH"
         }
     }
 }
