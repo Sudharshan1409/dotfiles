@@ -18,13 +18,8 @@ function snip() {
         return 1
     fi
 
-    # This script is executed by fzf's preview window.
-    # It receives the full "name\t{json}" line as its first argument.
     local preview_command='
-        # Ensure jq and bat are in the PATH for the subshell
         export PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin"
-        
-        # Extract the JSON part (2nd column) from the input line ($1)
         json_input=$(print -r -- "$1" | cut -f2-)
         
         lang=$(print -r -- "$json_input" | jq -r .language)
@@ -39,7 +34,6 @@ function snip() {
 
     local selected_line
     selected_line=$(print -r -- "$snippets_json" | \
-        # Create a tab-separated output: name   {...json...}
         jq -r '.[] | "\(.name)\t\(. | @json)"' | \
         fzf --height 40% --reverse \
             --delimiter='\t' \
@@ -57,13 +51,19 @@ function snip() {
     fi
     
     if [[ -n "$selected_line" ]]; then
-        # Extract the second column (the JSON object) from the selected line
+        # --- vvv THIS IS THE CORRECTED SECTION vvv ---
         local selected_snippet_json
-        selected_snippet_json=$(echo "$selected_line" | cut -f2-)
+        # Use print -r -- to safely extract the JSON part without corrupting it
+        selected_snippet_json=$(print -r -- "$selected_line" | cut -f2-)
         
         local snippet_body
-        snippet_body=$(echo "$selected_snippet_json" | jq -r .body)
-        echo -n "$snippet_body" | pbcopy
+        # Use print -r -- here as well to pass the clean JSON to jq
+        snippet_body=$(print -r -- "$selected_snippet_json" | jq -r .body)
+        
+        # Use print -rn to copy to clipboard without an extra newline at the end
+        print -rn -- "$snippet_body" | pbcopy
+        # --- ^^^ END OF CORRECTED SECTION ^^^ ---
+        
         echo "✅ Snippet copied to clipboard." >&2
     fi
 }

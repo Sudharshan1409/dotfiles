@@ -13,11 +13,11 @@ from lib.common import (
     find_item,
     get_group_selection,
     print_help_panel,
+    prompt_with_interrupt_handler,
     read_registry,
     write_registry,
 )
 from rich import box
-from rich.prompt import Confirm
 from rich.syntax import Syntax
 from rich.table import Table
 
@@ -64,14 +64,15 @@ def read_and_migrate_registry():
 
 
 def _get_function_type():
-    return inquirer.select(
+    prompt = inquirer.select(
         message="What type of function is this?",
         choices=[
             Choice("zsh", "Zsh Shell Function"),
             Choice("python", "Python Script"),
         ],
         default="zsh",
-    ).execute()
+    )
+    return prompt_with_interrupt_handler(prompt)
 
 
 def invoke_editor(initial_content="", func_type="zsh"):
@@ -208,7 +209,11 @@ def remove_function(args):
     if not group:
         CONSOLE.print(f"[red]Error: Function '{func_name}' not found.[/red]")
         return 1
-    if Confirm.ask(f"Are you sure you want to remove '{func_name}'?"):
+
+    prompt = inquirer.confirm(
+        message=f"Are you sure you want to remove '{func_name}'?", default=False
+    )
+    if prompt_with_interrupt_handler(prompt):
         del data[group][func_name]
         if not data[group]:
             del data[group]
@@ -246,46 +251,39 @@ def run_python_function(args):
 
 def main():
     parser = StyledArgumentParser(
-        description="A polyglot shell function manager.",
-        add_help=False,
-        usage="<command> [options]",
+        prog="enigma func", add_help=False, usage="<command> [options]"
     )
     parser.add_argument("--outfile", help=argparse.SUPPRESS)
     subparsers = parser.add_subparsers(dest="command")
 
-    parser_ls = subparsers.add_parser("ls", help="Show all functions.", add_help=False)
-    parser_add = subparsers.add_parser(
-        "add", help="Create a new function.", add_help=False
-    )
+    parser_ls = subparsers.add_parser("ls", add_help=False)
+    parser_ls.set_defaults(func=list_functions)
+    parser_add = subparsers.add_parser("add", add_help=False)
     parser_add.add_argument("name")
-    parser_edit = subparsers.add_parser(
-        "edit", help="Edit an existing function.", add_help=False
-    )
+    parser_add.set_defaults(func=add_function)
+    parser_edit = subparsers.add_parser("edit", add_help=False)
     parser_edit.add_argument("name")
-    parser_rm = subparsers.add_parser("rm", help="Remove a function.", add_help=False)
+    parser_edit.set_defaults(func=edit_function)
+    parser_rm = subparsers.add_parser("rm", add_help=False)
     parser_rm.add_argument("name")
-    parser_mv = subparsers.add_parser("mv", help="Move a function.", add_help=False)
+    parser_rm.set_defaults(func=remove_function)
+    parser_mv = subparsers.add_parser("mv", add_help=False)
     parser_mv.add_argument("name")
-    subparsers.add_parser("help", help="Show this help message.", add_help=False)
-    subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False)
+    parser_mv.set_defaults(func=move_function)
+    subparsers.add_parser("help", add_help=False).set_defaults(func=show_help)
+    subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False).set_defaults(
+        func=load_for_shell
+    )
     parser_run = subparsers.add_parser("run", help=argparse.SUPPRESS, add_help=False)
     parser_run.add_argument("name")
     parser_run.add_argument("extra_args", nargs=argparse.REMAINDER)
+    parser_run.set_defaults(func=run_python_function)
 
     parser.set_defaults(func=show_help)
-    parser_ls.set_defaults(func=list_functions)
-    parser_add.set_defaults(func=add_function)
-    parser_edit.set_defaults(func=edit_function)
-    parser_rm.set_defaults(func=remove_function)
-    parser_mv.set_defaults(func=move_function)
-    subparsers.choices["help"].set_defaults(func=show_help)
-    subparsers.choices["load"].set_defaults(func=load_for_shell)
-    subparsers.choices["run"].set_defaults(func=run_python_function)
 
     if len(sys.argv) == 1:
         show_help(None)
         sys.exit(0)
-
     args = parser.parse_args()
     args.func(args)
 

@@ -11,36 +11,35 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
-# --- vvv THIS IS THE CORRECTED LINE vvv ---
-# Use the default Console, which prints to standard output (stdout).
-# This allows the terminal to correctly render all rich styles.
-CONSOLE = Console()
-# --- ^^^ END OF CORRECTED LINE ^^^ ---
+CONSOLE = Console(stderr=True)
+
+
+def prompt_with_interrupt_handler(prompt_func):
+    """
+    A wrapper to handle KeyboardInterrupt (Ctrl+C) for any InquirerPy prompt.
+    """
+    try:
+        return prompt_func.execute()
+    except KeyboardInterrupt:
+        CONSOLE.print("\n[yellow]Operation cancelled by user.[/yellow]")
+        sys.exit(1)
 
 
 class StyledArgumentParser(argparse.ArgumentParser):
     """A custom ArgumentParser that uses rich to print styled error messages."""
 
     def error(self, message):
-        """
-        Overrides the default error handler to print styled output.
-        """
         error_text = Text()
         error_text.append("Usage: ", style="bold")
         error_text.append(f"{self.prog} {self.usage or ''}\n\n", style="cyan")
         error_text.append("Error: ", style="bold red")
         error_text.append(message, style="red")
-
-        # We explicitly print error messages to stderr here
         Console(stderr=True).print(error_text)
         sys.exit(2)
 
 
 def read_registry(path):
-    """
-    Reads a JSON registry file from the given path.
-    Creates the file and parent directory if they don't exist.
-    """
+    """Reads a JSON registry file from the given path."""
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as f:
@@ -48,8 +47,7 @@ def read_registry(path):
         return {}
     try:
         with open(path, "r") as f:
-            data = json.load(f)
-            return data if data else {}
+            return json.load(f)
     except (json.JSONDecodeError, IOError):
         CONSOLE.print(
             f"[red]Error: Could not read or parse {os.path.basename(path)}.[/red]"
@@ -58,10 +56,7 @@ def read_registry(path):
 
 
 def write_registry(data, path):
-    """
-    Writes a dictionary back to the specified JSON registry file.
-    Ensures the parent directory exists.
-    """
+    """Writes a dictionary back to the specified JSON registry file."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     try:
         with open(path, "w") as f:
@@ -71,10 +66,7 @@ def write_registry(data, path):
 
 
 def find_item(data, item_name):
-    """
-    Generic function to find which group an item belongs to.
-    Returns the group name and the item object itself.
-    """
+    """Generic function to find which group an item belongs to."""
     for group, items in data.items():
         if item_name in items:
             return group, items[item_name]
@@ -82,36 +74,34 @@ def find_item(data, item_name):
 
 
 def get_group_selection(data):
-    """
-    Presents an interactive dropdown menu for group selection.
-    This is used by malias and mfunc.
-    """
+    """Presents an interactive dropdown menu for group selection."""
     existing_groups = sorted(list(data.keys()))
     CREATE_NEW = "[Create New Group]"
     choices = [Choice(value=group, name=group) for group in existing_groups]
     choices.extend(
         [Separator(), Choice(value=CREATE_NEW, name="Create a new group...")]
     )
-    selection = inquirer.select(
+
+    prompt = inquirer.select(
         message="Select a group:",
         choices=choices,
         default=choices[0].value if existing_groups else CREATE_NEW,
-    ).execute()
+    )
+    selection = prompt_with_interrupt_handler(prompt)
+
     if selection == CREATE_NEW:
-        new_group = inquirer.text(
+        new_group_prompt = inquirer.text(
             message="Enter the new group name:",
             validate=lambda result: len(result) > 0,
             invalid_message="Group name cannot be empty.",
-        ).execute()
-        return new_group
+        )
+        return prompt_with_interrupt_handler(new_group_prompt)
     else:
         return selection
 
 
 def print_help_panel(title, command_name, commands):
-    """
-    Prints a standardized, colorful help panel using rich.
-    """
+    """Prints a standardized, colorful help panel using rich."""
     help_text = Text()
     help_text.append("Usage: ", style="bold")
     help_text.append(f"{command_name} <command> [arguments]\n\n", style="cyan")

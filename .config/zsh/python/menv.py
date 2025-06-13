@@ -11,6 +11,7 @@ from lib.common import (
     CONSOLE,
     StyledArgumentParser,
     print_help_panel,
+    prompt_with_interrupt_handler,
     read_registry,
     write_registry,
 )
@@ -21,12 +22,11 @@ EXPORTS_JSON_PATH = os.path.expanduser("~/.config/zsh/data/exports.json")
 
 
 def show_help(args):
-    """Displays the custom help panel for the environment manager."""
     title = "Environment Manager"
     command_name = "enigma env"
     commands = {
-        "ls": "Lists all environment entries, grouped by category.",
-        "add": "Interactively adds a new environment entry.",
+        "ls": "Lists all environment entries.",
+        "add": "Interactively adds a new entry.",
         "edit": "Interactively edits an existing entry.",
         "rm": "Removes an environment entry.",
     }
@@ -38,9 +38,11 @@ def get_current_os():
 
 
 def build_shell_command(entry_obj):
-    entry_type = entry_obj.get("type")
-    var_name = entry_obj.get("var_name")
-    value = entry_obj.get("value")
+    entry_type, var_name, value = (
+        entry_obj.get("type"),
+        entry_obj.get("var_name"),
+        entry_obj.get("value"),
+    )
     if entry_type == "variable":
         return f'export {var_name}="{value}"'
     if entry_type == "dynamic":
@@ -59,8 +61,7 @@ def load_for_shell(args):
     current_os = get_current_os()
     for entries in data.values():
         for entry_obj in entries.values():
-            entry_os = entry_obj.get("os", "any")
-            if entry_os.lower() == "any" or entry_os == current_os:
+            if entry_obj.get("os", "any") in ("any", current_os):
                 print(build_shell_command(entry_obj))
 
 
@@ -108,12 +109,14 @@ def add_or_edit_export(args, entry_to_edit=None):
                 original_group, original_obj = group, entries[entry_to_edit]
                 break
     else:
-        entry_to_edit = inquirer.text(
+        prompt = inquirer.text(
             message="What is the unique name for this entry?",
             validate=lambda r: len(r) > 0 and " " not in r,
             invalid_message="Name cannot be empty or contain spaces.",
-        ).execute()
-    entry_type = inquirer.select(
+        )
+        entry_to_edit = prompt_with_interrupt_handler(prompt)
+
+    prompt = inquirer.select(
         message="What type of entry is this?",
         choices=[
             Choice("variable", "Static variable (export KEY=VALUE)"),
@@ -123,57 +126,64 @@ def add_or_edit_export(args, entry_to_edit=None):
             Choice("run", "Simple command to execute"),
         ],
         default=original_obj.get("type"),
-    ).execute()
+    )
+    entry_type = prompt_with_interrupt_handler(prompt)
+
     value, var_name, default_val = "", "", original_obj.get("value", "")
     if entry_type in ["variable", "dynamic"]:
-        var_name = (
-            inquirer.text(
-                message="What is the variable's name?",
-                default=original_obj.get("var_name", ""),
-            )
-            .execute()
-            .upper()
+        prompt = inquirer.text(
+            message="What is the variable's name (e.g., FOO)?",
+            default=original_obj.get("var_name", ""),
         )
-        prompt = (
+        var_name = prompt_with_interrupt_handler(prompt).upper()
+
+        prompt_msg = (
             "What is the value?" if entry_type == "variable" else "What is the command?"
         )
-        value = inquirer.text(
-            message=f"{prompt} for {var_name}", default=default_val
-        ).execute()
-    elif entry_type == "path":
-        var_name, value = (
-            "PATH",
-            inquirer.text(
-                message="What is the directory to prepend?", default=default_val
-            ).execute(),
+        prompt = inquirer.text(
+            message=f"{prompt_msg} for {var_name}", default=default_val
         )
+        value = prompt_with_interrupt_handler(prompt)
+    elif entry_type == "path":
+        var_name = "PATH"
+        prompt = inquirer.text(
+            message="What is the directory to prepend?", default=default_val
+        )
+        value = prompt_with_interrupt_handler(prompt)
     else:
-        value = inquirer.text(
+        prompt = inquirer.text(
             message="What is the command to run?", default=default_val
-        ).execute()
-    entry_os = inquirer.select(
+        )
+        value = prompt_with_interrupt_handler(prompt)
+
+    prompt = inquirer.select(
         message="Which OS should this apply to?",
         choices=["any", "Darwin", "Linux"],
         default=original_obj.get("os", "any"),
-    ).execute()
+    )
+    entry_os = prompt_with_interrupt_handler(prompt)
+
     if original_group:
         group_name = original_group
     else:
         existing_groups = sorted(list(data.keys()))
         choices = [Choice(g, g) for g in existing_groups]
         choices.extend([Separator(), Choice("NEW", "Create a new group...")])
-        group_choice = inquirer.select(
-            message="Select a group:", choices=choices
-        ).execute()
+        prompt = inquirer.select(message="Select a group:", choices=choices)
+        group_choice = prompt_with_interrupt_handler(prompt)
         group_name = (
-            inquirer.text(message="Enter the new group name:").execute()
+            prompt_with_interrupt_handler(
+                inquirer.text(message="Enter the new group name:")
+            )
             if group_choice == "NEW"
             else group_choice
         )
+
     if original_group and entry_to_edit in data[original_group]:
         del data[original_group][entry_to_edit]
         if not data[original_group]:
             del data[original_group]
+
     if group_name not in data:
         data[group_name] = {}
     new_entry = {
@@ -188,6 +198,7 @@ def add_or_edit_export(args, entry_to_edit=None):
     CONSOLE.print(
         f"✅ Entry '[cyan]{entry_to_edit}[/cyan]' {action} in group '[cyan]{group_name}[/cyan]'."
     )
+
     if args.outfile:
         with open(args.outfile, "w") as f:
             original_var_name = original_obj.get("var_name")
@@ -202,9 +213,10 @@ def edit_export(args):
     if not all_entries:
         CONSOLE.print("[yellow]No entries to edit.[/yellow]")
         return
-    entry_to_edit = inquirer.select(
+    prompt = inquirer.select(
         message="Which entry do you want to edit?", choices=sorted(all_entries)
-    ).execute()
+    )
+    entry_to_edit = prompt_with_interrupt_handler(prompt)
     add_or_edit_export(args, entry_to_edit=entry_to_edit)
 
 
@@ -218,13 +230,16 @@ def remove_export(args):
     if not all_entries:
         CONSOLE.print("[yellow]No entries to remove.[/yellow]")
         return
-    entry_to_remove = inquirer.select(
+    prompt = inquirer.select(
         message="Which entry do you want to remove?",
         choices=sorted(list(all_entries.keys())),
-    ).execute()
-    if inquirer.confirm(
+    )
+    entry_to_remove = prompt_with_interrupt_handler(prompt)
+
+    prompt = inquirer.confirm(
         message=f"Are you sure you want to remove '{entry_to_remove}'?", default=False
-    ).execute():
+    )
+    if prompt_with_interrupt_handler(prompt):
         group, entry_obj = all_entries[entry_to_remove]
         del data[group][entry_to_remove]
         if not data[group]:
@@ -240,36 +255,25 @@ def remove_export(args):
 
 def main():
     parser = StyledArgumentParser(
-        description="An environment variable manager.",
-        add_help=False,
-        usage="<command> [options]",
+        prog="enigma env", add_help=False, usage="<command> [options]"
     )
     parser.add_argument("--outfile", help=argparse.SUPPRESS)
     subparsers = parser.add_subparsers(dest="command")
 
-    subparsers.add_parser(
-        "ls", help="Show all env configs.", add_help=False
-    ).set_defaults(func=list_exports)
-    subparsers.add_parser(
-        "add", help="Create a new entry.", add_help=False
-    ).set_defaults(func=add_or_edit_export)
-    subparsers.add_parser(
-        "edit", help="Edit an existing entry.", add_help=False
-    ).set_defaults(func=edit_export)
-    subparsers.add_parser("rm", help="Remove an entry.", add_help=False).set_defaults(
-        func=remove_export
-    )
-    subparsers.add_parser(
-        "help", help="Show this help message.", add_help=False
-    ).set_defaults(func=show_help)
+    subparsers.add_parser("ls", add_help=False).set_defaults(func=list_exports)
+    subparsers.add_parser("add", add_help=False).set_defaults(func=add_or_edit_export)
+    subparsers.add_parser("edit", add_help=False).set_defaults(func=edit_export)
+    subparsers.add_parser("rm", add_help=False).set_defaults(func=remove_export)
+    subparsers.add_parser("help", add_help=False).set_defaults(func=show_help)
     subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False).set_defaults(
         func=load_for_shell
     )
 
+    parser.set_defaults(func=show_help)
+
     if len(sys.argv) == 1:
         show_help(None)
         sys.exit(0)
-
     args = parser.parse_args()
     args.func(args)
 

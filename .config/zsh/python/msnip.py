@@ -14,6 +14,7 @@ from lib.common import (
     find_item,
     get_group_selection,
     print_help_panel,
+    prompt_with_interrupt_handler,
     read_registry,
     write_registry,
 )
@@ -25,7 +26,6 @@ SNIPPETS_JSON_PATH = os.path.expanduser("~/.config/zsh/data/snippets.json")
 
 
 def show_help(args):
-    """Displays the custom help panel for the snippet manager."""
     title = "Snippet Manager"
     command_name = "enigma snip"
     commands = {
@@ -39,23 +39,19 @@ def show_help(args):
 
 
 def list_snippets(args):
-    """Handler for the 'ls' command."""
     data = read_registry(SNIPPETS_JSON_PATH)
     if not data:
         if not args.json:
             CONSOLE.print("[yellow]No snippets found.[/yellow]")
         return
-
     if args.json:
-        flat_list = []
-        for group, snippets in data.items():
-            for name, snippet_obj in snippets.items():
-                snippet_obj["name"] = name
-                snippet_obj["group"] = group
-                flat_list.append(snippet_obj)
+        flat_list = [
+            {"name": name, "group": group, **obj}
+            for group, snippets in data.items()
+            for name, obj in snippets.items()
+        ]
         print(json.dumps(flat_list))
         return
-
     for group_name, snippets in sorted(data.items()):
         table = Table(
             title=group_name,
@@ -68,14 +64,8 @@ def list_snippets(args):
         table.add_column("Language", style="yellow")
         table.add_column("Body")
         for name, snip_obj in sorted(snippets.items()):
-            # --- vvv THIS IS THE CORRECTED LOGIC vvv ---
-            body = snip_obj.get("body", "")
-            lang = snip_obj.get("language", "text")
-
-            # Create a Syntax object for the FULL snippet body
+            body, lang = snip_obj.get("body", ""), snip_obj.get("language", "text")
             body_display = Syntax(body, lang, theme="monokai", word_wrap=True)
-            # --- ^^^ END OF CORRECTED LOGIC ^^^ ---
-
             table.add_row(name, lang, body_display)
         CONSOLE.print(table)
 
@@ -135,14 +125,16 @@ def _get_language_selection(default="text"):
         Separator(),
         Choice(value=OTHER_CHOICE_VAL, name="Enter a different language..."),
     ]
-    selection = inquirer.select(
+    prompt = inquirer.select(
         message="Language for syntax highlighting:",
         choices=choices,
         default=default,
         vi_mode=True,
-    ).execute()
+    )
+    selection = prompt_with_interrupt_handler(prompt)
     if selection == OTHER_CHOICE_VAL:
-        return inquirer.text(message="Enter custom language name:").execute() or "text"
+        prompt = inquirer.text(message="Enter custom language name:")
+        return prompt_with_interrupt_handler(prompt) or "text"
     return selection
 
 
@@ -216,10 +208,11 @@ def remove_snippet(args):
     if not group:
         CONSOLE.print(f"[red]Error: Snippet '{snippet_name}' not found.[/red]")
         return 1
-    if inquirer.confirm(
+    prompt = inquirer.confirm(
         message=f"Are you sure you want to remove snippet '{snippet_name}'?",
         default=False,
-    ).execute():
+    )
+    if prompt_with_interrupt_handler(prompt):
         del data[group][snippet_name]
         if not data[group]:
             del data[group]
@@ -229,34 +222,33 @@ def remove_snippet(args):
 
 def main():
     parser = StyledArgumentParser(
-        prog="enigma snip",
-        description="A command-line snippet manager.",
-        add_help=False,
-        usage="<command> [options]",
+        prog="enigma snip", add_help=False, usage="<command> [options]"
     )
     subparsers = parser.add_subparsers(dest="command")
 
-    parser_ls = subparsers.add_parser("ls", help="List all snippets.", add_help=False)
-    parser_ls.add_argument("--json", action="store_true", help="Output as raw JSON.")
+    parser_ls = subparsers.add_parser("ls", add_help=False)
+    parser_ls.add_argument("--json", action="store_true")
     parser_ls.set_defaults(func=list_snippets)
-    parser_add = subparsers.add_parser("add", help="Add a new snippet.", add_help=False)
+    parser_add = subparsers.add_parser("add", add_help=False)
     parser_add.add_argument("name")
     parser_add.set_defaults(func=add_snippet)
-    parser_edit = subparsers.add_parser("edit", help="Edit a snippet.", add_help=False)
+    parser_edit = subparsers.add_parser("edit", add_help=False)
     parser_edit.add_argument("name")
     parser_edit.set_defaults(func=edit_snippet)
-    parser_rm = subparsers.add_parser("rm", help="Remove a snippet.", add_help=False)
+    parser_rm = subparsers.add_parser("rm", add_help=False)
     parser_rm.add_argument("name")
     parser_rm.set_defaults(func=remove_snippet)
-    parser_mv = subparsers.add_parser("mv", help="Move a snippet.", add_help=False)
+    parser_mv = subparsers.add_parser("mv", add_help=False)
     parser_mv.add_argument("name")
     parser_mv.set_defaults(func=move_snippet)
-    subparsers.add_parser(
-        "help", help="Show this help message.", add_help=False
-    ).set_defaults(func=show_help)
+    subparsers.add_parser("help", add_help=False).set_defaults(func=show_help)
+
     parser.set_defaults(func=show_help)
 
-    args = parser.parse_args() if len(sys.argv) > 1 else parser.parse_args(["help"])
+    if len(sys.argv) == 1:
+        show_help(None)
+        sys.exit(0)
+    args = parser.parse_args()
     args.func(args)
 
 

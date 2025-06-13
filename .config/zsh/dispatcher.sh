@@ -12,25 +12,19 @@ function enigma() {
         print -P "  %F{yellow}alias%f     Manage shell aliases"
         print -P "  %F{yellow}func%f      Manage shell functions"
         print -P "  %F{yellow}env%f       Manage environment variables"
-        print -P "  %F{yellow}snip%f      Manage code snippets" # <--- ADD THIS LINE
+        print -P "  %F{yellow}snip%f      Manage code snippets"
+        print -P "  %F{yellow}proj%f      Manage and launch projects" # <--- ADD THIS LINE
         print ""
         print -P "Run 'enigma %F{cyan}<command>%f help' for more information on a specific command."
         return 1
     fi
 
     case "$sub_command" in
-        alias)
-            _malias_cmd "${@:2}"
-            ;;
-        func)
-            _mfunc_cmd "${@:2}"
-            ;;
-        env)
-            _menv_cmd "${@:2}"
-            ;;
-        snip) # <--- ADD THIS BLOCK
-            _msnip_cmd "${@:2}"
-            ;;
+        alias) _malias_cmd "${@:2}" ;;
+        func)  _mfunc_cmd "${@:2}" ;;
+        env)   _menv_cmd "${@:2}" ;;
+        snip)  _msnip_cmd "${@:2}" ;;
+        proj)  _mproj_cmd "${@:2}" ;; # <--- ADD THIS LINE
         *)
             echo "Error: Unknown command '$sub_command'." >&2
             enigma

@@ -3,18 +3,18 @@ import argparse
 import os
 import sys
 
-# Import our custom parser and other helpers
+from InquirerPy import inquirer
 from lib.common import (
     CONSOLE,
     StyledArgumentParser,
     find_item,
     get_group_selection,
     print_help_panel,
+    prompt_with_interrupt_handler,
     read_registry,
     write_registry,
 )
 from rich import box
-from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
 ALIAS_JSON_PATH = os.path.expanduser("~/.config/zsh/data/aliases.json")
@@ -77,9 +77,16 @@ def add_alias(args):
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' already exists. Use 'edit'."
         )
         return 1
-    alias_command = Prompt.ask(
-        f"Enter the command for the alias '[bold cyan]{alias_name}[/bold cyan]'"
-    )
+
+    # --- vvv THIS IS THE CORRECTED SECTION vvv ---
+    # Replace rich.prompt with InquirerPy and the interrupt handler
+    prompt = inquirer.text(message=f"Enter the command for the alias '{alias_name}':")
+    alias_command = prompt_with_interrupt_handler(prompt)
+    if not alias_command:
+        CONSOLE.print("[yellow]Command cannot be empty. Alias not added.[/yellow]")
+        return 1
+    # --- ^^^ END OF CORRECTED SECTION ^^^ ---
+
     group_name = get_group_selection(data)
     if group_name not in data:
         data[group_name] = {}
@@ -97,15 +104,23 @@ def add_alias(args):
 def edit_alias(args):
     data = read_registry(ALIAS_JSON_PATH)
     alias_name = args.name
-    group, _ = find_item(data, alias_name)
+    group, old_command = find_item(data, alias_name)
     if not group:
         CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
         )
         return 1
-    new_command = Prompt.ask(
-        f"Enter the new command for '[bold cyan]{alias_name}[/bold cyan]'"
+
+    # --- vvv THIS IS THE CORRECTED SECTION vvv ---
+    prompt = inquirer.text(
+        message=f"Enter the new command for '{alias_name}':", default=old_command
     )
+    new_command = prompt_with_interrupt_handler(prompt)
+    if not new_command:
+        CONSOLE.print("[yellow]Command cannot be empty. Alias not changed.[/yellow]")
+        return 1
+    # --- ^^^ END OF CORRECTED SECTION ^^^ ---
+
     data[group][alias_name] = new_command
     write_registry(data, ALIAS_JSON_PATH)
     CONSOLE.print(
@@ -154,9 +169,12 @@ def remove_alias(args):
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
         )
         return 1
-    if Confirm.ask(
-        f"Are you sure you want to remove the alias '[bold cyan]{alias_name}[/bold cyan]'?"
-    ):
+
+    prompt = inquirer.confirm(
+        message=f"Are you sure you want to remove the alias '[bold cyan]{alias_name}[/bold cyan]'?",
+        default=False,
+    )
+    if prompt_with_interrupt_handler(prompt):
         del data[group][alias_name]
         if not data[group]:
             del data[group]
@@ -179,8 +197,8 @@ def load_for_shell(args):
 
 
 def main():
-    # Use our new StyledArgumentParser
     parser = StyledArgumentParser(
+        prog="enigma alias",
         description="A group-aware alias manager.",
         add_help=False,
         usage="<command> [options]",
@@ -190,23 +208,18 @@ def main():
 
     parser_ls = subparsers.add_parser("ls", help="Show all aliases.", add_help=False)
     parser_ls.add_argument("group", nargs="?")
-
     parser_add = subparsers.add_parser(
         "add", help="Create a new alias.", add_help=False
     )
     parser_add.add_argument("name")
-
     parser_edit = subparsers.add_parser(
         "edit", help="Edit an existing alias.", add_help=False
     )
     parser_edit.add_argument("name")
-
     parser_rm = subparsers.add_parser("rm", help="Remove an alias.", add_help=False)
     parser_rm.add_argument("name")
-
     parser_mv = subparsers.add_parser("mv", help="Move an alias.", add_help=False)
     parser_mv.add_argument("name")
-
     subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False)
     subparsers.add_parser("help", help="Show this help message.", add_help=False)
 
@@ -222,7 +235,6 @@ def main():
     if len(sys.argv) == 1:
         show_help(None)
         sys.exit(0)
-
     args = parser.parse_args()
     args.func(args)
 
