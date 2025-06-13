@@ -1,13 +1,16 @@
-# My Ultimate Zsh Environment
+# The Enigma Shell Environment
 
-This repository contains my personal, highly-automated Zsh configuration. It is designed to be modular, robust, and easy to manage, leveraging Python for powerful custom tooling.
+This repository contains my personal, highly-automated Zsh configuration. It is designed to be modular, robust, and easy to manage, centered around a powerful, custom-built command-line tool called `enigma`.
 
-The core philosophy is to keep `~/.zshrc` as a minimal loader, with all logic self-contained within this configuration. Key features include:
+The core philosophy is to keep `~/.zshrc` as a minimal loader, with all logic self-contained within this configuration.
 
-- **Python-Powered Management**: Custom CLI tools, `malias` and `mfunc`, for interactively managing aliases and functions.
-- **Automated First-Time Setup**: The shell automatically detects if it's a new installation, creates a Python virtual environment, and installs all necessary dependencies.
-- **Interactive UI**: Uses `rich` and `InquirerPy` for beautiful, syntax-highlighted tables and interactive dropdown menus.
-- **Modern Tooling**: Tightly integrated with best-in-class tools like `fzf`, `eza`, `bat`, `zoxide`, and `git-delta`.
+### Core Features
+
+- **Unified Management CLI (`enigma`)**: A single, elegant entry point to manage every aspect of the shell environment.
+- **Python-Powered Tooling**: Custom backends for managing aliases, functions, environment variables, snippets, and projects, all with interactive TUI elements.
+- **Automated First-Time Setup**: The shell automatically creates a Python virtual environment and installs all dependencies on first launch.
+- **Polyglot Function Support**: Seamlessly create and run both Zsh and Python scripts as shell functions.
+- **Modern CLI Integrations**: Tightly integrated with best-in-class tools like `fzf`, `eza`, `bat`, and `zoxide`.
 
 ---
 
@@ -22,7 +25,7 @@ Ensure you have the following installed first:
 - [Homebrew](https://brew.sh/)
 - [Git](https://git-scm.com/downloads)
 - [Stow](https://www.gnu.org/software/stow/) (for symlinking dotfiles)
-- Python 3 (macOS comes with a compatible version)
+- Python 3 & Pip (macOS comes with a compatible version)
 
 ### Step 2: Clone the Dotfiles
 
@@ -42,77 +45,104 @@ cd ~/dotfiles
 stow .config/zsh
 ```
 
-### Step 3: Configure ~/.zshrc
+### Step 3: Configure `~/.zshrc`
 
-Your main ~/.zshrc file should be extremely minimal. Replace its entire contents with the following line. This is all that's needed to bootstrap the entire system.
+Your main `~/.zshrc` file should be extremely minimal. **Replace its entire contents** with the following single line. This is all that's needed to bootstrap the entire system.
 
-```bash
+```sh
 # Load the custom Zsh environment
 source ~/.config/zsh/init.sh
 ```
 
-(Note: You no longer need to set TMUX_PATH manually; it is handled internally where needed.)
-
 ### Step 4: Automated First-Time Setup
 
-The next step is the easiest. Simply open a new terminal window or tab.
+The next step is the easiest. **Simply open a new terminal window or tab.**
 
 The first time you start a new shell, you will see a message like this:
 
-```bash
+```
 Alias Manager: First-time setup detected. Please wait...
--> Found requirements.txt file.
--> Creating Python virtual environment at /Users/enigma/.config/zsh/venv...
--> Installing dependencies from requirements.txt...
+  -> Found requirements.txt file.
+  -> Creating Python virtual environment at /Users/enigma/.config/zsh/venv...
+  -> Installing dependencies from requirements.txt...
 ✅ Alias Manager setup complete. Your shell will now load.
 ```
 
-This process automatically creates a dedicated Python virtual environment and installs the required libraries (rich, InquirerPy, etc.). This only happens once. Every subsequent shell start will be instantaneous.
-Your shell is now fully configured.
+This process automatically creates a dedicated Python virtual environment and installs the required libraries (`rich`, `InquirerPy`, etc.). This only happens once.
 
-## Usage
+Your shell is now fully configured and the `enigma` command is available.
 
-The power of this setup comes from the custom command-line tools for managing your configuration.
+---
 
-### Managing Aliases with `malias`
+## The `enigma` Command Suite
 
-- List all aliases: Displays a beautifully formatted, syntax-highlighted table of all aliases, grouped by category.
-  ```bash
-  malias list
-  ```
-- Add a new alias:
-  `bash
-malias add la
-`
-  This will prompt you for the alias command and then present an interactive dropdown menu to select or create a group.
+The `enigma` command is the single entry point for managing all aspects of your shell.
 
-- Edit or Remove an alias:
-  ```bash
-  malias edit la
-  malias rm la
-  ```
+**Usage:** `enigma <command> [subcommand] [arguments]`
 
-### Managing Functions with `mfunc`
+### `enigma alias` - Alias Management
 
-- List all functions: Displays a table of all your shell functions with full syntax highlighting for the function bodies.
-  ```bash
-  mfunc list
-  ```
-- Add a new function:
-  `bash
-mfunc add my_cool_function
-`
-  This will open your $EDITOR (nvim) to write the function body. After you save and quit, it will present the interactive dropdown menu to select or create a group for it.
+Manages shell command aliases.
 
-- Edit or Remove a function:
-  ```bash
-  mfunc edit my_cool_function
-  mfunc rm my_cool_function
-  ```
+- `enigma alias ls`: Lists all aliases in a styled table.
+- `enigma alias add <name>`: Interactively adds a new alias.
+- `enigma alias edit <name>`: Interactively edits an existing alias.
+- `enigma alias rm <name>`: Removes an alias.
+- `enigma alias mv <name>`: Moves an alias to a different group.
+
+### `enigma func` - Function Management
+
+Manages both Zsh and Python functions.
+
+- `enigma func ls`: Lists all functions with syntax-highlighted bodies.
+- `enigma func add <name>`: Interactively adds a new Zsh or Python function.
+- `enigma func edit <name>`: Edits an existing function in your editor.
+- `enigma func rm <name>`: Removes a function.
+- `enigma func mv <name>`: Moves a function to a different group.
+
+### `enigma env` - Environment Management
+
+Manages environment variables, exports, and OS-specific configurations.
+
+- `enigma env ls`: Lists all environment entries.
+- `enigma env add`: Interactively adds a new environment entry (variable, path, dynamic, etc.).
+- `enigma env edit`: Interactively edits an existing entry.
+- `enigma env rm`: Removes an environment entry.
+
+### `enigma snip` - Snippet Management
+
+Manages a personal library of code snippets.
+
+- `enigma snip ls`: Lists all configured snippets.
+- `enigma snip add <name>`: Interactively adds a new snippet.
+- `enigma snip edit <name>`: Edits an existing snippet.
+- `enigma snip rm <name>`: Removes a snippet.
+- `enigma snip mv <name>`: Moves a snippet to a different group.
+
+### `enigma proj` - Project Management
+
+Manages project configurations for quick environment launching.
+
+- `enigma proj ls`: Lists all configured projects.
+- `enigma proj add <name>`: Interactively adds a new project by selecting its directory.
+- `enigma proj edit <name>`: Edits a project's configuration.
+- `enigma proj rm <name>`: Removes a project.
+- `enigma proj launch`: Interactively select and launch a project in a `tmux` session.
+
+---
+
+## Convenience Commands
+
+For frequent operations, two short, user-facing commands are available:
+
+- **`snip`**: A powerful, `fzf`-based fuzzy finder to search, preview, and copy a snippet to your clipboard.
+- **`proj`**: A convenience alias for `enigma proj launch`. Simply type `proj` to open the project launcher.
+
+---
 
 ## Recommended Tools (Dependencies)
 
-For the best experience, a number of modern command-line tools should be installed. The configuration is built around them.
+For the best experience, a number of modern command-line tools should be installed via Homebrew.
 
 | Tool          | Description                                 | Installation Command     |
 | ------------- | ------------------------------------------- | ------------------------ |
@@ -124,15 +154,8 @@ For the best experience, a number of modern command-line tools should be install
 | **git-delta** | A syntax-highlighting pager for git         | `brew install git-delta` |
 | **jq**        | A command-line JSON processor               | `brew install jq`        |
 
-### Important `fzf` Setup
-
-After installing `fzf` via Homebrew, you must also run its installation script to set up the key bindings:
+**Important `fzf` Setup:** After installing `fzf`, you must also run its installation script:
 
 ```bash
 $(brew --prefix)/opt/fzf/install
 ```
-
-## Customization & References
-
-- **fzf-git**: For more information on the powerful `fzf` git integrations, refer to the [fzf-git README](./fzf/FZF-GIT-README.md).
-- **Bat Theme**: The `bat` theme is set in `~/.config/zsh/exports.sh`. Refer to the [Bat documentation](../bat/README.md) for more theming options.
