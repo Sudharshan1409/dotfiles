@@ -170,9 +170,6 @@ alt-shift-w = 'mode window'
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
 esc = [ 'reload-config', 'mode main' ]
-r = [ 'flatten-workspace-tree', 'mode main' ] # reset layout
-f = [ 'layout floating tiling', 'mode main' ] # Toggle between floating and tiling layout
-
 # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
 #s = ['layout sticky tiling', 'mode main']
 
@@ -181,6 +178,8 @@ up = 'volume up'
 shift-down = [ 'volume set 0', 'mode main' ]
 
 [mode.window.binding]
+r = [ 'flatten-workspace-tree', 'mode main' ]                # reset layout
+f = [ 'layout floating tiling', 'mode main' ]                # Toggle between floating and tiling layout
 esc = [ 'reload-config', 'mode main' ]
 backspace = [ 'close-all-windows-but-current', 'mode main' ]
 c = [ 'close', 'mode main' ]
@@ -216,6 +215,10 @@ run = "move-node-to-workspace M"
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = "move-node-to-workspace E"
+
+[[on-window-detected]]
+if.app-id = 'ai.perplexity.mac'
+run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'

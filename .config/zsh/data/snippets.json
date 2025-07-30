@@ -5,6 +5,16 @@
             "language": "bash"
         }
     },
+    "diligent": {
+        "dil-cdk-deploy": {
+            "body": "DIL_CDK_SCOPE=sud aws-vault exec dil-boardeffect-dev -- npx cdk deploy PipelineDev/Deploy-dev-us-west-2/SharedInfra",
+            "language": "bash"
+        },
+        "dil-cdk-destroy": {
+            "body": "DIL_CDK_SCOPE=sud aws-vault exec dil-boardeffect-dev -- npx cdk destroy PipelineDev/Deploy-dev-us-west-2/SharedInfra",
+            "language": "bash"
+        }
+    },
     "git": {
         "git_checkout_pr": {
             "body": "# Requires 'gh' (GitHub CLI) and 'fzf' to be installed.\n# Lists open PRs, lets you select one, and checks out the branch.\ngh pr list | fzf --height 30% --reverse | awk '{print $1}' | xargs -I {} gh pr checkout {}",

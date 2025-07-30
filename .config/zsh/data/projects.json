@@ -1,4 +1,10 @@
 {
+    "Work": {
+        "diligent-be": {
+            "description": "Diligent Broadeffect Project",
+            "path": "/Users/globallogic/projects/diligent/"
+        }
+    },
     "self": {
         "scripts": {
             "description": "This project contains python scripts",
