@@ -8,6 +8,7 @@
         "sudo": "sudo -E -s",
         "vi": "nvim",
         "vim": "nvim",
+        "wezterm": "flatpak run org.wezfurlong.wezterm",
         "y": "yazi",
         "zshconf": "vim ~/.zshrc"
     },
