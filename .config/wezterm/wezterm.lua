@@ -25,6 +25,14 @@ local act = wezterm.action
 ---@class Config
 local config = wezterm.config_builder()
 
+config.mouse_bindings = {
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "CTRL",
+		action = wezterm.action.OpenLinkAtMouseCursor,
+	},
+}
+
 config.background = {
 	w.get_wallpaper(wallpapers_glob),
 	b.get_background(dark_opacity, light_opacity),
