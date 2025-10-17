@@ -25,3 +25,10 @@ function _menv_cmd() {
             ;;
     esac
 }
+
+# Pass completion from Homebrew
+fpath+=("$(brew --prefix pass)/share/zsh/site-functions")
+
+autoload -Uz compinit
+compinit
+

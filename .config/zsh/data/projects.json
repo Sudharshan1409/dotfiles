@@ -1,9 +1,5 @@
 {
     "Own-Projects": {
-        "docmate": {
-            "description": "Docmate app to maintain all my documents",
-            "path": "/home/enigma/projects/own/typescript/docmate/"
-        },
         "scripts": {
             "description": "Basic python scripts",
             "path": "/home/enigma/projects/own/python/scripts/"
