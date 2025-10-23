@@ -1,0 +1,167 @@
+{
+    "layer": "top",
+    "position": "top",
+    "mod": "dock",
+    "exclusive": true,
+    "passthrough": false,
+    "gtk-layer-shell": true,
+    "height": 50,
+    "modules-left": [
+        "clock",
+        "custom/weather",
+        "custom/moon",
+        "custom/wall",
+        "hyprland/workspaces"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "custom/network",
+        "tray",
+        "bluetooth",
+        "custom/temperature",
+        "custom/memory",
+        "battery",
+        "backlight",
+        "pulseaudio",
+        "pulseaudio#microphone"
+    ],
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1",
+        "format-icons": {
+            "1": "😎",
+            "2": "🌐",
+            "3": "👩🏽‍💻",
+            "4": "📒",
+            "5": "🎵"
+        },
+        "persistent_workspaces": {
+            "*": 1
+        }
+    },
+    "hyprland/window": {
+        "format": "{}"
+    },
+    "custom/weather": {
+        "tooltip": true,
+        "format": "{}",
+        "interval": 3600,
+        "exec": "~/.config/waybar/scripts/waybar-wttr.py",
+        "return-type": "json"
+    },
+    "custom/moon": {
+        "format": "{}",
+        "interval": 3600,
+        "exec": "feh --randomize --bg-fill ~/.config/backgrounds/"
+    },
+    "custom/wall": {
+        "format": "{}",
+        "interval": 60,
+        "exec": "feh --randomize --bg-fill ~/.config/backgrounds/ &",
+        "format-alt": "feh --randomize --bg-fill ~/.config/backgrounds/ &"
+    },
+    "custom/temperature": {
+        "tooltip": true,
+        "format": " {}",
+        "interval": 30,
+        "exec": "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print int(usage)\"%\"}'"
+    },
+    "custom/memory": {
+        "tooltip": true,
+        "format": "🧠 {}",
+        "interval": 30,
+        "exec": "free -h | awk '/^Mem:/ {print $3 \"/\" $2}'"
+    },
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10
+    },
+    "clock": {
+        "format": "{:%H:%M} \uf017 ",
+        "format-alt": "{:%A, %B %d, %Y (%R)} \uf5ef ",
+        "tooltip-format": "{calendar}"
+    },
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon} {percent}%",
+        "format-icons": [
+            "󰃞",
+            "󰃟",
+            "󰃠"
+        ],
+        "on-scroll-up": "brightnessctl -q set 1%-",
+        "on-scroll-down": "brightnessctl -q set 1%+"
+    },
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 40,
+            "critical": 30
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{time} {icon}",
+        "format-icons": [
+            "󰂎",
+            "󰁺",
+            "󰁻",
+            "󰁼",
+            "󰁽",
+            "󰁾",
+            "󰁿",
+            "󰂀",
+            "󰂁",
+            "󰂂",
+            "󰁹"
+        ]
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "tooltip": false,
+        "format-muted": " Muted",
+        "on-click": "pamixer -t",
+        "on-scroll-up": "pamixer -d 5",
+        "on-scroll-down": "pamixer -i 5",
+        "scroll-step": 100,
+        "format-icons": {
+            "default": [
+                "",
+                "",
+                ""
+            ]
+        }
+    },
+    "pulseaudio#microphone": {
+        "format": "{format_source}",
+        "format-source": " {volume}%",
+        "format-source-muted": " Muted",
+        "on-click": "pamixer --default-source -t",
+        "on-scroll-up": "pamixer --default-source -i 5",
+        "on-scroll-down": "pamixer --default-source -d 5",
+        "scroll-step": 5
+    },
+    "custom/network": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 5,
+        "exec": "/home/enigma/.config/waybar/scripts/network-manager.sh",
+        "on-click": "/home/enigma/.config/waybar/scripts/toggle-wifi.sh",
+        "tooltip": true
+    },
+    "bluetooth": {
+        "format": "{icon} {status}",
+        "format-disabled": " Off",
+        "format-connected": " {num_connections}",
+        "tooltip-format": "{device_alias}",
+        "on-click": "rfkill toggle bluetooth",
+        "format-icons": {
+            "default": "",
+            "connected": "",
+            "disabled": ""
+        }
+    }
+}

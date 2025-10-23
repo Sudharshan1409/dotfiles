@@ -24,6 +24,7 @@ local act = wezterm.action
 
 ---@class Config
 local config = wezterm.config_builder()
+config.enable_wayland = false
 
 config.mouse_bindings = {
 	{
@@ -43,6 +44,9 @@ config.line_height = 1.1
 
 config.font = wezterm.font_with_fallback({
 	"MesloLGS NF",
+	"JetBrainsMono Nerd Font",
+	"Symbols Nerd Font",
+	"Noto Color Emoji",
 	{ family = "Symbols Nerd Font Mono" },
 	-- "Monaspace Argon",
 	-- "Monaspace Krypton",
