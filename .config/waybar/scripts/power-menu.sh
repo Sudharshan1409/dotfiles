@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# Define the options with Nerd Font icons
+# Define the options for the menu
 options="⏻ Shutdown\n⏼ Reboot\n Lock\n Logout"
 
-# Show Rofi menu and get the chosen option
-chosen=$(echo -e "$options" | rofi -dmenu -i -p "Power Menu")
+# Rofi command using the reliable vertical theme in dmenu mode
+chosen=$(echo -e "$options" | rofi -dmenu \
+    -mesg "Power Menu" \
+    -theme ~/.config/rofi/powermenu-vertical.rasi)
 
 # Execute a command based on the choice
 case "$chosen" in

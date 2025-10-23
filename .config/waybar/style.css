@@ -1,3 +1,6 @@
+/* ####################################################################################### */
+/* #  Global & Base Styles                                                               # */
+/* ####################################################################################### */
 * {
   border: none;
   border-radius: 0;
@@ -20,22 +23,25 @@ tooltip {
   border-color: #11111b;
 }
 
-/* Base style for all modules */
-#custom-power_profile,
+/* ####################################################################################### */
+/* #  Module Group Styling                                                               # */
+/* ####################################################################################### */
+
+/* This is the base style for every module "box" on the bar */
+#workspaces,
+#clock,
 #custom-weather,
 #window,
-#clock,
-#battery,
-#pulseaudio,
+#custom-mediaplayer,
 #custom-network,
 #tray,
 #custom-bluetooth,
 #custom-temperature,
 #custom-memory,
-#workspaces,
+#battery,
 #backlight,
-#custom-settings,
-#custom-mediaplayer,
+#pulseaudio,
+#pulseaudio.microphone,
 #custom-power {
   background: #1e1e2e;
   opacity: 0.8;
@@ -44,9 +50,12 @@ tooltip {
   border: 1px solid #181825;
 }
 
+/* ####################################################################################### */
+/* #  Individual Modules & States                                                        # */
+/* ####################################################################################### */
+
 /* --- Left Modules --- */
 
-/* Group 1: Clock & Weather */
 #clock {
   color: #fab387;
   border-radius: 10px 0 0 10px;
@@ -58,12 +67,12 @@ tooltip {
   border-left: 0px;
 }
 
-/* Group 2: Window Title and Workspaces */
 #window {
   border-radius: 10px 0 0 10px;
   margin-left: 10px;
   border-right: 0;
 }
+
 #workspaces {
   border-radius: 0 10px 10px 0;
   border-left: 0;
@@ -71,17 +80,17 @@ tooltip {
 }
 #workspaces button {
   padding: 5px;
-  color: #636777;
+  color: #a6adc8; /* Brightened inactive numbers */
 }
 #workspaces button:hover {
   background: #11111b;
   color: #cdd6f4;
   border-radius: 10px;
 }
-#workspaces button.focused {
-  color: #a6adc8;
+#workspaces button.active {
+  color: #1e1d2f;
   background: #eba0ac;
-  border-radius: 10px;
+  border-radius: 10px; /* Dimmed highlight with contrast */
 }
 #workspaces button.urgent {
   color: #11111b;
@@ -89,21 +98,21 @@ tooltip {
   border-radius: 10px;
 }
 
-/* --- Center Module (Standalone) --- */
+/* --- Center Module --- */
+
 #custom-mediaplayer {
   border-radius: 10px;
-  color: #cba6f7; /* Purple */
+  color: #cba6f7;
 }
 #custom-mediaplayer.Playing {
-  color: #a6e3a1; /* Green when playing */
+  color: #a6e3a1;
 }
 #custom-mediaplayer.Paused {
-  color: #f9e2af; /* Yellow when paused */
+  color: #f9e2af;
 }
 
 /* --- Right Modules --- */
 
-/* Group 1: Network, Tray, Bluetooth */
 #custom-network {
   border-radius: 10px 0 0 10px;
 }
@@ -141,7 +150,6 @@ tooltip {
   color: #eba0ac;
 }
 
-/* Group 2: System Stats */
 #custom-temperature {
   border-radius: 10px 0 0 10px;
   border-right: 0;
@@ -149,12 +157,14 @@ tooltip {
 #custom-temperature.critical {
   color: #f00;
 }
+
 #custom-memory {
   color: #eba0ac;
   border-radius: 0;
   border-left: 0;
   border-right: 0;
 }
+
 #battery {
   color: #a6e3a1;
   border-radius: 0;
@@ -167,19 +177,18 @@ tooltip {
 #battery.critical {
   color: #f00;
 }
+
 #backlight {
   border-radius: 0 10px 10px 0;
   border-left: 0;
   margin-right: 10px;
 }
 
-/* Group 3: Audio */
 #pulseaudio {
   color: #89b4fa;
   border-radius: 10px 0 0 10px;
   border-right: 0;
 }
-/* THIS IS THE FIX: Changed #pulseaudio#microphone to #pulseaudio.microphone */
 #pulseaudio.microphone {
   color: #cba6f7;
   border-radius: 0 10px 10px 0;
@@ -187,7 +196,6 @@ tooltip {
   margin-right: 10px;
 }
 
-/* Group 4: Power Button (Standalone) */
 #custom-power {
   color: #f38ba8;
   border-radius: 10px;

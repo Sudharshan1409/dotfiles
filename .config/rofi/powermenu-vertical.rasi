@@ -1,0 +1,69 @@
+/* ~/.config/rofi/powermenu-vertical.rasi */
+
+* {
+    background:       #1e1e2e;
+    background-alt:   #181825;
+    foreground:       #cdd6f4;
+    selected:         #f38ba8;
+
+    font:             "JetBrains Mono Nerd Font Bold 16";
+    background-color: transparent;
+    text-color:       @foreground;
+}
+
+window {
+    background-color: @background;
+    border:           2px;
+    border-color:     @background-alt;
+    border-radius:    10px;
+    width:            300px; /* A good width for a vertical menu */
+    location:         center;
+    anchor:           center;
+    padding:          20px;
+}
+
+mainbox {
+    children:   [ "message", "listview" ];
+    spacing:    15px; /* Space between title and first option */
+}
+
+/* The "Power Menu" title */
+message {
+    background-color: @background-alt;
+    border-radius:    10px;
+    padding:          10px;
+    horizontal-align: 0.5; /* Center the title text */
+}
+
+inputbar {
+    enabled: false;
+}
+
+listview {
+    /* This ensures a vertical layout */
+    layout:     vertical;
+    columns:    1;
+    lines:      4; /* Display all 4 options at once */
+    spacing:    15px; /* Space between each grid box */
+}
+
+/* This creates the "grid" around each option */
+element {
+    background-color: @background-alt;
+    border:           2px;
+    border-color:     @background-alt; /* A subtle border */
+    border-radius:    10px;
+    padding:          15px;
+}
+
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+    horizontal-align: 0.5; /* Center the text (Shutdown, Reboot, etc.) */
+}
+
+element selected {
+    background-color: @selected;
+    text-color:       @background-alt;
+    border-color:     @selected; /* Highlight border on selection */
+}

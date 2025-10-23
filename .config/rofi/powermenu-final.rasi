@@ -1,0 +1,61 @@
+/* ~/.config/rofi/powermenu-final.rasi (Definitive Fix) */
+
+* {
+    background:       #1e1e2e;
+    background-alt:   #181825;
+    foreground:       #cdd6f4;
+    selected:         #f38ba8;
+
+    font:             "JetBrains Mono Nerd Font Bold 16";
+    background-color: transparent;
+    text-color:       @foreground;
+}
+
+window {
+    background-color: @background;
+    border:           2px;
+    border-color:     @background-alt;
+    border-radius:    10px;
+    width:            800px; /* Generous width to guarantee space */
+    location:         center;
+    anchor:           center;
+    padding:          25px;
+}
+
+/* We are not showing an input bar or a message/prompt */
+mainbox {
+    children:   [ "listview" ];
+    spacing:    20px;
+}
+
+inputbar {
+    enabled: false;
+}
+
+listview {
+    /* This is the key part that forces the grid */
+    layout:           horizontal;
+    fixed-height:     true;
+    fixed-columns:    true; /*  <-- THE CRITICAL FIX */
+    
+    columns:    4;
+    lines:      1;
+    spacing:    20px;
+}
+
+element {
+    background-color: @background-alt;
+    border-radius:    10px;
+    padding:          35px 20px;
+}
+
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+}
+
+element selected {
+    background-color: @selected;
+    text-color:       @background-alt;
+}

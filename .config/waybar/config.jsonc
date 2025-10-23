@@ -1,11 +1,17 @@
 {
+    // #######################################################################################
+    // #  General Bar Configuration                                                          #
+    // #######################################################################################
     "layer": "top",
     "position": "top",
+    "height": 50,
     "mod": "dock",
     "exclusive": true,
     "passthrough": false,
     "gtk-layer-shell": true,
-    "height": 50,
+    // #######################################################################################
+    // #  Module Layout                                                                      #
+    // #######################################################################################
     "modules-left": [
         "clock",
         "custom/weather",
@@ -27,34 +33,13 @@
         "pulseaudio#microphone",
         "custom/power"
     ],
-    "hyprland/workspaces": {
-        "format": "{icon}",
-        "on-scroll-up": "hyprctl dispatch workspace e+1",
-        "on-scroll-down": "hyprctl dispatch workspace e-1",
-        "format-icons": {
-            "1": "😎",
-            "2": "🌐",
-            "3": "👩🏽‍💻",
-            "4": "📒",
-            "5": "🎵"
-        },
-        "persistent_workspaces": {
-            "*": 1
-        }
-    },
-    "hyprland/window": {
-        "format": "{}",
-        "max-length": 35,
-        "tooltip": true
-    },
-    "custom/mediaplayer": {
-        "format": "{icon} {text}",
-        "return-type": "json",
-        "max-length": 40,
-        "exec": "playerctl -a metadata --format '{\"text\": \"{{markup_escape(artist)}} - {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(artist)}} - {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
-        "on-click": "playerctl play-pause",
-        "on-scroll-up": "playerctl next",
-        "on-scroll-down": "playerctl previous"
+    // #######################################################################################
+    // #  Left Modules Configuration                                                         #
+    // #######################################################################################
+    "clock": {
+        "format": "{:%H:%M}  ",
+        "format-alt": "{:%A, %B %d, %Y (%R)}  ",
+        "tooltip-format": "{calendar}"
     },
     "custom/weather": {
         "tooltip": true,
@@ -62,6 +47,55 @@
         "interval": 3600,
         "exec": "~/.config/waybar/scripts/waybar-wttr.py",
         "return-type": "json"
+    },
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 25,
+        "tooltip": true
+    },
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "all-outputs": true,
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1",
+        "persistent_workspaces": {
+            "*": 1
+        }
+    },
+    // #######################################################################################
+    // #  Center Module Configuration                                                        #
+    // #######################################################################################
+    "custom/mediaplayer": {
+        "format": "{icon} {text}",
+        "return-type": "json",
+        "max-length": 30,
+        "exec": "playerctl -a metadata --format '{\"text\": \"{{markup_escape(artist)}} - {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(artist)}} - {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+        "on-click": "playerctl play-pause",
+        "on-scroll-up": "playerctl next",
+        "on-scroll-down": "playerctl previous"
+    },
+    // #######################################################################################
+    // #  Right Modules Configuration                                                        #
+    // #######################################################################################
+    "custom/network": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 5,
+        "exec": "~/.config/waybar/scripts/network-manager.sh",
+        "on-click": "~/.config/waybar/scripts/toggle-wifi.sh",
+        "tooltip": true
+    },
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10
+    },
+    "custom/bluetooth": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 5,
+        "exec": "~/.config/waybar/scripts/bluetooth-manager.sh",
+        "on-click": "~/.config/waybar/scripts/toggle-bluetooth.sh",
+        "on-click-right": "blueman-manager"
     },
     "custom/temperature": {
         "tooltip": true,
@@ -74,26 +108,6 @@
         "format": "🧠 {}",
         "interval": 30,
         "exec": "free -h | awk '/^Mem:/ {print $3 \"/\" $2}'"
-    },
-    "tray": {
-        "icon-size": 18,
-        "spacing": 10
-    },
-    "clock": {
-        "format": "{:%H:%M} \uf017 ",
-        "format-alt": "{:%A, %B %d, %Y (%R)} \uf5ef ",
-        "tooltip-format": "{calendar}"
-    },
-    "backlight": {
-        "device": "intel_backlight",
-        "format": "{icon} {percent}%",
-        "format-icons": [
-            "󰃞",
-            "󰃟",
-            "󰃠"
-        ],
-        "on-scroll-up": "brightnessctl -q set 1%-",
-        "on-scroll-down": "brightnessctl -q set 1%+"
     },
     "battery": {
         "states": {
@@ -119,6 +133,17 @@
             "󰁹"
         ]
     },
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon} {percent}%",
+        "format-icons": [
+            "󰃞",
+            "󰃟",
+            "󰃠"
+        ],
+        "on-scroll-up": "brightnessctl -q set 1%-",
+        "on-scroll-down": "brightnessctl -q set 1%+"
+    },
     "pulseaudio": {
         "format": "{icon} {volume}%",
         "tooltip": false,
@@ -136,22 +161,6 @@
         "on-scroll-up": "~/.config/waybar/scripts/mic-control.sh down",
         "on-scroll-down": "~/.config/waybar/scripts/mic-control.sh up",
         "scroll-step": 5
-    },
-    "custom/network": {
-        "format": "{}",
-        "return-type": "json",
-        "interval": 5,
-        "exec": "~/.config/waybar/scripts/network-manager.sh",
-        "on-click": "~/.config/waybar/scripts/toggle-wifi.sh",
-        "tooltip": true
-    },
-    "custom/bluetooth": {
-        "format": "{}",
-        "return-type": "json",
-        "interval": 5,
-        "exec": "~/.config/waybar/scripts/bluetooth-manager.sh",
-        "on-click": "~/.config/waybar/scripts/toggle-bluetooth.sh",
-        "on-click-right": "blueman-manager"
     },
     "custom/power": {
         "format": "⏻",

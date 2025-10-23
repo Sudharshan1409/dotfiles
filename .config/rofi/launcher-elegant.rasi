@@ -1,0 +1,83 @@
+/* ~/.config/rofi/launcher-elegant.rasi */
+/* A simple, elegant Catppuccin Mocha theme */
+
+* {
+    /* Catppuccin Mocha Palette */
+    background:       #1E1D2F; /* Base */
+    background-alt:   #181926; /* Crust */
+    foreground:       #CDD6F4; /* Text */
+    selected:         #89B4FA; /* Blue */
+    urgent:           #F38BA8; /* Red */
+
+    font:             "JetBrains Mono Nerd Font 16"; /* Non-bold for a lighter feel */
+    background-color: transparent;
+    text-color:       @foreground;
+}
+
+window {
+    background-color: @background;
+    border:           1px;
+    border-color:     @selected;
+    border-radius:    12px;
+    width:            600px;
+    height:           550px;
+    location:         center;
+    anchor:           center;
+    padding:          20px;
+}
+
+mainbox {
+    children:   [ "inputbar", "listview" ];
+    spacing:    15px;
+}
+
+/* --- Input Bar --- */
+inputbar {
+    children:         [ "prompt", "entry" ];
+    padding:          8px 12px;
+    background-color: @background-alt;
+    border-radius:    8px;
+}
+
+prompt {
+    background-color: inherit;
+    text-color:       @selected;
+    padding:          0px 5px 0px 0px; /* Space between icon and text */
+}
+
+entry {
+    background-color: inherit;
+    placeholder:      "Search...";
+    placeholder-color: @foreground;
+}
+
+/* --- Results List --- */
+listview {
+    margin:           10px 0 0 0; /* Add space above the list */
+    lines:            8;
+    cycle:            true;
+    dynamic:          true;
+    layout:           vertical;
+}
+
+element {
+    padding:          10px;
+    border-radius:    8px;
+    /* No background by default for a clean look */
+}
+
+element-icon {
+    size:             1.8em;
+    margin:           0 15px 0 0;
+    vertical-align:   0.5;
+}
+
+element-text {
+    vertical-align: 0.5;
+}
+
+/* Highlight the selected item */
+element selected {
+    background-color: @selected;
+    text-color:       @background; /* Invert text for readability */
+}
