@@ -9,23 +9,23 @@
     "modules-left": [
         "clock",
         "custom/weather",
-        "custom/moon",
-        "custom/wall",
+        "hyprland/window",
         "hyprland/workspaces"
     ],
     "modules-center": [
-        "hyprland/window"
+        "custom/mediaplayer"
     ],
     "modules-right": [
         "custom/network",
         "tray",
-        "bluetooth",
+        "custom/bluetooth",
         "custom/temperature",
         "custom/memory",
         "battery",
         "backlight",
         "pulseaudio",
-        "pulseaudio#microphone"
+        "pulseaudio#microphone",
+        "custom/power"
     ],
     "hyprland/workspaces": {
         "format": "{icon}",
@@ -43,7 +43,18 @@
         }
     },
     "hyprland/window": {
-        "format": "{}"
+        "format": "{}",
+        "max-length": 35,
+        "tooltip": true
+    },
+    "custom/mediaplayer": {
+        "format": "{icon} {text}",
+        "return-type": "json",
+        "max-length": 40,
+        "exec": "playerctl -a metadata --format '{\"text\": \"{{markup_escape(artist)}} - {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(artist)}} - {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+        "on-click": "playerctl play-pause",
+        "on-scroll-up": "playerctl next",
+        "on-scroll-down": "playerctl previous"
     },
     "custom/weather": {
         "tooltip": true,
@@ -51,17 +62,6 @@
         "interval": 3600,
         "exec": "~/.config/waybar/scripts/waybar-wttr.py",
         "return-type": "json"
-    },
-    "custom/moon": {
-        "format": "{}",
-        "interval": 3600,
-        "exec": "feh --randomize --bg-fill ~/.config/backgrounds/"
-    },
-    "custom/wall": {
-        "format": "{}",
-        "interval": 60,
-        "exec": "feh --randomize --bg-fill ~/.config/backgrounds/ &",
-        "format-alt": "feh --randomize --bg-fill ~/.config/backgrounds/ &"
     },
     "custom/temperature": {
         "tooltip": true,
@@ -124,44 +124,38 @@
         "tooltip": false,
         "format-muted": " Muted",
         "on-click": "pamixer -t",
-        "on-scroll-up": "pamixer -d 5",
-        "on-scroll-down": "pamixer -i 5",
-        "scroll-step": 100,
-        "format-icons": {
-            "default": [
-                "",
-                "",
-                ""
-            ]
-        }
+        "on-scroll-up": "~/.config/waybar/scripts/volume-control.sh down",
+        "on-scroll-down": "~/.config/waybar/scripts/volume-control.sh up",
+        "scroll-step": 100
     },
     "pulseaudio#microphone": {
         "format": "{format_source}",
         "format-source": " {volume}%",
         "format-source-muted": " Muted",
         "on-click": "pamixer --default-source -t",
-        "on-scroll-up": "pamixer --default-source -i 5",
-        "on-scroll-down": "pamixer --default-source -d 5",
+        "on-scroll-up": "~/.config/waybar/scripts/mic-control.sh down",
+        "on-scroll-down": "~/.config/waybar/scripts/mic-control.sh up",
         "scroll-step": 5
     },
     "custom/network": {
         "format": "{}",
         "return-type": "json",
         "interval": 5,
-        "exec": "/home/enigma/.config/waybar/scripts/network-manager.sh",
-        "on-click": "/home/enigma/.config/waybar/scripts/toggle-wifi.sh",
+        "exec": "~/.config/waybar/scripts/network-manager.sh",
+        "on-click": "~/.config/waybar/scripts/toggle-wifi.sh",
         "tooltip": true
     },
-    "bluetooth": {
-        "format": "{icon} {status}",
-        "format-disabled": " Off",
-        "format-connected": " {num_connections}",
-        "tooltip-format": "{device_alias}",
-        "on-click": "rfkill toggle bluetooth",
-        "format-icons": {
-            "default": "",
-            "connected": "",
-            "disabled": ""
-        }
+    "custom/bluetooth": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 5,
+        "exec": "~/.config/waybar/scripts/bluetooth-manager.sh",
+        "on-click": "~/.config/waybar/scripts/toggle-bluetooth.sh",
+        "on-click-right": "blueman-manager"
+    },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "~/.config/waybar/scripts/power-menu.sh"
     }
 }
