@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Define the options for the menu
-options="⏻ Shutdown\n⏼ Reboot\n Lock\n Logout"
+# Define the options with the new "Sleep" option included
+# The moon icon () is from Nerd Fonts
+options="⏻ Shutdown\n⏼ Reboot\n Sleep\n Lock\n Logout" # <-- ADDED SLEEP OPTION
 
 # Rofi command using the reliable vertical theme in dmenu mode
 chosen=$(echo -e "$options" | rofi -dmenu \
@@ -15,6 +16,9 @@ case "$chosen" in
         ;;
     "⏼ Reboot")
         systemctl reboot
+        ;;
+    " Sleep") # <-- ADDED THIS BLOCK
+        systemctl suspend
         ;;
     " Lock")
         hyprlock

@@ -10,11 +10,10 @@
     "passthrough": false,
     "gtk-layer-shell": true,
     // #######################################################################################
-    // #  Module Layout                                                                      #
+    // #  Module Layout (Weather Removed)                                                    #
     // #######################################################################################
     "modules-left": [
         "clock",
-        "custom/weather",
         "hyprland/window",
         "hyprland/workspaces"
     ],
@@ -36,17 +35,11 @@
     // #######################################################################################
     // #  Left Modules Configuration                                                         #
     // #######################################################################################
+    // THIS IS YOUR ORIGINAL, STABLE CLOCK CONFIGURATION, RESTORED
     "clock": {
         "format": "{:%H:%M}  ",
         "format-alt": "{:%A, %B %d, %Y (%R)}  ",
         "tooltip-format": "{calendar}"
-    },
-    "custom/weather": {
-        "tooltip": true,
-        "format": "{}",
-        "interval": 3600,
-        "exec": "~/.config/waybar/scripts/waybar-wttr.py",
-        "return-type": "json"
     },
     "hyprland/window": {
         "format": "{}",
@@ -59,7 +52,21 @@
         "on-scroll-up": "hyprctl dispatch workspace e+1",
         "on-scroll-down": "hyprctl dispatch workspace e-1",
         "persistent_workspaces": {
-            "*": 1
+            "eDP-1": [
+                1,
+                2,
+                3
+            ],
+            "HDMI-A-1": [
+                4,
+                5,
+                6
+            ],
+            "DVI-I-1": [
+                7,
+                8,
+                9
+            ]
         }
     },
     // #######################################################################################
@@ -95,7 +102,7 @@
         "interval": 5,
         "exec": "~/.config/waybar/scripts/bluetooth-manager.sh",
         "on-click": "~/.config/waybar/scripts/toggle-bluetooth.sh",
-        "on-click-right": "blueman-manager"
+        "on-click-right": "blueberry"
     },
     "custom/temperature": {
         "tooltip": true,

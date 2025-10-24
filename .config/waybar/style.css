@@ -30,7 +30,6 @@ tooltip {
 /* This is the base style for every module "box" on the bar */
 #workspaces,
 #clock,
-#custom-weather,
 #window,
 #custom-mediaplayer,
 #custom-network,
@@ -43,6 +42,7 @@ tooltip {
 #pulseaudio,
 #pulseaudio.microphone,
 #custom-power {
+  /* <-- THIS LINE IS CORRECTED */
   background: #1e1e2e;
   opacity: 0.8;
   padding: 0px 10px;
@@ -56,15 +56,11 @@ tooltip {
 
 /* --- Left Modules --- */
 
+/* Standalone style for the original clock */
 #clock {
   color: #fab387;
-  border-radius: 10px 0 0 10px;
+  border-radius: 10px;
   margin-left: 10px;
-  border-right: 0px;
-}
-#custom-weather {
-  border-radius: 0 10px 10px 0;
-  border-left: 0px;
 }
 
 #window {
@@ -72,7 +68,6 @@ tooltip {
   margin-left: 10px;
   border-right: 0;
 }
-
 #workspaces {
   border-radius: 0 10px 10px 0;
   border-left: 0;
@@ -80,7 +75,7 @@ tooltip {
 }
 #workspaces button {
   padding: 5px;
-  color: #a6adc8; /* Brightened inactive numbers */
+  color: #a6adc8;
 }
 #workspaces button:hover {
   background: #11111b;
@@ -90,7 +85,7 @@ tooltip {
 #workspaces button.active {
   color: #1e1d2f;
   background: #eba0ac;
-  border-radius: 10px; /* Dimmed highlight with contrast */
+  border-radius: 10px;
 }
 #workspaces button.urgent {
   color: #11111b;

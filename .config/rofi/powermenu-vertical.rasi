@@ -16,7 +16,7 @@ window {
     border:           2px;
     border-color:     @background-alt;
     border-radius:    10px;
-    width:            300px; /* A good width for a vertical menu */
+    width:            300px;
     location:         center;
     anchor:           center;
     padding:          20px;
@@ -24,15 +24,14 @@ window {
 
 mainbox {
     children:   [ "message", "listview" ];
-    spacing:    15px; /* Space between title and first option */
+    spacing:    15px;
 }
 
-/* The "Power Menu" title */
 message {
     background-color: @background-alt;
     border-radius:    10px;
     padding:          10px;
-    horizontal-align: 0.5; /* Center the title text */
+    horizontal-align: 0.5;
 }
 
 inputbar {
@@ -40,18 +39,16 @@ inputbar {
 }
 
 listview {
-    /* This ensures a vertical layout */
     layout:     vertical;
     columns:    1;
-    lines:      4; /* Display all 4 options at once */
-    spacing:    15px; /* Space between each grid box */
+    lines:      5; /* <-- CHANGED FROM 4 TO 5 */
+    spacing:    15px;
 }
 
-/* This creates the "grid" around each option */
 element {
     background-color: @background-alt;
     border:           2px;
-    border-color:     @background-alt; /* A subtle border */
+    border-color:     @background-alt;
     border-radius:    10px;
     padding:          15px;
 }
@@ -59,11 +56,11 @@ element {
 element-text {
     background-color: inherit;
     text-color:       inherit;
-    horizontal-align: 0.5; /* Center the text (Shutdown, Reboot, etc.) */
+    horizontal-align: 0.5;
 }
 
 element selected {
     background-color: @selected;
     text-color:       @background-alt;
-    border-color:     @selected; /* Highlight border on selection */
+    border-color:     @selected;
 }
