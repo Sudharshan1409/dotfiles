@@ -12,6 +12,14 @@ This repository contains configuration files for various tools and applications.
 
   - [Git README](.config/git/README.md)
 
+- **Hypr**: Configuration files for Hyprland, a dynamic tiling Wayland compositor.
+
+  - [Hypr README](.config/hypr/README.md)
+
+- **Kitty**: Configuration files for Kitty, a fast, feature-rich, GPU-accelerated terminal emulator.
+
+  - [Kitty README](.config/kitty/README.md)
+
 - **Neovim**: Configuration files for Neovim, a highly customizable text editor.
 
   - [Neovim README](.config/nvim/README.md)
@@ -23,6 +31,10 @@ This repository contains configuration files for various tools and applications.
 - **Tmux**: Configuration files for Tmux, a terminal multiplexer.
 
   - [Tmux README](.config/tmux/README.md)
+
+- **Waybar**: Configuration files for Waybar, a highly customizable Wayland bar for Sway and Wlroots based compositors.
+
+  - [Waybar README](.config/waybar/README.md)
 
 - **WezTerm**: Configuration files for WezTerm, a GPU-accelerated terminal emulator.
 
