@@ -55,7 +55,12 @@ keymap("n", "<leader>j", "<cmd>cprev<CR>zz", { desc = "Go to previous quickfix" 
 
 -- Search and Replace Keymaps
 keymap("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search and replace" })
-keymap("n", "<leader>sl", ":lua SEARCH_AND_REPLACE_DYNAMIC()<CR>", { desc = "Search and replace for N lines" })
+keymap(
+	"n",
+	"<leader>sl",
+	":lua require('core.functions').search_and_replace_dynamic()<CR>",
+	{ desc = "Search and replace for N lines" }
+)
 keymap("n", "<leader>sn", "/<C-r><C-w><cr>", { desc = "Move to next occurrence of the word" })
 keymap("n", "<leader>sp", "?<C-r><C-w><cr>", { desc = "Move to previous occurrence of the word" })
 
@@ -73,7 +78,7 @@ keymap(
 keymap(
 	"n",
 	"<leader>nvim",
-	"<cmd>lua require('telescope.builtin').find_files({prompt_title = 'Nvim  Config', cwd = '~/.config/nvim/', hidden = fale})<CR>",
+	"<cmd>lua require('telescope.builtin').find_files({prompt_title = 'Nvim  Config', cwd = '~/.config/nvim/', hidden = false})<CR>",
 	{ desc = "Open Nvim Config" }
 )
 

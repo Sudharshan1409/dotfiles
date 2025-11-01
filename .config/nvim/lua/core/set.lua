@@ -44,7 +44,7 @@ vim.g.markdown_recommended_style = 0
 -- File and backup settings
 opt.swapfile = false
 opt.backup = false
-opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 opt.undofile = true
 
 -- Cursor and highlight settings
@@ -60,6 +60,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- Command-line completion
 opt.wildmenu = true
+opt.wildoptions = "pum,tagfile"
 
 -- Performance settings
 opt.lazyredraw = false

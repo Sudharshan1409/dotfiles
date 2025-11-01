@@ -33,22 +33,7 @@ ls.add_snippets('javascript', {
     }),
 })
 
--- for ts files
-
-ls.add_snippets('typescript', {
-    s("todo", {
-        t("// TODO: "), i(1, "todo")
-    }),
-    s("log", {
-        t("console.log("), i(1, "value"), t(");")
-    }),
-    s("fn", {
-        t("const "), i(1, "name"), t(" = ("), i(2, "args"), t(") => {"), i(0), t("};")
-    }),
-    s("afn", {
-        t("const "), i(1, "name"), t(" = async ("), i(2, "args"), t(") => {"), i(0), t("};")
-    }),
-})
+ls.add_snippets('typescript', ls.get_snippets('javascript'))
 
 -- for lua files
 

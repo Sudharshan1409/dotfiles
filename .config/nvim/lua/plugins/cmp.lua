@@ -9,6 +9,7 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		"saadparwaiz1/cmp_luasnip", -- for autocompletion
 		"rafamadriz/friendly-snippets", -- useful snippets
+		"hrsh7th/cmp-cmdline",
 	},
 	config = function()
 		-- Here is where you configure the autocompletion settings.
@@ -57,6 +58,20 @@ return {
 					require("luasnip").lsp_expand(args.body)
 				end,
 			},
+		})
+		cmp.setup.cmdline("/", {
+			mappings = cmp.mapping.preset.cmdline(),
+			sources = {
+				{ name = "buffer" },
+			},
+		})
+		cmp.setup.cmdline(":", {
+			mappings = cmp.mapping.preset.cmdline(),
+			sources = cmp.config.sources({
+				{ name = "path" },
+			}, {
+				{ name = "cmdline" },
+			}),
 		})
 	end,
 }

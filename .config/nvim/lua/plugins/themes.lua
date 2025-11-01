@@ -8,9 +8,14 @@ return {
 	},
 	"shaunsingh/nord.nvim",
 	"navarasu/onedark.nvim",
-	"Mofiqul/dracula.nvim",
+{
+		"Mofiqul/dracula.nvim",
+		config = function()
+			vim.cmd("colorscheme dracula-soft")
+		end,
+	},
 	"tanvirtin/monokai.nvim",
-	"mhartington/oceanic-next",
+	{"mhartington/oceanic-next"},
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
