@@ -32,6 +32,7 @@ This Waybar configuration relies on several external packages to function correc
 
 *   **`rofi`**: Used for the power menu and the interactive Wi-Fi menu.
 *   **`network-manager`**: Provides the `nmcli` tool to manage network connections.
+*   **`network-manager-applet`**: A graphical applet for managing network connections, which will appear in the system tray.
 *   **`rfkill`**: Used to toggle Wi-Fi and Bluetooth on and off.
 *   **`playerctl`**: Controls media players (e.g., Spotify, VLC) for the media module.
 *   **`brightnessctl`**: Adjusts screen brightness.
@@ -45,15 +46,33 @@ You can install these dependencies using your distribution's package manager.
 
 **Arch Linux:**
 ```bash
-sudo pacman -S rofi network-manager rfkill playerctl brightnessctl pamixer hyprlock blueberry
+sudo pacman -S rofi networkmanager network-manager-applet rfkill playerctl brightnessctl pamixer hyprlock blueberry
 ```
 
 **Ubuntu / Debian:**
 ```bash
-sudo apt-get install rofi network-manager rfkill playerctl brightnessctl pamixer hyprlock blueberry
+sudo apt-get install rofi network-manager network-manager-applet rfkill playerctl brightnessctl pamixer hyprlock blueberry
 ```
 
 *Note: `hyprlock` and `blueberry` may not be available in the default Ubuntu/Debian repositories. You may need to install them from another source if you are using Hyprland or require the Blueberry utility on these distributions.*
+
+## Autostarting `nm-applet`
+
+To have the NetworkManager Applet (`nm-applet`) appear in your Waybar tray, you need to autostart it with your Hyprland session.
+
+1.  **Open your Hyprland configuration file:**
+    This is typically located at `~/.config/hypr/hyprland.conf`.
+
+2.  **Add the following line to your Hyprland configuration:**
+    ```
+    exec-once = nm-applet --indicator &
+    ```
+    The `--indicator` flag ensures it starts as a tray icon. The `&` runs it in the background, allowing Hyprland to continue loading.
+
+3.  **Reload Hyprland:**
+    After saving the Hyprland configuration, reload it (e.g., by running `hyprctl reload` in a terminal, or logging out and back in).
+
+Once `nm-applet` is running, its icon should appear in the `tray` module of your Waybar, allowing you to manage your Wi-Fi connections graphically.
 
 ## Sudo Configuration
 
