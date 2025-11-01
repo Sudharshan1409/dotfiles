@@ -11,7 +11,7 @@ Some of the scripts used by this Waybar configuration require `sudo` privileges 
 To install the necessary sudo rules, run the following command:
 
 ```bash
-sudo /home/enigma/dotfiles/.config/waybar/scripts/install_sudo_rules.sh
+sudo ~/.config/waybar/scripts/install_sudo_rules.sh
 ```
 
 This script will create a new file at `/etc/sudoers.d/waybar-scripts-enigma` with the required rules.
