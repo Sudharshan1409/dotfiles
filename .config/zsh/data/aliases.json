@@ -60,9 +60,5 @@
         "wayconf": "z ~/.config/waybar",
         "wezconf": "z ~/.config/wezterm",
         "yaziconf": "z ~/.config/yazi"
-    },
-    "work": {
-        "genie-prod": "ssh sudharshan.v@172.30.31.22",
-        "genie-staging": "ssh sudharshan.v@172.30.31.10"
     }
 }
