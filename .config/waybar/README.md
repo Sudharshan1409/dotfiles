@@ -28,19 +28,33 @@ This directory contains various scripts that are used by the modules in the `con
 
 ## Sudo Configuration
 
-The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts require `sudo` to execute the `rfkill` command. To avoid entering your password every time you toggle Wi-Fi or Bluetooth, you can add the following line to your `sudoers` file.
+The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts now use `rfkill` from your system's `PATH`. They require `sudo` to execute the `rfkill` command. To avoid entering your password every time you toggle Wi-Fi or Bluetooth, you can add a rule to your `sudoers` file.
 
 **Warning:** Editing the `sudoers` file can have serious consequences if done incorrectly. Always use `sudo visudo` to edit this file, as it will validate the syntax before saving.
 
-1.  Open the `sudoers` file in a terminal:
+1.  **Find your username by running this command:**
+    ```bash
+    whoami
+    ```
+
+2.  **Find the path to the `rfkill` executable by running this command:**
+    ```bash
+    which rfkill
+    ```
+
+3.  **Open the `sudoers` file for editing:**
     ```bash
     sudo visudo
     ```
 
-2.  Add the following line to the end of the file, replacing `enigma` with your username:
+4.  **Add the following line to the end of the file.** Replace `<username>` with the output from step 1 and `<path_to_rfkill>` with the output from step 2.
 
     ```
-    enigma ALL=(ALL) NOPASSWD: /home/linuxbrew/.linuxbrew/sbin/rfkill
+    <username> ALL=(ALL) NOPASSWD: <path_to_rfkill>
     ```
 
-This configuration allows the user `enigma` to run the `/home/linuxbrew/.linuxbrew/sbin/rfkill` command with `sudo` without being prompted for a password.
+    For example, if your username is `enigma` and `rfkill` is located at `/usr/sbin/rfkill`, the line would look like this:
+
+    ```
+    enigma ALL=(ALL) NOPASSWD: /usr/sbin/rfkill
+    ```

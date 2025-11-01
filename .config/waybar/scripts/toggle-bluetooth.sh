@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo /home/linuxbrew/.linuxbrew/sbin/rfkill toggle bluetooth
+sudo rfkill toggle bluetooth
 pkill -SIGRTMIN+8 waybar
