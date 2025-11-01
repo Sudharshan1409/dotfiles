@@ -35,7 +35,7 @@ tooltip {
 #custom-network,
 #tray,
 #custom-bluetooth,
-#custom-temperature,
+#custom-cpu,
 #custom-memory,
 #battery,
 #backlight,
@@ -145,11 +145,11 @@ tooltip {
   color: #eba0ac;
 }
 
-#custom-temperature {
+#custom-cpu {
   border-radius: 10px 0 0 10px;
   border-right: 0;
 }
-#custom-temperature.critical {
+#custom-cpu.critical {
   color: #f00;
 }
 
@@ -195,4 +195,5 @@ tooltip {
   color: #f38ba8;
   border-radius: 10px;
   margin-right: 10px;
+  font-size: 20px;
 }

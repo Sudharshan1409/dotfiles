@@ -9,7 +9,7 @@ WIFI_INTERFACE="wlo1"
 # 1. Check for Ethernet connection first (This part is already working perfectly)
 if ip addr show "$ETH_INTERFACE" | grep -q "inet "; then
     IP_ADDR=$(ip addr show "$ETH_INTERFACE" | grep "inet " | awk '{print $2}' | cut -d'/' -f1)
-    echo "{\"text\":\" ${IP_ADDR}\", \"tooltip\":\"Ethernet: ${IP_ADDR}\", \"class\":\"ethernet\"}"
+    echo "{\"text\":\" ${IP_ADDR}\", \"tooltip\":\"Ethernet (${ETH_INTERFACE}): ${IP_ADDR}\", \"class\":\"ethernet\"}"
     exit 0
 fi
 
