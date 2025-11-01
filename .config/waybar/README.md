@@ -26,6 +26,35 @@ This directory contains various scripts that are used by the modules in the `con
 *   `waybar-wttr.py`: A Python script that fetches and displays weather information from `wttr.in`.
 *   `wifi-menu.sh`: Displays a menu of available Wi-Fi networks using `rofi` and allows you to connect to them.
 
+## Dependencies
+
+This Waybar configuration relies on several external packages to function correctly.
+
+*   **`rofi`**: Used for the power menu and the interactive Wi-Fi menu.
+*   **`network-manager`**: Provides the `nmcli` tool to manage network connections.
+*   **`rfkill`**: Used to toggle Wi-Fi and Bluetooth on and off.
+*   **`playerctl`**: Controls media players (e.g., Spotify, VLC) for the media module.
+*   **`brightnessctl`**: Adjusts screen brightness.
+*   **`pamixer`**: Controls audio volume for both speakers and microphone.
+*   **`hyprlock`**: The screen locker used in the power menu (specific to the Hyprland compositor).
+*   **`blueberry`**: A Bluetooth configuration utility.
+
+### Installation
+
+You can install these dependencies using your distribution's package manager.
+
+**Arch Linux:**
+```bash
+sudo pacman -S rofi network-manager rfkill playerctl brightnessctl pamixer hyprlock blueberry
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt-get install rofi network-manager rfkill playerctl brightnessctl pamixer hyprlock blueberry
+```
+
+*Note: `hyprlock` and `blueberry` may not be available in the default Ubuntu/Debian repositories. You may need to install them from another source if you are using Hyprland or require the Blueberry utility on these distributions.*
+
 ## Sudo Configuration
 
 The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts now use `rfkill` from your system's `PATH`. They require `sudo` to execute the `rfkill` command. To avoid entering your password every time you toggle Wi-Fi or Bluetooth, you can add a rule to your `sudoers` file.
