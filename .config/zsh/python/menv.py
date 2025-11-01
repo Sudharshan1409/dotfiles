@@ -9,7 +9,12 @@ from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 from lib.common import (
     CONSOLE,
+    STYLE,
     StyledArgumentParser,
+    find_item_and_scope,
+    fuzzy_select,
+    get_group_selection,
+    get_scope_selection,
     print_help_panel,
     prompt_with_interrupt_handler,
     read_registry,
@@ -29,6 +34,7 @@ def show_help(args):
         "add": "Interactively adds a new entry.",
         "edit": "Interactively edits an existing entry.",
         "rm": "Removes an environment entry.",
+        "scope": "Move an entry between global and local scopes.",
     }
     print_help_panel(title, command_name, commands)
 
@@ -70,6 +76,9 @@ def list_exports(args):
     if not data:
         CONSOLE.print("[yellow]Environment registry is empty.[/yellow]")
         return
+
+    global_data = read_registry(EXPORTS_JSON_PATH, read_local=False)
+
     for group_name, entries in sorted(data.items()):
         table = Table(
             title=group_name,
@@ -83,6 +92,8 @@ def list_exports(args):
         table.add_column("OS", style="green")
         table.add_column("Variable Name")
         table.add_column("Value")
+        table.add_column("Scope", style="yellow")
+
         for name, entry_obj in sorted(entries.items()):
             var_name = entry_obj.get("var_name")
             var_name_display = (
@@ -90,29 +101,31 @@ def list_exports(args):
                 if var_name
                 else "[dim red]N/A[/dim red]"
             )
+            scope = "local" if name not in global_data.get(group_name, {}) else "global"
             table.add_row(
                 name,
                 entry_obj.get("type", "N/A"),
                 entry_obj.get("os", "N/A"),
                 var_name_display,
                 entry_obj.get("value", ""),
+                scope,
             )
         CONSOLE.print(table)
 
 
 def add_or_edit_export(args, entry_to_edit=None):
     data = read_registry(EXPORTS_JSON_PATH)
-    original_obj, original_group = {}, None
+    original_obj, original_group, scope = {}, None, "global"
+
     if entry_to_edit:
-        for group, entries in data.items():
-            if entry_to_edit in entries:
-                original_group, original_obj = group, entries[entry_to_edit]
-                break
+        original_group, original_obj, scope = find_item_and_scope(EXPORTS_JSON_PATH, entry_to_edit)
     else:
         prompt = inquirer.text(
             message="What is the unique name for this entry?",
             validate=lambda r: len(r) > 0 and " " not in r,
             invalid_message="Name cannot be empty or contain spaces.",
+            style=STYLE,
+            vi_mode=True
         )
         entry_to_edit = prompt_with_interrupt_handler(prompt)
 
@@ -126,6 +139,8 @@ def add_or_edit_export(args, entry_to_edit=None):
             Choice("run", "Simple command to execute"),
         ],
         default=original_obj.get("type"),
+        style=STYLE,
+        vi_mode=True
     )
     entry_type = prompt_with_interrupt_handler(prompt)
 
@@ -134,6 +149,8 @@ def add_or_edit_export(args, entry_to_edit=None):
         prompt = inquirer.text(
             message="What is the variable's name (e.g., FOO)?",
             default=original_obj.get("var_name", ""),
+            style=STYLE,
+            vi_mode=True
         )
         var_name = prompt_with_interrupt_handler(prompt).upper()
 
@@ -141,18 +158,18 @@ def add_or_edit_export(args, entry_to_edit=None):
             "What is the value?" if entry_type == "variable" else "What is the command?"
         )
         prompt = inquirer.text(
-            message=f"{prompt_msg} for {var_name}", default=default_val
+            message=f"{prompt_msg} for {var_name}", default=default_val, style=STYLE, vi_mode=True
         )
         value = prompt_with_interrupt_handler(prompt)
     elif entry_type == "path":
         var_name = "PATH"
         prompt = inquirer.text(
-            message="What is the directory to prepend?", default=default_val
+            message="What is the directory to prepend?", default=default_val, style=STYLE, vi_mode=True
         )
         value = prompt_with_interrupt_handler(prompt)
     else:
         prompt = inquirer.text(
-            message="What is the command to run?", default=default_val
+            message="What is the command to run?", default=default_val, style=STYLE, vi_mode=True
         )
         value = prompt_with_interrupt_handler(prompt)
 
@@ -160,43 +177,40 @@ def add_or_edit_export(args, entry_to_edit=None):
         message="Which OS should this apply to?",
         choices=["any", "Darwin", "Linux"],
         default=original_obj.get("os", "any"),
+        style=STYLE,
+        vi_mode=True
     )
     entry_os = prompt_with_interrupt_handler(prompt)
 
     if original_group:
         group_name = original_group
     else:
-        existing_groups = sorted(list(data.keys()))
-        choices = [Choice(g, g) for g in existing_groups]
-        choices.extend([Separator(), Choice("NEW", "Create a new group...")])
-        prompt = inquirer.select(message="Select a group:", choices=choices)
-        group_choice = prompt_with_interrupt_handler(prompt)
-        group_name = (
-            prompt_with_interrupt_handler(
-                inquirer.text(message="Enter the new group name:")
-            )
-            if group_choice == "NEW"
-            else group_choice
-        )
+        group_name = get_group_selection(data)
 
-    if original_group and entry_to_edit in data[original_group]:
-        del data[original_group][entry_to_edit]
-        if not data[original_group]:
-            del data[original_group]
+    if not entry_to_edit:
+        scope = get_scope_selection()
 
-    if group_name not in data:
-        data[group_name] = {}
+    registry_to_write = read_registry(EXPORTS_JSON_PATH, read_local=False) if scope == "global" else read_registry(EXPORTS_JSON_PATH + ".local", read_local=False)
+
+    if original_group and entry_to_edit in registry_to_write.get(original_group, {}):
+        del registry_to_write[original_group][entry_to_edit]
+        if not registry_to_write[original_group]:
+            del registry_to_write[original_group]
+
+    if group_name not in registry_to_write:
+        registry_to_write[group_name] = {}
     new_entry = {
         "type": entry_type,
         "os": entry_os,
         "var_name": var_name,
         "value": value,
     }
-    data[group_name][entry_to_edit] = new_entry
-    write_registry(data, EXPORTS_JSON_PATH)
+    registry_to_write[group_name][entry_to_edit] = new_entry
+    write_registry(registry_to_write, EXPORTS_JSON_PATH, scope)
+
     action = "updated" if original_group else "added"
     CONSOLE.print(
-        f"✅ Entry '[cyan]{entry_to_edit}[/cyan]' {action} in group '[cyan]{group_name}[/cyan]'."
+        f"✅ Entry '[cyan]{entry_to_edit}[/cyan]' {action} in group '[cyan]{group_name}[/cyan]' in {scope} scope."
     )
 
     if args.outfile:
@@ -207,50 +221,79 @@ def add_or_edit_export(args, entry_to_edit=None):
             f.write(f"{build_shell_command(new_entry)}\n")
 
 
-def edit_export(args):
-    data = read_registry(EXPORTS_JSON_PATH)
+def _get_env_name_from_dropdown(data, message="Select an environment entry"):
     all_entries = [name for group in data.values() for name in group]
     if not all_entries:
-        CONSOLE.print("[yellow]No entries to edit.[/yellow]")
-        return
-    prompt = inquirer.select(
-        message="Which entry do you want to edit?", choices=sorted(all_entries)
-    )
-    entry_to_edit = prompt_with_interrupt_handler(prompt)
+        CONSOLE.print("[yellow]No entries found.[/yellow]")
+        return None
+    return fuzzy_select(sorted(all_entries), message)
+
+
+def edit_export(args):
+    data = read_registry(EXPORTS_JSON_PATH)
+    entry_to_edit = _get_env_name_from_dropdown(data, "Which entry do you want to edit?")
+    if not entry_to_edit:
+        return 1
     add_or_edit_export(args, entry_to_edit=entry_to_edit)
 
 
 def remove_export(args):
     data = read_registry(EXPORTS_JSON_PATH)
-    all_entries = {
-        name: (group, obj)
-        for group, entries in data.items()
-        for name, obj in entries.items()
-    }
-    if not all_entries:
-        CONSOLE.print("[yellow]No entries to remove.[/yellow]")
-        return
-    prompt = inquirer.select(
-        message="Which entry do you want to remove?",
-        choices=sorted(list(all_entries.keys())),
-    )
-    entry_to_remove = prompt_with_interrupt_handler(prompt)
+    entry_to_remove = _get_env_name_from_dropdown(data, "Which entry do you want to remove?")
+    if not entry_to_remove:
+        return 1
+
+    group, entry_obj, scope = find_item_and_scope(EXPORTS_JSON_PATH, entry_to_remove)
+    if not group:
+        CONSOLE.print(f"[red]Error: Entry '{entry_to_remove}' not found.[/red]")
+        return 1
 
     prompt = inquirer.confirm(
-        message=f"Are you sure you want to remove '{entry_to_remove}'?", default=False
+        message=f"Are you sure you want to remove '{entry_to_remove}' from the {scope} config?", default=False, style=STYLE, vi_mode=True
     )
     if prompt_with_interrupt_handler(prompt):
-        group, entry_obj = all_entries[entry_to_remove]
-        del data[group][entry_to_remove]
-        if not data[group]:
-            del data[group]
-        write_registry(data, EXPORTS_JSON_PATH)
-        CONSOLE.print(f"✅ Entry '[cyan]{entry_to_remove}[/cyan]' removed.")
+        registry_to_write = read_registry(EXPORTS_JSON_PATH, read_local=False) if scope == "global" else read_registry(EXPORTS_JSON_PATH + ".local", read_local=False)
+        del registry_to_write[group][entry_to_remove]
+        if not registry_to_write[group]:
+            del registry_to_write[group]
+        write_registry(registry_to_write, EXPORTS_JSON_PATH, scope)
+        CONSOLE.print(f"✅ Entry '[cyan]{entry_to_remove}[/cyan]' removed from {scope} scope.")
         if args.outfile:
             var_name = entry_obj.get("var_name")
             if var_name:
                 with open(args.outfile, "w") as f:
                     f.write(f"unset {var_name}\n")
+
+def scope_export(args):
+    data = read_registry(EXPORTS_JSON_PATH)
+    entry_to_scope = _get_env_name_from_dropdown(data, "Which entry do you want to scope?")
+    if not entry_to_scope:
+        return 1
+
+    original_group, entry_obj, original_scope = find_item_and_scope(EXPORTS_JSON_PATH, entry_to_scope)
+    if not original_group:
+        CONSOLE.print(f"[red]Error: Entry '{entry_to_scope}' not found.[/red]")
+        return 1
+
+    new_scope = "local" if original_scope == "global" else "global"
+
+    # Remove from old scope
+    old_registry = read_registry(EXPORTS_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(EXPORTS_JSON_PATH + ".local", read_local=False)
+    del old_registry[original_group][entry_to_scope]
+    if not old_registry[original_group]:
+        del old_registry[original_group]
+    write_registry(old_registry, EXPORTS_JSON_PATH, original_scope)
+
+    # Add to new scope
+    new_registry = read_registry(EXPORTS_JSON_PATH, read_local=False) if new_scope == "global" else read_registry(EXPORTS_JSON_PATH + ".local", read_local=False)
+    if original_group not in new_registry:
+        new_registry[original_group] = {}
+    new_registry[original_group][entry_to_scope] = entry_obj
+    write_registry(new_registry, EXPORTS_JSON_PATH, new_scope)
+
+    CONSOLE.print(
+        f"✅ Entry '[cyan]{entry_to_scope}[/cyan]' moved to {new_scope} scope."
+    )
 
 
 def main():
@@ -264,6 +307,7 @@ def main():
     subparsers.add_parser("add", add_help=False).set_defaults(func=add_or_edit_export)
     subparsers.add_parser("edit", add_help=False).set_defaults(func=edit_export)
     subparsers.add_parser("rm", add_help=False).set_defaults(func=remove_export)
+    subparsers.add_parser("scope", add_help=False).set_defaults(func=scope_export)
     subparsers.add_parser("help", add_help=False).set_defaults(func=show_help)
     subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False).set_defaults(
         func=load_for_shell

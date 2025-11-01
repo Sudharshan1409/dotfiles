@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import subprocess
 import sys
 
 from InquirerPy import inquirer
@@ -11,7 +12,30 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
+from InquirerPy.utils import get_style
+
 CONSOLE = Console(stderr=True)
+
+STYLE = get_style(
+    {
+        "questionmark": "fg:#61afef",
+        "answer": "fg:#98c379",
+        "input": "fg:#98c379",
+        "question": "",
+        "instruction": "fg:#abb2bf",
+        "pointer": "fg:#61afef",
+        "checkbox": "fg:#98c379",
+        "separator": "fg:#abb2bf",
+        "skipped": "fg:#5c6370",
+        "validator": "fg:#c678dd",
+        "marker": "fg:#61afef",
+        "patch": "fg:#c678dd",
+        "fuzzy_prompt": "fg:#c678dd",
+        "fuzzy_info": "fg:#abb2bf",
+        "fuzzy_match": "fg:#c678dd bold",
+    },
+    style_override=False,
+)
 
 
 def prompt_with_interrupt_handler(prompt_func):
@@ -38,31 +62,50 @@ class StyledArgumentParser(argparse.ArgumentParser):
         sys.exit(2)
 
 
-def read_registry(path):
-    """Reads a JSON registry file from the given path."""
-    if not os.path.exists(path):
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w") as f:
-            json.dump({}, f)
-        return {}
-    try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except (json.JSONDecodeError, IOError):
-        CONSOLE.print(
-            f"[red]Error: Could not read or parse {os.path.basename(path)}.[/red]"
-        )
-        return {}
+def read_registry(path, read_local=True):
+    """Reads a JSON registry file, merging a .local file if it exists."""
+    global_data = {}
+    if os.path.exists(path):
+        try:
+            with open(path, "r") as f:
+                global_data = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            CONSOLE.print(
+                f"[red]Error: Could not read or parse {os.path.basename(path)}.[/red]"
+            )
+
+    if not read_local:
+        return global_data
+
+    local_path = path + ".local"
+    local_data = {}
+    if os.path.exists(local_path):
+        try:
+            with open(local_path, "r") as f:
+                local_data = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            CONSOLE.print(
+                f"[red]Error: Could not read or parse {os.path.basename(local_path)}.[/red]"
+            )
+
+    # Deep merge local_data into global_data
+    for group, items in local_data.items():
+        if group in global_data:
+            global_data[group].update(items)
+        else:
+            global_data[group] = items
+    return global_data
 
 
-def write_registry(data, path):
+def write_registry(data, path, scope="global"):
     """Writes a dictionary back to the specified JSON registry file."""
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    write_path = path if scope == "global" else path + ".local"
+    os.makedirs(os.path.dirname(write_path), exist_ok=True)
     try:
-        with open(path, "w") as f:
+        with open(write_path, "w") as f:
             json.dump(data, f, indent=4, sort_keys=True)
     except IOError:
-        CONSOLE.print(f"[red]Error: Could not write to {os.path.basename(path)}.[/red]")
+        CONSOLE.print(f"[red]Error: Could not write to {os.path.basename(write_path)}.[/red]")
 
 
 def find_item(data, item_name):
@@ -73,27 +116,94 @@ def find_item(data, item_name):
     return None, None
 
 
+def find_item_and_scope(path, item_name):
+    """Finds an item and determines if it's in the global or local scope."""
+    global_data = read_registry(path, read_local=False)
+    group, item = find_item(global_data, item_name)
+    if group:
+        return group, item, "global"
+
+    local_data = read_registry(path + ".local", read_local=False)
+    group, item = find_item(local_data, item_name)
+    if group:
+        return group, item, "local"
+
+    return None, None, None
+
+
+def fuzzy_select(choices, prompt_message):
+
+
+    """Uses fzf to present a fuzzy-findable list of choices."""
+
+
+    choices_str = "\n".join(map(str, choices))
+
+
+    try:
+
+
+        fzf_process = subprocess.run(
+
+
+            ["fzf", "--prompt", f"{prompt_message} ", "--height", "40%", "--reverse"],
+
+
+            input=choices_str, 
+
+
+            text=True, 
+
+
+            stdout=subprocess.PIPE, 
+
+
+            check=True
+
+
+        )
+
+
+        return fzf_process.stdout.strip()
+
+
+    except (subprocess.CalledProcessError, FileNotFoundError):
+
+
+        CONSOLE.print("\n[yellow]Operation cancelled or fzf not found.[/yellow]")
+
+
+        sys.exit(1)
+
+
+
+
+
+def get_scope_selection():
+    """Presents an interactive dropdown menu for scope selection."""
+    choices = [
+        "global       (recommended, tracked by git)",
+        "local        (system-specific, not tracked by git)",
+    ]
+    selection = fuzzy_select(choices, "Select a scope: ")
+    return selection.split()[0]
+
+
 def get_group_selection(data):
     """Presents an interactive dropdown menu for group selection."""
     existing_groups = sorted(list(data.keys()))
     CREATE_NEW = "[Create New Group]"
-    choices = [Choice(value=group, name=group) for group in existing_groups]
-    choices.extend(
-        [Separator(), Choice(value=CREATE_NEW, name="Create a new group...")]
-    )
-
-    prompt = inquirer.select(
-        message="Select a group:",
-        choices=choices,
-        default=choices[0].value if existing_groups else CREATE_NEW,
-    )
-    selection = prompt_with_interrupt_handler(prompt)
+    choices = existing_groups + [CREATE_NEW]
+    
+    selection = fuzzy_select(choices, "Select a group: ")
 
     if selection == CREATE_NEW:
         new_group_prompt = inquirer.text(
             message="Enter the new group name:",
             validate=lambda result: len(result) > 0,
             invalid_message="Group name cannot be empty.",
+            style=STYLE,
+            vi_mode=True,
         )
         return prompt_with_interrupt_handler(new_group_prompt)
     else:

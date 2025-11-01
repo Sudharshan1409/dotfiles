@@ -9,9 +9,13 @@ from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from lib.common import (
     CONSOLE,
+    STYLE,
     StyledArgumentParser,
     find_item,
+    find_item_and_scope,
+    fuzzy_select,
     get_group_selection,
+    get_scope_selection,
     print_help_panel,
     prompt_with_interrupt_handler,
     read_registry,
@@ -33,6 +37,7 @@ def show_help(args):
         "edit": "Interactively edits an existing function.",
         "rm": "Removes a function.",
         "mv": "Moves a function to a different group.",
+        "scope": "Move a function between global and local scopes.",
     }
     print_help_panel(title, command_name, commands)
 
@@ -71,6 +76,8 @@ def _get_function_type():
             Choice("python", "Python Script"),
         ],
         default="zsh",
+        style=STYLE,
+        vi_mode=True
     )
     return prompt_with_interrupt_handler(prompt)
 
@@ -105,6 +112,9 @@ def list_functions(args):
     if not data:
         CONSOLE.print("[yellow]Function registry is empty.[/yellow]")
         return
+
+    global_data = read_registry(FUNCTION_JSON_PATH, read_local=False)
+
     for group_name, functions in sorted(data.items()):
         table = Table(
             title=group_name,
@@ -115,13 +125,16 @@ def list_functions(args):
         table.add_column("Function", style="cyan", no_wrap=True)
         table.add_column("Type", style="yellow")
         table.add_column("Body")
+        table.add_column("Scope", style="yellow")
+
         for name, func_obj in sorted(functions.items()):
             func_type, body = func_obj.get("type", "zsh"), func_obj.get("body", "")
             lexer = "python" if func_type == "python" else "bash"
             syntax = Syntax(
                 body, lexer, theme="monokai", line_numbers=True, word_wrap=True
             )
-            table.add_row(name, func_type.capitalize(), syntax)
+            scope = "local" if name not in global_data.get(group_name, {}) else "global"
+            table.add_row(name, func_type.capitalize(), syntax, scope)
         CONSOLE.print(table)
 
 
@@ -137,11 +150,16 @@ def add_function(args):
         CONSOLE.print("Cancelled or empty body provided.")
         return 1
     group_name = get_group_selection(data)
-    if group_name not in data:
-        data[group_name] = {}
-    data[group_name][func_name] = {"type": func_type, "body": func_body}
-    write_registry(data, FUNCTION_JSON_PATH)
-    CONSOLE.print(f"✅ Function '{func_name}' added to group '{group_name}'.")
+    scope = get_scope_selection()
+
+    registry_to_write = read_registry(FUNCTION_JSON_PATH, read_local=False) if scope == "global" else read_registry(FUNCTION_JSON_PATH + ".local", read_local=False)
+
+    if group_name not in registry_to_write:
+        registry_to_write[group_name] = {}
+    registry_to_write[group_name][func_name] = {"type": func_type, "body": func_body}
+    write_registry(registry_to_write, FUNCTION_JSON_PATH, scope)
+
+    CONSOLE.print(f"✅ Function '{func_name}' added to group '{group_name}' in {scope} scope.")
     if args.outfile:
         with open(args.outfile, "w") as f:
             if func_type == "zsh":
@@ -150,21 +168,36 @@ def add_function(args):
                 f.write(f'{func_name}() {{ enigma func run {func_name} "$@" }}\n')
 
 
+def _get_func_name_from_dropdown(data, message="Select a function"):
+    all_funcs = [name for group in data.values() for name in group]
+    if not all_funcs:
+        CONSOLE.print("[yellow]No functions found.[/yellow]")
+        return None
+    return fuzzy_select(sorted(all_funcs), message)
+
+
 def edit_function(args):
     data = read_and_migrate_registry()
-    func_name = args.name
-    group, func_obj = find_item(data, func_name)
+    func_name = _get_func_name_from_dropdown(data, "Select a function to edit")
+    if not func_name:
+        return 1
+    
+    group, func_obj, scope = find_item_and_scope(FUNCTION_JSON_PATH, func_name)
     if not group:
         CONSOLE.print(f"[red]Error: Function '{func_name}' not found.[/red]")
         return 1
+
     func_type = func_obj.get("type", "zsh")
     new_body = invoke_editor(initial_content=func_obj["body"], func_type=func_type)
     if new_body is None:
         CONSOLE.print("Edit cancelled.")
         return 1
-    data[group][func_name]["body"] = new_body
-    write_registry(data, FUNCTION_JSON_PATH)
-    CONSOLE.print(f"✅ Function '{func_name}' updated.")
+
+    registry_to_write = read_registry(FUNCTION_JSON_PATH, read_local=False) if scope == "global" else read_registry(FUNCTION_JSON_PATH + ".local", read_local=False)
+    registry_to_write[group][func_name]["body"] = new_body
+    write_registry(registry_to_write, FUNCTION_JSON_PATH, scope)
+
+    CONSOLE.print(f"✅ Function '{func_name}' updated in {scope} scope.")
     if args.outfile:
         with open(args.outfile, "w") as f:
             f.write(f"unset -f {func_name}\n")
@@ -176,13 +209,17 @@ def edit_function(args):
 
 def move_function(args):
     data = read_and_migrate_registry()
-    func_name = args.name
-    original_group, func_data = find_item(data, func_name)
+    func_name = _get_func_name_from_dropdown(data, "Select a function to move")
+    if not func_name:
+        return 1
+    
+    original_group, func_data, scope = find_item_and_scope(FUNCTION_JSON_PATH, func_name)
     if not original_group:
         CONSOLE.print(
             f"[red]Error: Function '[cyan]{func_name}[/cyan]' not found.[/red]"
         )
         return 1
+
     CONSOLE.print(
         f"Moving function '[cyan]{func_name}[/cyan]' from group '[green]{original_group}[/green]'."
     )
@@ -190,38 +227,76 @@ def move_function(args):
     if new_group == original_group:
         CONSOLE.print("[yellow]New group is the same. No changes made.[/yellow]")
         return
-    del data[original_group][func_name]
-    if not data[original_group]:
-        del data[original_group]
-    if new_group not in data:
-        data[new_group] = {}
-    data[new_group][func_name] = func_data
-    write_registry(data, FUNCTION_JSON_PATH)
+
+    registry_to_write = read_registry(FUNCTION_JSON_PATH, read_local=False) if scope == "global" else read_registry(FUNCTION_JSON_PATH + ".local", read_local=False)
+    del registry_to_write[original_group][func_name]
+    if not registry_to_write[original_group]:
+        del registry_to_write[original_group]
+    if new_group not in registry_to_write:
+        registry_to_write[new_group] = {}
+    registry_to_write[new_group][func_name] = func_data
+    write_registry(registry_to_write, FUNCTION_JSON_PATH, scope)
+
     CONSOLE.print(
-        f"✅ Function '[cyan]{func_name}[/cyan]' moved to group '[green]{new_group}[/green]'."
+        f"✅ Function '[cyan]{func_name}[/cyan]' moved to group '[green]{new_group}[/green]' in {scope} scope."
     )
 
 
 def remove_function(args):
     data = read_and_migrate_registry()
-    func_name = args.name
-    group, _ = find_item(data, func_name)
+    func_name = _get_func_name_from_dropdown(data, "Select a function to remove")
+    if not func_name:
+        return 1
+    
+    group, _, scope = find_item_and_scope(FUNCTION_JSON_PATH, func_name)
     if not group:
         CONSOLE.print(f"[red]Error: Function '{func_name}' not found.[/red]")
         return 1
 
     prompt = inquirer.confirm(
-        message=f"Are you sure you want to remove '{func_name}'?", default=False
+        message=f"Are you sure you want to remove '{func_name}' from the {scope} config?", default=False, style=STYLE, vi_mode=True
     )
     if prompt_with_interrupt_handler(prompt):
-        del data[group][func_name]
-        if not data[group]:
-            del data[group]
-        write_registry(data, FUNCTION_JSON_PATH)
-        CONSOLE.print(f"✅ Function '{func_name}' removed.")
+        registry_to_write = read_registry(FUNCTION_JSON_PATH, read_local=False) if scope == "global" else read_registry(FUNCTION_JSON_PATH + ".local", read_local=False)
+        del registry_to_write[group][func_name]
+        if not registry_to_write[group]:
+            del registry_to_write[group]
+        write_registry(registry_to_write, FUNCTION_JSON_PATH, scope)
+        CONSOLE.print(f"✅ Function '{func_name}' removed from {scope} scope.")
         if args.outfile:
             with open(args.outfile, "w") as f:
                 f.write(f"unset -f {func_name}\n")
+
+def scope_function(args):
+    data = read_and_migrate_registry()
+    func_name = _get_func_name_from_dropdown(data, "Select a function to change scope")
+    if not func_name:
+        return 1
+
+    original_group, func_data, original_scope = find_item_and_scope(FUNCTION_JSON_PATH, func_name)
+    if not original_group:
+        CONSOLE.print(f"[red]Error: Function '[cyan]{func_name}[/cyan]' not found.[/red]")
+        return 1
+
+    new_scope = "local" if original_scope == "global" else "global"
+
+    # Remove from old scope
+    old_registry = read_registry(FUNCTION_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(FUNCTION_JSON_PATH + ".local", read_local=False)
+    del old_registry[original_group][func_name]
+    if not old_registry[original_group]:
+        del old_registry[original_group]
+    write_registry(old_registry, FUNCTION_JSON_PATH, original_scope)
+
+    # Add to new scope
+    new_registry = read_registry(FUNCTION_JSON_PATH, read_local=False) if new_scope == "global" else read_registry(FUNCTION_JSON_PATH + ".local", read_local=False)
+    if original_group not in new_registry:
+        new_registry[original_group] = {}
+    new_registry[original_group][func_name] = func_data
+    write_registry(new_registry, FUNCTION_JSON_PATH, new_scope)
+
+    CONSOLE.print(
+        f"✅ Function '[cyan]{func_name}[/cyan]' moved to {new_scope} scope."
+    )
 
 
 def load_for_shell(args):
@@ -262,14 +337,13 @@ def main():
     parser_add.add_argument("name")
     parser_add.set_defaults(func=add_function)
     parser_edit = subparsers.add_parser("edit", add_help=False)
-    parser_edit.add_argument("name")
     parser_edit.set_defaults(func=edit_function)
     parser_rm = subparsers.add_parser("rm", add_help=False)
-    parser_rm.add_argument("name")
     parser_rm.set_defaults(func=remove_function)
     parser_mv = subparsers.add_parser("mv", add_help=False)
-    parser_mv.add_argument("name")
     parser_mv.set_defaults(func=move_function)
+    parser_scope = subparsers.add_parser("scope", add_help=False)
+    parser_scope.set_defaults(func=scope_function)
     subparsers.add_parser("help", add_help=False).set_defaults(func=show_help)
     subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False).set_defaults(
         func=load_for_shell

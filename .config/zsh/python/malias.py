@@ -6,9 +6,13 @@ import sys
 from InquirerPy import inquirer
 from lib.common import (
     CONSOLE,
+    STYLE,
     StyledArgumentParser,
     find_item,
+    find_item_and_scope,
+    fuzzy_select,
     get_group_selection,
+    get_scope_selection,
     print_help_panel,
     prompt_with_interrupt_handler,
     read_registry,
@@ -30,6 +34,7 @@ def show_help(args):
         "edit": "Interactively edits an existing alias.",
         "rm": "Removes an alias.",
         "mv": "Moves an alias to a different group.",
+        "scope": "Move an alias between global and local scopes.",
     }
     print_help_panel(title, command_name, commands)
 
@@ -39,6 +44,9 @@ def list_aliases(args):
     if not data:
         CONSOLE.print("[yellow]Alias registry is empty.[/yellow]")
         return
+
+    global_data = read_registry(ALIAS_JSON_PATH, read_local=False)
+
     groups_to_display = data
     if args.group:
         canonical_group = next(
@@ -51,6 +59,7 @@ def list_aliases(args):
                 f"[red]❌ Error:[/red] Group '[b]{args.group}[/b]' not found."
             )
             return
+
     for group_name, aliases in sorted(groups_to_display.items()):
         table = Table(
             title=group_name,
@@ -61,11 +70,15 @@ def list_aliases(args):
         )
         table.add_column("Alias", style="cyan", no_wrap=True, min_width=5)
         table.add_column("Command", style="white")
+        table.add_column("Scope", style="yellow")
+
         if not aliases:
-            table.add_row("[dim]...empty...", "")
+            table.add_row("[dim]...empty...[/dim]", "", "")
         else:
             for name, command in sorted(aliases.items()):
-                table.add_row(name, command)
+                # Determine scope
+                scope = "local" if name not in global_data.get(group_name, {}) else "global"
+                table.add_row(name, command, scope)
         CONSOLE.print(table)
 
 
@@ -78,22 +91,24 @@ def add_alias(args):
         )
         return 1
 
-    # --- vvv THIS IS THE CORRECTED SECTION vvv ---
-    # Replace rich.prompt with InquirerPy and the interrupt handler
-    prompt = inquirer.text(message=f"Enter the command for the alias '{alias_name}':")
+    prompt = inquirer.text(message=f"Enter the command for the alias '{alias_name}':", style=STYLE, vi_mode=True)
     alias_command = prompt_with_interrupt_handler(prompt)
     if not alias_command:
         CONSOLE.print("[yellow]Command cannot be empty. Alias not added.[/yellow]")
         return 1
-    # --- ^^^ END OF CORRECTED SECTION ^^^ ---
 
     group_name = get_group_selection(data)
-    if group_name not in data:
-        data[group_name] = {}
-    data[group_name][alias_name] = alias_command
-    write_registry(data, ALIAS_JSON_PATH)
+    scope = get_scope_selection()
+
+    registry_to_write = read_registry(ALIAS_JSON_PATH, read_local=False) if scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
+
+    if group_name not in registry_to_write:
+        registry_to_write[group_name] = {}
+    registry_to_write[group_name][alias_name] = alias_command
+    write_registry(registry_to_write, ALIAS_JSON_PATH, scope)
+
     CONSOLE.print(
-        f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' added to group '[blue]{group_name}[/blue]'."
+        f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' added to group '[blue]{group_name}[/blue]' in {scope} scope."
     )
     if args.outfile:
         with open(args.outfile, "w") as f:
@@ -101,30 +116,42 @@ def add_alias(args):
             f.write(f"alias {alias_name}='{command_quoted}'\n")
 
 
+def _get_alias_name_from_dropdown(data, message="Select an alias"):
+    all_aliases = [name for group in data.values() for name in group]
+    if not all_aliases:
+        CONSOLE.print("[yellow]No aliases found.[/yellow]")
+        return None
+    return fuzzy_select(sorted(all_aliases), message)
+
+
 def edit_alias(args):
     data = read_registry(ALIAS_JSON_PATH)
-    alias_name = args.name
-    group, old_command = find_item(data, alias_name)
+    alias_name = _get_alias_name_from_dropdown(data, "Select an alias to edit")
+    if not alias_name:
+        return 1
+    
+    group, old_command, scope = find_item_and_scope(ALIAS_JSON_PATH, alias_name)
     if not group:
         CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
         )
         return 1
 
-    # --- vvv THIS IS THE CORRECTED SECTION vvv ---
     prompt = inquirer.text(
-        message=f"Enter the new command for '{alias_name}':", default=old_command
+        message=f"Enter the new command for '{alias_name}':", default=old_command, style=STYLE, vi_mode=True
     )
     new_command = prompt_with_interrupt_handler(prompt)
     if not new_command:
         CONSOLE.print("[yellow]Command cannot be empty. Alias not changed.[/yellow]")
         return 1
-    # --- ^^^ END OF CORRECTED SECTION ^^^ ---
 
-    data[group][alias_name] = new_command
-    write_registry(data, ALIAS_JSON_PATH)
+    # Read the specific registry (global or local) and update it
+    registry_to_write = read_registry(ALIAS_JSON_PATH, read_local=False) if scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
+    registry_to_write[group][alias_name] = new_command
+    write_registry(registry_to_write, ALIAS_JSON_PATH, scope)
+
     CONSOLE.print(
-        f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' updated successfully."
+        f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' updated successfully in {scope} scope."
     )
     if args.outfile:
         with open(args.outfile, "w") as f:
@@ -134,11 +161,15 @@ def edit_alias(args):
 
 def move_alias(args):
     data = read_registry(ALIAS_JSON_PATH)
-    alias_name = args.name
-    original_group, alias_body = find_item(data, alias_name)
+    alias_name = _get_alias_name_from_dropdown(data, "Select an alias to move")
+    if not alias_name:
+        return 1
+    
+    original_group, alias_body, scope = find_item_and_scope(ALIAS_JSON_PATH, alias_name)
     if not original_group:
         CONSOLE.print(f"[red]Error: Alias '[cyan]{alias_name}[/cyan]' not found.[/red]")
         return 1
+
     CONSOLE.print(
         f"Moving alias '[cyan]{alias_name}[/cyan]' from group '[blue]{original_group}[/blue]'."
     )
@@ -148,22 +179,29 @@ def move_alias(args):
             "[yellow]New group is the same as the old group. No changes made.[/yellow]"
         )
         return
-    del data[original_group][alias_name]
-    if not data[original_group]:
-        del data[original_group]
-    if new_group not in data:
-        data[new_group] = {}
-    data[new_group][alias_name] = alias_body
-    write_registry(data, ALIAS_JSON_PATH)
+
+    # Read the specific registry (global or local) and update it
+    registry_to_write = read_registry(ALIAS_JSON_PATH, read_local=False) if scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
+    del registry_to_write[original_group][alias_name]
+    if not registry_to_write[original_group]:
+        del registry_to_write[original_group]
+    if new_group not in registry_to_write:
+        registry_to_write[new_group] = {}
+    registry_to_write[new_group][alias_name] = alias_body
+    write_registry(registry_to_write, ALIAS_JSON_PATH, scope)
+
     CONSOLE.print(
-        f"✅ Alias '[cyan]{alias_name}[/cyan]' successfully moved to group '[blue]{new_group}[/blue]'."
+        f"✅ Alias '[cyan]{alias_name}[/cyan]' successfully moved to group '[blue]{new_group}[/blue]' in {scope} scope."
     )
 
 
 def remove_alias(args):
     data = read_registry(ALIAS_JSON_PATH)
-    alias_name = args.name
-    group, _ = find_item(data, alias_name)
+    alias_name = _get_alias_name_from_dropdown(data, "Select an alias to remove")
+    if not alias_name:
+        return 1
+    
+    group, _, scope = find_item_and_scope(ALIAS_JSON_PATH, alias_name)
     if not group:
         CONSOLE.print(
             f"[red]❌ Error:[/red] Alias '[bold cyan]{alias_name}[/bold cyan]' not found."
@@ -171,20 +209,54 @@ def remove_alias(args):
         return 1
 
     prompt = inquirer.confirm(
-        message=f"Are you sure you want to remove the alias '[bold cyan]{alias_name}[/bold cyan]'?",
+        message=f"Are you sure you want to remove the alias '[bold cyan]{alias_name}[/bold cyan]' from the {scope} config?",
         default=False,
+        style=STYLE,
+        vi_mode=True
     )
     if prompt_with_interrupt_handler(prompt):
-        del data[group][alias_name]
-        if not data[group]:
-            del data[group]
-        write_registry(data, ALIAS_JSON_PATH)
+        registry_to_write = read_registry(ALIAS_JSON_PATH, read_local=False) if scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
+        del registry_to_write[group][alias_name]
+        if not registry_to_write[group]:
+            del registry_to_write[group]
+        write_registry(registry_to_write, ALIAS_JSON_PATH, scope)
         CONSOLE.print(
-            f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' removed successfully."
+            f"✅ Alias '[bold cyan]{alias_name}[/bold cyan]' removed successfully from {scope} scope."
         )
         if args.outfile:
             with open(args.outfile, "w") as f:
                 f.write(f"unalias {alias_name}\n")
+
+def scope_alias(args):
+    data = read_registry(ALIAS_JSON_PATH)
+    alias_name = _get_alias_name_from_dropdown(data, "Select an alias to change scope")
+    if not alias_name:
+        return 1
+
+    original_group, alias_body, original_scope = find_item_and_scope(ALIAS_JSON_PATH, alias_name)
+    if not original_group:
+        CONSOLE.print(f"[red]Error: Alias '[cyan]{alias_name}[/cyan]' not found.[/red]")
+        return 1
+
+    new_scope = "local" if original_scope == "global" else "global"
+
+    # Remove from old scope
+    old_registry = read_registry(ALIAS_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
+    del old_registry[original_group][alias_name]
+    if not old_registry[original_group]:
+        del old_registry[original_group]
+    write_registry(old_registry, ALIAS_JSON_PATH, original_scope)
+
+    # Add to new scope
+    new_registry = read_registry(ALIAS_JSON_PATH, read_local=False) if new_scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
+    if original_group not in new_registry:
+        new_registry[original_group] = {}
+    new_registry[original_group][alias_name] = alias_body
+    write_registry(new_registry, ALIAS_JSON_PATH, new_scope)
+
+    CONSOLE.print(
+        f"✅ Alias '[cyan]{alias_name}[/cyan]' moved to {new_scope} scope."
+    )
 
 
 def load_for_shell(args):
@@ -215,11 +287,9 @@ def main():
     parser_edit = subparsers.add_parser(
         "edit", help="Edit an existing alias.", add_help=False
     )
-    parser_edit.add_argument("name")
     parser_rm = subparsers.add_parser("rm", help="Remove an alias.", add_help=False)
-    parser_rm.add_argument("name")
     parser_mv = subparsers.add_parser("mv", help="Move an alias.", add_help=False)
-    parser_mv.add_argument("name")
+    parser_scope = subparsers.add_parser("scope", help="Move an alias between scopes.", add_help=False)
     subparsers.add_parser("load", help=argparse.SUPPRESS, add_help=False)
     subparsers.add_parser("help", help="Show this help message.", add_help=False)
 
@@ -229,6 +299,7 @@ def main():
     parser_edit.set_defaults(func=edit_alias)
     parser_rm.set_defaults(func=remove_alias)
     parser_mv.set_defaults(func=move_alias)
+    parser_scope.set_defaults(func=scope_alias)
     subparsers.choices["load"].set_defaults(func=load_for_shell)
     subparsers.choices["help"].set_defaults(func=show_help)
 
