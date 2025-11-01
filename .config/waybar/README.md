@@ -18,14 +18,15 @@ This script will create a new file at `/etc/sudoers.d/waybar-scripts-enigma` wit
 
 ### Sudo Rules
 
-The script will add the following rules:
+The script will add the following rules to a file in `/etc/sudoers.d/`.
+It will automatically detect your username and the paths to `rfkill` and `wifi-menu.sh`.
 
 ```
-# Sudo rules for Waybar scripts for user enigma
+# Sudo rules for Waybar scripts for user <your_username>
 
-enigma ALL=(ALL) NOPASSWD: /home/linuxbrew/.linuxbrew/sbin/rfkill toggle bluetooth
-enigma ALL=(ALL) NOPASSWD: /home/linuxbrew/.linuxbrew/sbin/rfkill toggle wifi
-enigma ALL=(ALL) NOPASSWD: /home/enigma/dotfiles/.config/waybar/scripts/wifi-menu.sh
+<your_username> ALL=(ALL) NOPASSWD: <path_to_rfkill> toggle bluetooth
+<your_username> ALL=(ALL) NOPASSWD: <path_to_rfkill> toggle wifi
+<your_username> ALL=(ALL) NOPASSWD: <path_to_your_waybar_config>/scripts/wifi-menu.sh
 ```
 
 This allows your user to run the specified commands with `sudo` without being asked for a password.

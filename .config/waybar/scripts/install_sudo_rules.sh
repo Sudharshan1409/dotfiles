@@ -14,12 +14,19 @@ WAYBAR_CONFIG_DIR=$(dirname "$0")/..
 # Get absolute path
 WAYBAR_CONFIG_DIR=$(cd "$WAYBAR_CONFIG_DIR" && pwd)
 
+# Find the path to rfkill
+RFKILL_PATH=$(command -v rfkill)
+if [ -z "$RFKILL_PATH" ]; then
+  echo "Error: rfkill command not found." >&2
+  exit 1
+fi
+
 SUDO_RULES="
 # Sudo rules for Waybar scripts for user $USERNAME
 
 # Allow toggling bluetooth and wifi without password from Waybar scripts
-$USERNAME ALL=(ALL) NOPASSWD: /home/linuxbrew/.linuxbrew/sbin/rfkill toggle bluetooth
-$USERNAME ALL=(ALL) NOPASSWD: /home/linuxbrew/.linuxbrew/sbin/rfkill toggle wifi
+$USERNAME ALL=(ALL) NOPASSWD: $RFKILL_PATH toggle bluetooth
+$USERNAME ALL=(ALL) NOPASSWD: $RFKILL_PATH toggle wifi
 
 # Allow running the wifi menu script without password
 $USERNAME ALL=(ALL) NOPASSWD: $WAYBAR_CONFIG_DIR/scripts/wifi-menu.sh
