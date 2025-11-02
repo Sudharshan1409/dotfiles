@@ -49,22 +49,22 @@
     "hyprland/workspaces": {
         "format": "{id}",
         "all-outputs": true,
-        "on-scroll-up": "hyprctl dispatch workspace e+1",
-        "on-scroll-down": "hyprctl dispatch workspace e-1",
+        "show-special": true,
+        "sort-by-number": true,
         "persistent_workspaces": {
             "eDP-1": [
                 1,
-                2,
-                3
+                4,
+                7
             ],
             "HDMI-A-1": [
-                4,
+                2,
                 5,
-                6
+                8
             ],
             "DVI-I-1": [
-                7,
-                8,
+                3,
+                6,
                 9
             ]
         }
@@ -76,7 +76,7 @@
         "format": "{icon} {text}",
         "return-type": "json",
         "max-length": 30,
-        "exec": "playerctl -a metadata --format '{\"text\": \"{{markup_escape(artist)}} - {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(artist)}} - {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+        "exec": "playerctl -a metadata --format '{\"text\": \"{{markup_escape(artist)}} - {{markup_escape(title)}}\", \"tooltip\": \"<b>Player:</b> {{playerName}} | <b>Artist:</b> {{markup_escape(artist)}} | <b>Title:</b> {{markup_escape(title)}} | <b>Album:</b> {{markup_escape(album)}} | <b>Track:</b> {{xesam:trackNumber}} | <b>Duration:</b> {{duration(mpris:length)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
         "on-click": "playerctl play-pause",
         "on-scroll-up": "playerctl next",
         "on-scroll-down": "playerctl previous"

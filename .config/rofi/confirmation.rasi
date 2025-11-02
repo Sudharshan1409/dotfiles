@@ -36,7 +36,7 @@ window {
 
     border-radius:    10px;
 
-    width:            300px;
+    width:            600px;
 
     location:         center;
 
@@ -86,7 +86,7 @@ listview {
 
     columns:    1;
 
-    lines:      5; /* <-- CHANGED FROM 4 TO 5 */
+    lines:      2;
 
     spacing:    15px;
 

@@ -3,7 +3,7 @@ return {
 	cmd = "Commentless",
 	keys = {
 		{
-			"<leader>/",
+			"<leader>c",
 			function()
 				require("commentless").toggle()
 			end,

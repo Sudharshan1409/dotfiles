@@ -2,3 +2,4 @@ plugin/packer_compiled.lua
 pack
 .DS_Store
 .session.nvim
+GEMINI.md
