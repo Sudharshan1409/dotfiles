@@ -18,6 +18,7 @@ from lib.common import (
     print_help_panel,
     prompt_with_interrupt_handler,
     read_registry,
+    scope_item,
     write_registry,
 )
 from rich import box
@@ -186,46 +187,7 @@ def remove_project(args):
         CONSOLE.print(f"✅ Project '[cyan]{proj_name}[/cyan]' removed from {scope} scope.")
 
 def scope_project(args):
-    data = read_registry(PROJECTS_JSON_PATH)
-    proj_name = _get_project_name_from_dropdown(data, "Select a project to change scope")
-    if not proj_name:
-        return 1
-
-    original_group, proj_data, original_scope = find_item_and_scope(PROJECTS_JSON_PATH, proj_name)
-    if not original_group:
-        CONSOLE.print(f"[red]Error: Project '[cyan]{proj_name}[/cyan]' not found.[/red]")
-        return 1
-
-    new_scope = "local" if original_scope == "global" else "global"
-
-    CONSOLE.print(f"Project '[cyan]{proj_name}[/cyan]' is currently in the [yellow]{original_scope}[/yellow] scope.")
-    prompt = inquirer.confirm(
-        message=f"Move to {new_scope} scope?",
-        default=True,
-        style=STYLE,
-        vi_mode=True
-    )
-    if not prompt_with_interrupt_handler(prompt):
-        CONSOLE.print("[yellow]Operation cancelled.[/yellow]")
-        return
-
-    # Remove from old scope
-    old_registry = read_registry(PROJECTS_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
-    del old_registry[original_group][proj_name]
-    if not old_registry[original_group]:
-        del old_registry[original_group]
-    write_registry(old_registry, PROJECTS_JSON_PATH, original_scope)
-
-    # Add to new scope
-    new_registry = read_registry(PROJECTS_JSON_PATH, read_local=False) if new_scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
-    if original_group not in new_registry:
-        new_registry[original_group] = {}
-    new_registry[original_group][proj_name] = proj_data
-    write_registry(new_registry, PROJECTS_JSON_PATH, new_scope)
-
-    CONSOLE.print(
-        f"✅ Project '[cyan]{proj_name}[/cyan]' moved to {new_scope} scope."
-    )
+    scope_item("Project", PROJECTS_JSON_PATH, _get_project_name_from_dropdown)
 
 
 def launch_project(args):

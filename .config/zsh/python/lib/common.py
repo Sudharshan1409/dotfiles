@@ -223,3 +223,45 @@ def print_help_panel(title, command_name, commands):
         help_text, title=f"[bold white]{title}[/bold white]", border_style="dim"
     )
     CONSOLE.print(panel)
+
+def scope_item(item_type, json_path, get_item_name_from_dropdown):
+    data = read_registry(json_path)
+    item_name = get_item_name_from_dropdown(data, f"Select an {item_type.lower()} to change scope")
+    if not item_name:
+        return 1
+
+    original_group, item_body, original_scope = find_item_and_scope(json_path, item_name)
+    if not original_group:
+        CONSOLE.print(f"[red]Error: {item_type} '[cyan]{item_name}[/cyan]' not found.[/red]")
+        return 1
+
+    new_scope = "local" if original_scope == "global" else "global"
+    
+    CONSOLE.print(f"{item_type} '[cyan]{item_name}[/cyan]' is currently in the [yellow]{original_scope}[/yellow] scope.")
+    prompt = inquirer.confirm(
+        message=f"Move to {new_scope} scope?",
+        default=True,
+        style=STYLE,
+        vi_mode=True
+    )
+    if not prompt_with_interrupt_handler(prompt):
+        CONSOLE.print("[yellow]Operation cancelled.[/yellow]")
+        return
+
+    # Remove from old scope
+    old_registry = read_registry(json_path, read_local=False) if original_scope == "global" else read_registry(json_path + ".local", read_local=False)
+    del old_registry[original_group][item_name]
+    if not old_registry[original_group]:
+        del old_registry[original_group]
+    write_registry(old_registry, json_path, original_scope)
+
+    # Add to new scope
+    new_registry = read_registry(json_path, read_local=False) if new_scope == "global" else read_registry(json_path + ".local", read_local=False)
+    if original_group not in new_registry:
+        new_registry[original_group] = {}
+    new_registry[original_group][item_name] = item_body
+    write_registry(new_registry, json_path, new_scope)
+
+    CONSOLE.print(
+        f"✅ {item_type} '[cyan]{item_name}[/cyan]' moved to {new_scope} scope."
+    )

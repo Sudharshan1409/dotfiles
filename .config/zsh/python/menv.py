@@ -18,6 +18,7 @@ from lib.common import (
     print_help_panel,
     prompt_with_interrupt_handler,
     read_registry,
+    scope_item,
     write_registry,
 )
 from rich import box
@@ -265,46 +266,7 @@ def remove_export(args):
                     f.write(f"unset {var_name}\n")
 
 def scope_export(args):
-    data = read_registry(EXPORTS_JSON_PATH)
-    entry_to_scope = _get_env_name_from_dropdown(data, "Which entry do you want to scope?")
-    if not entry_to_scope:
-        return 1
-
-    original_group, entry_obj, original_scope = find_item_and_scope(EXPORTS_JSON_PATH, entry_to_scope)
-    if not original_group:
-        CONSOLE.print(f"[red]Error: Entry '{entry_to_scope}' not found.[/red]")
-        return 1
-
-    new_scope = "local" if original_scope == "global" else "global"
-
-    CONSOLE.print(f"Entry '[cyan]{entry_to_scope}[/cyan]' is currently in the [yellow]{original_scope}[/yellow] scope.")
-    prompt = inquirer.confirm(
-        message=f"Move to {new_scope} scope?",
-        default=True,
-        style=STYLE,
-        vi_mode=True
-    )
-    if not prompt_with_interrupt_handler(prompt):
-        CONSOLE.print("[yellow]Operation cancelled.[/yellow]")
-        return
-
-    # Remove from old scope
-    old_registry = read_registry(EXPORTS_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(EXPORTS_JSON_PATH + ".local", read_local=False)
-    del old_registry[original_group][entry_to_scope]
-    if not old_registry[original_group]:
-        del old_registry[original_group]
-    write_registry(old_registry, EXPORTS_JSON_PATH, original_scope)
-
-    # Add to new scope
-    new_registry = read_registry(EXPORTS_JSON_PATH, read_local=False) if new_scope == "global" else read_registry(EXPORTS_JSON_PATH + ".local", read_local=False)
-    if original_group not in new_registry:
-        new_registry[original_group] = {}
-    new_registry[original_group][entry_to_scope] = entry_obj
-    write_registry(new_registry, EXPORTS_JSON_PATH, new_scope)
-
-    CONSOLE.print(
-        f"✅ Entry '[cyan]{entry_to_scope}[/cyan]' moved to {new_scope} scope."
-    )
+    scope_item("Entry", EXPORTS_JSON_PATH, _get_env_name_from_dropdown)
 
 
 def main():
