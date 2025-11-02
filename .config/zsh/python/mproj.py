@@ -292,8 +292,6 @@ def main():
     parser_mv.set_defaults(func=move_project)
     parser_scope = subparsers.add_parser("scope", add_help=False)
     parser_scope.set_defaults(func=scope_project)
-    parser_scope = subparsers.add_parser("scope", add_help=False)
-    parser_scope.set_defaults(func=scope_project)
     # --- ^^^ END OF CORRECTED PARSER SETUP ^^^ ---
 
     subparsers.add_parser("help", add_help=False).set_defaults(func=show_help)
