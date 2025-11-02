@@ -27,8 +27,7 @@ This configuration depends on a number of external packages. Here is a list of t
 - `sway-notification-center`: The notification daemon.
 - `hyprpaper`: The wallpaper daemon.
 - `hypridle`: The idle daemon.
-- `hyprlock`: The screen locker.
-- `rofi`: The application launcher.
+- `walker`: A custom application launcher.
 - `kitty`: The terminal emulator.
 - `nautilus`: The file manager.
 
@@ -95,11 +94,19 @@ yay -S catppuccin-cursors-mocha
 - `sublime-text-4`: The text editor.
 - `onlyoffice-desktopeditors`: The office suite.
 - `localsend-bin`: The file sharing application.
-- `walker`: A custom application launcher.
+- `rofi`: The application launcher.
 - `elephant`, `elephant-desktopapplications`: Custom desktop applications.
 
 **Installation:**
 ```bash
 sudo pacman -S brave-browser spotify-launcher pavucontrol blueman gnome-calculator blueberry qemu retroarch steam vlc mpv kdenlive obs-studio pinta imv alacritty ghostty sublime-text-4 onlyoffice-desktopeditors
 yay -S localsend-bin walker elephant elephant-desktopapplications
+```
+
+## Script Permissions
+
+Before the scripts in the `scripts/` directory can be used, they need to be made executable. You can do this by running the following command:
+
+```bash
+chmod +x ~/.config/hypr/scripts/*.sh
 ```

@@ -59,6 +59,7 @@ element-text {
     horizontal-align: 0.5;
 }
 
+
 element selected {
     background-color: @selected;
     text-color:       @background-alt;

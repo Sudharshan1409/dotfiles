@@ -106,3 +106,12 @@ The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts now use `rfkill` from you
     ```
     enigma ALL=(ALL) NOPASSWD: /usr/sbin/rfkill
     ```
+
+## Script Permissions
+
+Before the scripts in the `scripts/` directory can be used, they need to be made executable. You can do this by running the following command:
+
+```bash
+chmod +x ~/.config/waybar/scripts/*.sh
+chmod +x ~/.config/waybar/scripts/*.py
+```
