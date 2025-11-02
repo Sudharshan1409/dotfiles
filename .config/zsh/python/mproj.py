@@ -198,6 +198,17 @@ def scope_project(args):
 
     new_scope = "local" if original_scope == "global" else "global"
 
+    CONSOLE.print(f"Project '[cyan]{proj_name}[/cyan]' is currently in the [yellow]{original_scope}[/yellow] scope.")
+    prompt = inquirer.confirm(
+        message=f"Move to {new_scope} scope?",
+        default=True,
+        style=STYLE,
+        vi_mode=True
+    )
+    if not prompt_with_interrupt_handler(prompt):
+        CONSOLE.print("[yellow]Operation cancelled.[/yellow]")
+        return
+
     # Remove from old scope
     old_registry = read_registry(PROJECTS_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
     del old_registry[original_group][proj_name]

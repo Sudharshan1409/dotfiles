@@ -239,6 +239,17 @@ def scope_alias(args):
         return 1
 
     new_scope = "local" if original_scope == "global" else "global"
+    
+    CONSOLE.print(f"Alias '[cyan]{alias_name}[/cyan]' is currently in the [yellow]{original_scope}[/yellow] scope.")
+    prompt = inquirer.confirm(
+        message=f"Move to {new_scope} scope?",
+        default=True,
+        style=STYLE,
+        vi_mode=True
+    )
+    if not prompt_with_interrupt_handler(prompt):
+        CONSOLE.print("[yellow]Operation cancelled.[/yellow]")
+        return
 
     # Remove from old scope
     old_registry = read_registry(ALIAS_JSON_PATH, read_local=False) if original_scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
