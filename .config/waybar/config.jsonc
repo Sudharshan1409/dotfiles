@@ -103,7 +103,7 @@
         "interval": 5,
         "exec": "~/.config/waybar/scripts/bluetooth-manager.sh",
         "on-click": "~/.config/waybar/scripts/toggle-bluetooth.sh",
-        "on-click-right": "blueberry"
+        "on-click-right": "~/.config/waybar/scripts/launch_bluetooth.sh"
     },
     "custom/cpu": {
         "format": "󰾆 {}%",
