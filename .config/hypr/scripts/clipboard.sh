@@ -20,7 +20,7 @@ rofi_exit_code=$?
 case "$rofi_exit_code" in
   0) 
     # Entry selected, decode and copy
-    echo "$selection" | sed 's/^[0-9]\+\t//' | cliphist decode | wl-copy
+    echo "$selection" | cliphist decode | wl-copy
     ;; 
   1) 
     # Cancelled
