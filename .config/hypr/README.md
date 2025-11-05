@@ -77,36 +77,7 @@ sudo pacman -S grim slurp satty
 ```bash
 sudo apt install grim slurp
 ```
-**Note:** `satty` is not available in the default Ubuntu repositories. It needs to be built from source.
-
-To install `satty` on Ubuntu, follow these steps:
-
-1. Install the required dependencies:
-   ```bash
-   sudo apt update && sudo apt install -y libgtk-4-1 libadwaita-1-dev libgdk-pixbuf-2.0-dev cargo git build-essential
-   ```
-
-2. Clone the `satty` repository:
-   ```bash
-   git clone https://github.com/noornee/satty.git
-   ```
-
-3. Build the project:
-   ```bash
-   cd satty
-   cargo build --release
-   ```
-
-4. Move the binary to your local bin directory:
-   ```bash
-   sudo mv target/release/satty /usr/local/bin/
-   ```
-
-5. Remove the cloned repository:
-   ```bash
-   cd ..
-   rm -rf satty
-   ```
+**Note:** `satty` is not available in the default Ubuntu repositories. It needs to be built from source. See the [satty GitHub page](https://github.com/gabm/satty) for instructions.
 
 ### Theming
 - `qt5ct`: For Qt5 theme configuration.
