@@ -24,7 +24,6 @@ local act = wezterm.action
 
 ---@class Config
 local config = wezterm.config_builder()
-config.enable_wayland = false
 
 config.mouse_bindings = {
 	{

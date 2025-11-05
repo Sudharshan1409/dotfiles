@@ -55,6 +55,7 @@
         "proj": "z ~/projects",
         "shellconf": "z ~/.config/zsh",
         "sketchyconf": "z ~/.config/sketchybar",
+        "swayconf": "z ~/.config/swaync",
         "tmuxconf": "z ~/.config/tmux",
         "vimconf": "z ~/.config/nvim",
         "wayconf": "z ~/.config/waybar",
