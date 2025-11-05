@@ -77,7 +77,13 @@ sudo pacman -S grim slurp satty
 ```bash
 sudo apt install grim slurp
 ```
-**Note:** `satty` is not available in the default Ubuntu repositories. It needs to be built from source. See the [satty GitHub page](https://github.com/gabm/satty) for instructions.
+For Satty, clone the repository, build from source, and copy the binary to `/usr/local/bin`:
+```bash
+git clone https://github.com/Satty-org/Satty.git
+cd Satty
+cargo build --release
+sudo cp target/release/satty /usr/local/bin
+```
 
 ### Theming
 - `qt5ct`: For Qt5 theme configuration.
