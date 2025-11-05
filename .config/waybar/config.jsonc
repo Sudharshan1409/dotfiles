@@ -30,7 +30,8 @@
         "backlight",
         "pulseaudio",
         "pulseaudio#microphone",
-        "custom/power"
+        "custom/power",
+        "custom/swaync"
     ],
     // #######################################################################################
     // #  Left Modules Configuration                                                         #
@@ -176,5 +177,10 @@
         "format": "⏻",
         "tooltip": false,
         "on-click": "~/.config/waybar/scripts/power-menu.sh"
+    },
+    "custom/swaync": {
+        "format": "󰂚",
+        "tooltip": false,
+        "on-click": "~/.config/waybar/scripts/swaync-client.sh"
     }
 }
