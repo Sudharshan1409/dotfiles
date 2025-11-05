@@ -4,56 +4,68 @@ This repository contains configuration files for various tools and applications.
 
 ## Configurations
 
-- **Aerospace**: Configuration files for aerospace-related tools.
-
-  - [Aerospace README](.config/aerospace/README.md)
-
-- **Git**: Configuration files for Git version control system.
-
-  - [Git README](.config/git/README.md)
-
-- **Hypr**: Configuration files for Hyprland, a dynamic tiling Wayland compositor.
-
-  - [Hypr README](.config/hypr/README.md)
-
-- **Kitty**: Configuration files for Kitty, a fast, feature-rich, GPU-accelerated terminal emulator.
-
-  - [Kitty README](.config/kitty/README.md)
-
-- **Neovim**: Configuration files for Neovim, a highly customizable text editor.
-
-  - [Neovim README](.config/nvim/README.md)
-
-- **SketchyBar**: Configuration files for SketchyBar, a customizable status bar for macOS.
-
-  - [SketchyBar README](.config/sketchybar/README.md)
-
-- **Tmux**: Configuration files for Tmux, a terminal multiplexer.
-
-  - [Tmux README](.config/tmux/README.md)
-
-- **Waybar**: Configuration files for Waybar, a highly customizable Wayland bar for Sway and Wlroots based compositors.
-
-  - [Waybar README](.config/waybar/README.md)
-
-- **WezTerm**: Configuration files for WezTerm, a GPU-accelerated terminal emulator.
-
-  - [WezTerm README](.config/wezterm/README.md)
-
-- **Yazi**: Configuration files for Yazi, a terminal file manager.
-
-  - [Yazi README](.config/yazi/README.md)
-
-- **Zellij**: Configuration files for Zellij, a terminal workspace and multiplexer.
-
-  - [Zellij README](.config/zellij/README.md)
+### Shell & Terminal
 
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
 
   - [Zsh README](.config/zsh/README.md)
 
+- **Kitty**: Configuration files for Kitty, a fast, feature-rich, GPU-accelerated terminal emulator.
+
+  - [Kitty README](.config/kitty/README.md)
+
+- **WezTerm**: Configuration files for WezTerm, a GPU-accelerated terminal emulator.
+
+  - [WezTerm README](.config/wezterm/README.md)
+
+- **Tmux**: Configuration files for Tmux, a terminal multiplexer.
+
+  - [Tmux README](.config/tmux/README.md)
+
+- **Zellij**: Configuration files for Zellij, a terminal workspace and multiplexer.
+
+  - [Zellij README](.config/zellij/README.md)
+
+### Desktop & Window Management
+
+- **Hypr**: Configuration files for Hyprland, a dynamic tiling Wayland compositor.
+
+  - [Hypr README](.config/hypr/README.md)
+
+- **Waybar**: Configuration files for Waybar, a highly customizable Wayland bar for Sway and Wlroots based compositors.
+
+  - [Waybar README](.config/waybar/README.md)
+
+- **Swaync**: Configuration for Swaync, a notification daemon for Wayland.
+
+  - [Swaync README](.config/swaync/README.md)
+
+- **Aerospace**: Configuration files for aerospace-related tools.
+
+  - [Aerospace README](.config/aerospace/README.md)
+
+- **SketchyBar**: Configuration files for SketchyBar, a customizable status bar for macOS.
+
+  - [SketchyBar README](.config/sketchybar/README.md)
+
+### Development
+
+- **Neovim**: Configuration files for Neovim, a highly customizable text editor.
+
+  - [Neovim README](.config/nvim/README.md)
+
+- **Git**: Configuration files for Git version control system.
+
+  - [Git README](.config/git/README.md)
+
+### Command-Line Tools
+
 - **Bat**: Configuration files for Bat, a better alternative for Cat command.
   - [Bat README](.config/bat/README.md)
+
+- **Yazi**: Configuration files for Yazi, a terminal file manager.
+
+  - [Yazi README](.config/yazi/README.md)
 
 ## Usage
 
