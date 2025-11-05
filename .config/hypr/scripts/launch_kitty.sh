@@ -11,7 +11,7 @@ if [ "$active_window_class" = "kitty" ]; then
 
     for pid in $shell_pids; do
         cwd=$(readlink "/proc/$pid/cwd")
-        if [ "$cwd" != "/home/enigma" ]; then
+        if [ "$cwd" != "$HOME" ]; then
             kitty --directory "$cwd" &
             exit 0
         fi
