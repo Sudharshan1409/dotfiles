@@ -33,7 +33,22 @@ case "$1" in
     os)
         echo "$OS_STRING"
         ;;
-    system)
-        echo "$UPTIME  |  $PACKAGES"
+    uptime)
+        echo "$UPTIME"
+        ;;
+    packages)
+        echo "$PACKAGES"
+        ;;
+    kernel)
+        echo " Kernel: $(uname -r)"
+        ;;
+    shell)
+        echo " Shell: $($SHELL --version | head -n 1)"
+        ;;
+    cpu)
+        echo " CPU: $(lscpu | grep "Model name" | sed 's/Model name:[ \t]*//')"
+        ;;
+    gpu)
+        echo " GPU: $(lspci | grep -E "VGA|3D" | sed 's/.*: //')"
         ;;
 esac
