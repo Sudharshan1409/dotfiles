@@ -38,7 +38,15 @@ sudo pacman -S hyprland waybar sway-notification-center hyprpaper hypridle hyprl
 **Ubuntu Installation:**
 ```bash
 sudo add-apt-repository ppa:cppiber/hyprland -y && sudo apt update
-sudo apt install hyprland waybar sway-notification-center hyprpaper hypridle hyprlock rofi kitty nautilus
+sudo apt install hyprland waybar sway-notification-center hyprpaper hypridle rofi kitty nautilus
+```
+
+**Note:** `hyprlock` may not be available in the PPA. If it is not, you can build it from source:
+```bash
+git clone https://github.com/hyprwm/hyprlock.git
+cd hyprlock
+make all
+sudo make install
 ```
 
 ### System Utilities
