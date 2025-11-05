@@ -40,7 +40,7 @@ This repository contains configuration files for various tools and applications.
 
   - [Waybar README](.config/waybar/README.md)
 
-  - **Note on Bluetooth**: The Waybar configuration uses an OS-specific script to launch the appropriate Bluetooth manager. On Arch Linux, it uses `blueberry`, and on Ubuntu, it uses `blueman-manager`.
+  - **Note on Bluetooth**: The Waybar configuration uses an OS-specific script to launch the appropriate Bluetooth manager. On Arch Linux, it uses `blueberry`, and on Ubuntu, it uses `bzmenu`.
 
 - **Swaync**: Configuration for Swaync, a notification daemon for Wayland.
 
