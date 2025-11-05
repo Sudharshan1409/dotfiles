@@ -115,10 +115,11 @@
         }
     },
     "custom/memory": {
-        "tooltip": true,
-        "format": "🧠 {}",
+        "return-type": "json",
+        "format": "{}",
         "interval": 30,
-        "exec": "free -h | awk '/^Mem:/ {print $3 \"/\" $2}'"
+        "exec": "~/.config/waybar/scripts/memory.sh",
+        "on-click": "kitty htop"
     },
     "battery": {
         "states": {
