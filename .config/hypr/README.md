@@ -59,7 +59,7 @@ sudo pacman -S polkit-gnome wl-clipboard cliphist network-manager-applet pipewir
 
 **Ubuntu Installation:**
 ```bash
-sudo apt install policykit-1-gnome wl-clipboard network-manager-applet pipewire-pulse brightnessctl libnotify4 procps coreutils util-linux findutils
+sudo apt install policykit-1-gnome wl-clipboard network-manager-gnome pipewire-pulse brightnessctl libnotify4 procps coreutils util-linux findutils
 ```
 **Note:** `cliphist` is not available in the default Ubuntu repositories. It needs to be installed from source.
 

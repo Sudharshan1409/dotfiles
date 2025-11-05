@@ -51,10 +51,45 @@ sudo pacman -S rofi networkmanager network-manager-applet rfkill playerctl brigh
 
 **Ubuntu / Debian:**
 ```bash
-sudo apt-get install rofi network-manager network-manager-applet rfkill playerctl brightnessctl pamixer hyprlock blueberry
+sudo apt-get install rofi network-manager network-manager-gnome rfkill playerctl brightnessctl pamixer hyprlock
 ```
 
-*Note: `hyprlock` and `blueberry` may not be available in the default Ubuntu/Debian repositories. You may need to install them from another source if you are using Hyprland or require the Blueberry utility on these distributions.*
+*Note: `hyprlock` may not be available in the default Ubuntu/Debian repositories. You may need to install it from another source if you are using Hyprland.*
+
+**Installing Hyprlock on Ubuntu from Source:**
+
+If `hyprlock` is not available in your repository, you can build and install it from source:
+
+```bash
+git clone https://github.com/hyprwm/hyprlock.git
+cd hyprlock
+make all
+sudo make install
+```
+
+**Installing Blueberry on Ubuntu from Source:**
+
+If `blueberry` is not available in your repository, you can build and install it from source:
+
+```bash
+# 1. Install general build dependencies
+sudo apt update
+sudo apt install -y git build-essential devscripts fakeroot \
+  python3 python3-gi python3-dbus python3-gi-cairo \
+  gir1.2-gtk-3.0 gir1.2-glib-2.0 gir1.2-notify-0.7
+
+# 2. Clone the Blueberry repository
+git clone https://github.com/linuxmint/blueberry.git
+cd blueberry
+
+# 3. Build the package using dpkg-buildpackage
+dpkg-buildpackage -b -us -uc
+
+# 4. Install the resulting .deb package
+cd ..
+sudo dpkg -i blueberry*.deb
+sudo apt -f install
+```
 
 ## Autostarting `nm-applet`
 
@@ -76,18 +111,21 @@ Once `nm-applet` is running, its icon should appear in the `tray` module of your
 
 ## Sudo Configuration
 
-The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts now use `rfkill` from your system's `PATH`. They require `sudo` to execute the `rfkill` command. To avoid entering your password every time you toggle Wi-Fi or Bluetooth, you can add a rule to your `sudoers` file.
+The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts use `rfkill` and require `sudo` to execute. To avoid entering your password every time, you can add rules to your `sudoers` file.
+
+There might be two different `rfkill` executables on your system, one in your user's path and another in the `sudo` secure path. You should add rules for both.
 
 **Warning:** Editing the `sudoers` file can have serious consequences if done incorrectly. Always use `sudo visudo` to edit this file, as it will validate the syntax before saving.
 
-1.  **Find your username by running this command:**
+1.  **Find your username:**
     ```bash
     whoami
     ```
 
-2.  **Find the path to the `rfkill` executable by running this command:**
+2.  **Find the paths to the `rfkill` executables:**
     ```bash
     which rfkill
+    sudo which rfkill
     ```
 
 3.  **Open the `sudoers` file for editing:**
@@ -95,15 +133,17 @@ The `toggle-bluetooth.sh` and `toggle-wifi.sh` scripts now use `rfkill` from you
     sudo visudo
     ```
 
-4.  **Add the following line to the end of the file.** Replace `<username>` with the output from step 1 and `<path_to_rfkill>` with the output from step 2.
+4.  **Add the following lines to the end of the file.** Replace `<username>` with your username and the paths with the output from the commands above.
 
     ```
-    <username> ALL=(ALL) NOPASSWD: <path_to_rfkill>
+    <username> ALL=(ALL) NOPASSWD: <path_to_rfkill_from_which>
+    <username> ALL=(ALL) NOPASSWD: <path_to_rfkill_from_sudo_which>
     ```
 
-    For example, if your username is `enigma` and `rfkill` is located at `/usr/sbin/rfkill`, the line would look like this:
+    For example, if your username is `enigma`, `which rfkill` returns `/home/linuxbrew/.linuxbrew/sbin/rfkill`, and `sudo which rfkill` returns `/usr/sbin/rfkill`, you would add:
 
     ```
+    enigma ALL=(ALL) NOPASSWD: /home/linuxbrew/.linuxbrew/sbin/rfkill
     enigma ALL=(ALL) NOPASSWD: /usr/sbin/rfkill
     ```
 
