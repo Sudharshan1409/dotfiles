@@ -302,12 +302,17 @@ scrollbar trough {
 }
 
 .widget-volume label {
+  font-size: 1.5rem;
   color: #85c1dc;
   padding: 0 1rem;
 }
 
 .widget-volume trough highlight {
   background: #85c1dc;
+}
+
+.widget-backlight {
+  padding: 1rem 0;
 }
 
 .widget-backlight trough highlight {
@@ -317,11 +322,10 @@ scrollbar trough {
 .widget-backlight label {
   font-size: 1.5rem;
   color: #e5c890;
+  padding: 0 1rem;
 }
 
-.widget-backlight .KB {
-  padding-bottom: 1rem;
-}
+.widget-backlight .KB {}
 
 .image {
   padding-right: 0.5rem;
