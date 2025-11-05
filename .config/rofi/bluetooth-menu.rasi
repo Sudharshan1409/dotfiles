@@ -44,8 +44,6 @@ prompt {
 
 entry {
     background-color: inherit;
-    placeholder:      "Search Devices...";
-    placeholder-color: @foreground;
 }
 
 listview {
