@@ -4,7 +4,8 @@ This repository contains configuration files for various tools and applications.
 
 ## Configurations
 
-### Shell & Terminal
+<details>
+<summary>Shell & Terminal</summary>
 
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
 
@@ -26,7 +27,10 @@ This repository contains configuration files for various tools and applications.
 
   - [Zellij README](.config/zellij/README.md)
 
-### Desktop & Window Management
+</details>
+
+<details>
+<summary>Desktop & Window Management</summary>
 
 - **Hypr**: Configuration files for Hyprland, a dynamic tiling Wayland compositor.
 
@@ -48,7 +52,10 @@ This repository contains configuration files for various tools and applications.
 
   - [SketchyBar README](.config/sketchybar/README.md)
 
-### Development
+</details>
+
+<details>
+<summary>Development</summary>
 
 - **Neovim**: Configuration files for Neovim, a highly customizable text editor.
 
@@ -58,7 +65,10 @@ This repository contains configuration files for various tools and applications.
 
   - [Git README](.config/git/README.md)
 
-### Command-Line Tools
+</details>
+
+<details>
+<summary>Command-Line Tools</summary>
 
 - **Bat**: Configuration files for Bat, a better alternative for Cat command.
   - [Bat README](.config/bat/README.md)
@@ -66,6 +76,8 @@ This repository contains configuration files for various tools and applications.
 - **Yazi**: Configuration files for Yazi, a terminal file manager.
 
   - [Yazi README](.config/yazi/README.md)
+
+</details>
 
 ## Usage
 
