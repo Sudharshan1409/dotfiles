@@ -1,9 +1,6 @@
 #!/bin/zsh
 
-# Source the cache manager
-source "$HOME/.config/zsh/cache_manager.sh"
-
-# --- Paths (moved to cache_manager.sh) ---
+# --- Paths ---
 _VENV_DIR="$HOME/.config/zsh/venv"
 _PYTHON_DIR="$HOME/.config/zsh/python"
 _PYTHON_VENV_EXECUTABLE="$_VENV_DIR/bin/python3"
@@ -39,8 +36,8 @@ if [ ! -f "$_MALIAS_PY_SCRIPT" ]; then
     return 1
 fi
 
-# --- ALIAS LOADER (now handled by cache_manager.sh) ---
-_load_cache
+# --- ALIAS LOADER ---
+eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MALIAS_PY_SCRIPT" load)"
 
 # --- INTERNAL MANAGEMENT FUNCTION ---
 function _malias_cmd() {
@@ -53,7 +50,6 @@ function _malias_cmd() {
             local exit_code=$?
             if [[ $exit_code -eq 0 && -s "$tmpfile" ]]; then
                 source "$tmpfile"
-                _generate_cache # Regenerate cache after modification
             fi
             rm -f "$tmpfile"
             ;;

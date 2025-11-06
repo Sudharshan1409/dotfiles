@@ -1,8 +1,5 @@
 #!/bin/zsh
 
-# Source the cache manager
-source "$HOME/.config/zsh/cache_manager.sh"
-
 # --- Paths ---
 _PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
 _MFUNC_PY_SCRIPT="$HOME/.config/zsh/python/mfunc.py"
@@ -13,8 +10,7 @@ if [ ! -f "$_MFUNC_PY_SCRIPT" ]; then
     return 1
 fi
 
-# --- FUNCTION LOADER (now handled by cache_manager.sh) ---
-_load_cache
+eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MFUNC_PY_SCRIPT" load)"
 
 # --- INTERNAL MANAGEMENT FUNCTION ---
 function _mfunc_cmd() {
@@ -27,7 +23,6 @@ function _mfunc_cmd() {
             local exit_code=$?
             if [[ $exit_code -eq 0 && -s "$tmpfile" ]]; then
                 source "$tmpfile"
-                _generate_cache # Regenerate cache after modification
             fi
             rm -f "$tmpfile"
             ;;

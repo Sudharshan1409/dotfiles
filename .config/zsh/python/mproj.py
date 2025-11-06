@@ -5,7 +5,6 @@ import sys
 
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
-from InquirerPy.utils import get_style
 from lib.common import (
     CONSOLE,
     STYLE,
@@ -63,7 +62,9 @@ def list_projects(args):
 
         for name, proj_obj in sorted(projects.items()):
             scope = "local" if name not in global_data.get(group_name, {}) else "global"
-            table.add_row(name, proj_obj.get("path"), proj_obj.get("description", ""), scope)
+            table.add_row(
+                name, proj_obj.get("path"), proj_obj.get("description", ""), scope
+            )
         CONSOLE.print(table)
 
 
@@ -79,17 +80,26 @@ def add_project(args):
     CONSOLE.print(
         f"Adding new project '[cyan]{proj_name}[/cyan]' with path '[yellow]{proj_path}[/yellow]'."
     )
-    prompt = inquirer.text(message="Enter a short description (optional):", style=STYLE, vi_mode=True)
+    prompt = inquirer.text(
+        message="Enter a short description (optional):", style=STYLE, vi_mode=True
+    )
     proj_desc = prompt_with_interrupt_handler(prompt)
     group_name = get_group_selection(data)
     scope = get_scope_selection()
 
-    registry_to_write = read_registry(PROJECTS_JSON_PATH, read_local=False) if scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+    registry_to_write = (
+        read_registry(PROJECTS_JSON_PATH, read_local=False)
+        if scope == "global"
+        else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+    )
 
     if group_name not in registry_to_write:
         registry_to_write[group_name] = {}
 
-    registry_to_write[group_name][proj_name] = {"path": proj_path, "description": proj_desc}
+    registry_to_write[group_name][proj_name] = {
+        "path": proj_path,
+        "description": proj_desc,
+    }
     write_registry(registry_to_write, PROJECTS_JSON_PATH, scope)
     CONSOLE.print(
         f"✅ Project '[cyan]{proj_name}[/cyan]' added to group '[magenta]{group_name}[/magenta]' in {scope} scope."
@@ -110,7 +120,7 @@ def edit_project(args):
     proj_name = _get_project_name_from_dropdown(data, "Select a project to edit")
     if not proj_name:
         return 1
-    
+
     group, proj_obj, scope = find_item_and_scope(PROJECTS_JSON_PATH, proj_name)
     if not group:
         CONSOLE.print(f"[red]Error: Project '{proj_name}' not found.[/red]")
@@ -119,13 +129,24 @@ def edit_project(args):
     CONSOLE.print(
         f"Editing project '[cyan]{proj_name}[/cyan]'. Current values are defaults."
     )
-    prompt = inquirer.text(message="Path:", default=proj_obj.get("path"), style=STYLE, vi_mode=True)
+    prompt = inquirer.text(
+        message="Path:", default=proj_obj.get("path"), style=STYLE, vi_mode=True
+    )
     new_path = prompt_with_interrupt_handler(prompt)
 
-    prompt = inquirer.text(message="Description:", default=proj_obj.get("description"), style=STYLE, vi_mode=True)
+    prompt = inquirer.text(
+        message="Description:",
+        default=proj_obj.get("description"),
+        style=STYLE,
+        vi_mode=True,
+    )
     new_desc = prompt_with_interrupt_handler(prompt)
 
-    registry_to_write = read_registry(PROJECTS_JSON_PATH, read_local=False) if scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+    registry_to_write = (
+        read_registry(PROJECTS_JSON_PATH, read_local=False)
+        if scope == "global"
+        else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+    )
     registry_to_write[group][proj_name] = {"path": new_path, "description": new_desc}
     write_registry(registry_to_write, PROJECTS_JSON_PATH, scope)
     CONSOLE.print(f"✅ Project '[cyan]{proj_name}[/cyan]' updated in {scope} scope.")
@@ -136,10 +157,14 @@ def move_project(args):
     proj_name = _get_project_name_from_dropdown(data, "Select a project to move")
     if not proj_name:
         return 1
-    
-    original_group, proj_data, scope = find_item_and_scope(PROJECTS_JSON_PATH, proj_name)
+
+    original_group, proj_data, scope = find_item_and_scope(
+        PROJECTS_JSON_PATH, proj_name
+    )
     if not original_group:
-        CONSOLE.print(f"[red]Error: Project '[cyan]{proj_name}[/cyan]' not found.[/red]")
+        CONSOLE.print(
+            f"[red]Error: Project '[cyan]{proj_name}[/cyan]' not found.[/red]"
+        )
         return 1
 
     CONSOLE.print(
@@ -150,7 +175,11 @@ def move_project(args):
         CONSOLE.print("[yellow]New group is the same. No changes made.[/yellow]")
         return
 
-    registry_to_write = read_registry(PROJECTS_JSON_PATH, read_local=False) if scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+    registry_to_write = (
+        read_registry(PROJECTS_JSON_PATH, read_local=False)
+        if scope == "global"
+        else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+    )
     del registry_to_write[original_group][proj_name]
     if not registry_to_write[original_group]:
         del registry_to_write[original_group]
@@ -169,22 +198,32 @@ def remove_project(args):
     proj_name = _get_project_name_from_dropdown(data, "Select a project to remove")
     if not proj_name:
         return 1
-    
+
     group, _, scope = find_item_and_scope(PROJECTS_JSON_PATH, proj_name)
     if not group:
         CONSOLE.print(f"[red]Error: Project '{proj_name}' not found.[/red]")
         return 1
 
     prompt = inquirer.confirm(
-        message=f"Are you sure you want to remove project '{proj_name}' from the {scope} config?", default=False, style=STYLE, vi_mode=True
+        message=f"Are you sure you want to remove project '{proj_name}' from the {scope} config?",
+        default=False,
+        style=STYLE,
+        vi_mode=True,
     )
     if prompt_with_interrupt_handler(prompt):
-        registry_to_write = read_registry(PROJECTS_JSON_PATH, read_local=False) if scope == "global" else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+        registry_to_write = (
+            read_registry(PROJECTS_JSON_PATH, read_local=False)
+            if scope == "global"
+            else read_registry(PROJECTS_JSON_PATH + ".local", read_local=False)
+        )
         del registry_to_write[group][proj_name]
         if not registry_to_write[group]:
             del registry_to_write[group]
         write_registry(registry_to_write, PROJECTS_JSON_PATH, scope)
-        CONSOLE.print(f"✅ Project '[cyan]{proj_name}[/cyan]' removed from {scope} scope.")
+        CONSOLE.print(
+            f"✅ Project '[cyan]{proj_name}[/cyan]' removed from {scope} scope."
+        )
+
 
 def scope_project(args):
     scope_item("Project", PROJECTS_JSON_PATH, _get_project_name_from_dropdown)
