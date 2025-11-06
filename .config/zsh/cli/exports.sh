@@ -1,10 +1,14 @@
-#!/bin/bash
+#!/bin/zsh
+
+# Source the cache manager
+source "$HOME/.config/zsh/cache_manager.sh"
 
 _PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
 _MENV_PY_SCRIPT="$HOME/.config/zsh/python/menv.py"
 
 # On shell startup, execute the python script's 'load' command.
-eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" load)"
+# Now handled by cache_manager.sh
+_load_cache
 
 # --- INTERNAL MANAGEMENT FUNCTION ---
 function _menv_cmd() {
@@ -17,6 +21,7 @@ function _menv_cmd() {
             local exit_code=$?
             if [[ $exit_code -eq 0 && -s "$tmpfile" ]]; then
                 source "$tmpfile"
+                _generate_cache # Regenerate cache after modification
             fi
             rm -f "$tmpfile"
             ;;

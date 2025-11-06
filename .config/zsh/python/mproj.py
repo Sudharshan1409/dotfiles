@@ -206,12 +206,10 @@ def launch_project(args):
         Choice(value=proj_data, name=f"{proj_data[0]} ({proj_data[1].get('path')})")
         for proj_data in all_projects
     ]
-    style = get_style(STYLE, style_override=False)
-
     prompt = inquirer.select(
         message="Select a project to launch:",
         choices=choices,
-        style=style,
+        style=STYLE,
         vi_mode=True,
     )
     selected_proj_data = prompt_with_interrupt_handler(prompt)

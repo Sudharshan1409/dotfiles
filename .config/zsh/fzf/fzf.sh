@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --zsh)"

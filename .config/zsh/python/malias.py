@@ -100,6 +100,7 @@ def add_alias(args):
 
     group_name = get_group_selection(data)
     scope = get_scope_selection()
+    print(f"DEBUG: The selected scope is: {scope}")
 
     registry_to_write = read_registry(ALIAS_JSON_PATH, read_local=False) if scope == "global" else read_registry(ALIAS_JSON_PATH + ".local", read_local=False)
 
