@@ -49,10 +49,6 @@
         "serve": {
             "body": "# Start a simple Python web server in the current directory.\nlocal port=\"${1:-8000}\"\nlocal ip\nip=$(ifconfig en0 | grep \"inet \" | cut -d \" \" -f 2)\necho \"Serving HTTP on http://${ip}:${port}/ and http://0.0.0.0:${port}/ ...\"\necho \"Press Ctrl-C to stop.\"\n# The -u flag ensures output is not buffered, so it stops cleanly.\npython3 -u -m http.server \"$port\"",
             "type": "zsh"
-        },
-        "wezterm": {
-            "body": "if command -v wezterm >/dev/null 2>&1; then\n    command wezterm \"$@\"\nelse\n    flatpak run org.wezfurlong.wezterm \"$@\"\nfi",
-            "type": "zsh"
         }
     },
     "Tmux": {
