@@ -5,7 +5,7 @@ _PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
 _MENV_PY_SCRIPT="$HOME/.config/zsh/python/menv.py"
 
 # On shell startup, execute the python script's 'load' command.
-eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" load)"
+_load_cache "exports.sh" $_PYTHON_VENV_EXECUTABLE $_MENV_PY_SCRIPT
 
 # --- INTERNAL MANAGEMENT FUNCTION ---
 function _menv_cmd() {
@@ -28,9 +28,9 @@ function _menv_cmd() {
 }
 
 # Pass completion from Homebrew
-fpath+=("$(brew --prefix pass)/share/zsh/site-functions")
-
-autoload -Uz compinit
-compinit
-
+# fpath+=("$(brew --prefix pass)/share/zsh/site-functions")
+#
+# autoload -Uz compinit
+# compinit
+#
 source "$HOME/.config/zsh/fzf/fzf.sh"

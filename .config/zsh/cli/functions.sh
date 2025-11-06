@@ -10,7 +10,7 @@ if [ ! -f "$_MFUNC_PY_SCRIPT" ]; then
     return 1
 fi
 
-eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MFUNC_PY_SCRIPT" load)"
+_load_cache "functions.sh" $_PYTHON_VENV_EXECUTABLE $_MFUNC_PY_SCRIPT
 
 # --- INTERNAL MANAGEMENT FUNCTION ---
 function _mfunc_cmd() {

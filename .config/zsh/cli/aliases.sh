@@ -37,7 +37,8 @@ if [ ! -f "$_MALIAS_PY_SCRIPT" ]; then
 fi
 
 # --- ALIAS LOADER ---
-eval "$("$_PYTHON_VENV_EXECUTABLE" "$_MALIAS_PY_SCRIPT" load)"
+
+_load_cache "aliases.sh" $_PYTHON_VENV_EXECUTABLE $_MALIAS_PY_SCRIPT
 
 # --- INTERNAL MANAGEMENT FUNCTION ---
 function _malias_cmd() {
