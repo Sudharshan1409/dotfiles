@@ -48,27 +48,11 @@
         "tooltip": true
     },
     "hyprland/workspaces": {
-        "format": "{id}",
+        "format": "{name}",
         "all-outputs": true,
         "show-special": true,
         "sort-by-number": true,
-        "persistent_workspaces": {
-            "eDP-1": [
-                1,
-                4,
-                7
-            ],
-            "HDMI-A-1": [
-                2,
-                5,
-                8
-            ],
-            "DVI-I-1": [
-                3,
-                6,
-                9
-            ]
-        }
+        "persistent_workspaces": {}
     },
     // #######################################################################################
     // #  Center Module Configuration                                                        #
