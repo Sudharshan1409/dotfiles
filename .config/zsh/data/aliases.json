@@ -2,6 +2,7 @@
     "Basic": {
         "cat": "bat",
         "cl": "clear && printf \"\\e[3J\"",
+        "hello": "echo \"hello world\"",
         "pyglobalenv": "source ~/venv/bin/activate",
         "refresh": "source ~/.zshrc",
         "src": "source ~/.zshrc",
@@ -47,6 +48,7 @@
         "desk": "z ~/Desktop",
         "dotfiles": "z ~/dotfiles",
         "down": "z ~/Downloads",
+        "ghosttyconf": "z ~/.config/ghostty",
         "gitconf": "z ~/.config/git",
         "home": "z ~",
         "hyprconf": "z ~/.config/hypr",
@@ -55,6 +57,7 @@
         "proj": "z ~/projects",
         "shellconf": "z ~/.config/zsh",
         "sketchyconf": "z ~/.config/sketchybar",
+        "starconf": "z ~/.config/starship",
         "swayconf": "z ~/.config/swaync",
         "tmuxconf": "z ~/.config/tmux",
         "vimconf": "z ~/.config/nvim",

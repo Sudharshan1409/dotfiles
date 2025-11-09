@@ -1,23 +1,33 @@
 #!/bin/bash
 
+# Soft pastel colors
+GREEN="<span foreground='#8FBC8F'>"   # soft sage green
+YELLOW="<span foreground='#E6DDAA'>"  # muted warm yellow
+RESET="</span>"
+
 players=$(playerctl -l 2>/dev/null)
 
-# Prioritize players that are currently playing
+# Check for playing players
 for player in $players; do
     status=$(playerctl -p "$player" status 2>/dev/null)
     if [ "$status" = "Playing" ]; then
-        echo "󰎈 Now Playing: $(playerctl -p "$player" metadata artist) - $(playerctl -p "$player" metadata title)"
+        artist=$(playerctl -p "$player" metadata artist)
+        title=$(playerctl -p "$player" metadata title)
+        echo "${GREEN}󰎈 Now Playing:${RESET} $artist - $title"
         exit
     fi
 done
 
-# If no player is playing, check for paused players
+# Check for paused players
 for player in $players; do
     status=$(playerctl -p "$player" status 2>/dev/null)
     if [ "$status" = "Paused" ]; then
-        echo "󰏤 Paused: $(playerctl -p "$player" metadata artist) - $(playerctl -p "$player" metadata title)"
+        artist=$(playerctl -p "$player" metadata artist)
+        title=$(playerctl -p "$player" metadata title)
+        echo "${YELLOW}󰏤 Paused:${RESET} $artist - $title"
         exit
     fi
 done
 
 echo ""
+

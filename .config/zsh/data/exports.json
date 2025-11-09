@@ -11,12 +11,6 @@
             "type": "path",
             "value": "~/.npm-global/bin",
             "var_name": "PATH"
-        },
-        "starship_config": {
-            "os": "any",
-            "type": "variable",
-            "value": "~/.config/starship/starship.toml",
-            "var_name": "STARSHIP_CONFIG"
         }
     },
     "System (Linux)": {
