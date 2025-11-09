@@ -23,11 +23,13 @@ function _mfunc_cmd() {
             local exit_code=$?
             if [[ $exit_code -eq 0 && -s "$tmpfile" ]]; then
                 source "$tmpfile"
+                _generate_cache "functions.sh" $_PYTHON_VENV_EXECUTABLE $_MALIAS_PY_SCRIPT
             fi
             rm -f "$tmpfile"
             ;;
         *)
             "$_PYTHON_VENV_EXECUTABLE" "$_MFUNC_PY_SCRIPT" "$@"
+            _generate_cache "functions.sh" $_PYTHON_VENV_EXECUTABLE $_MALIAS_PY_SCRIPT
             ;;
     esac
 }

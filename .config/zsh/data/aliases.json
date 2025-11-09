@@ -2,7 +2,6 @@
     "Basic": {
         "cat": "bat",
         "cl": "clear && printf \"\\e[3J\"",
-        "hello": "echo \"hello world\"",
         "pyglobalenv": "source ~/venv/bin/activate",
         "refresh": "source ~/.zshrc",
         "src": "source ~/.zshrc",
