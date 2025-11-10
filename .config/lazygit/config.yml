@@ -1,0 +1,205 @@
+gui:
+  # Show file icons (requires a Nerd Font)
+  showFileIcons: true
+  # Show branch heads with divergence info
+  showBranchCommitHash: true
+  # Compact side panels
+  sidePanelWidth: 0.3333
+  # Show command log
+  showCommandLog: false
+  # Expanded commit length
+  commitLength:
+    show: true
+  # Mouse support
+  mouseEvents: true
+  # Skip unnecessary prompts
+  skipDiscardChangeWarning: false
+  skipStashWarning: false
+  skipNoStagedFilesWarning: false
+  skipRewordInEditorWarning: false
+  # Border style: 'single' | 'double' | 'rounded' | 'hidden'
+  border: "rounded"
+  # Animated loading
+  showListFooter: true
+  showFileTree: true
+  showRandomTip: true
+  # Diff options
+  expandFocusedSidePanel: false
+  mainPanelSplitMode: "flexible"
+  theme:
+    activeBorderColor:
+      - "#a6e3a1" # Green
+      - bold
+    inactiveBorderColor:
+      - "#585b70" # Gray
+    optionsTextColor:
+      - "#89b4fa" # Blue
+    selectedLineBgColor:
+      - "#313244" # Dark gray
+    selectedRangeBgColor:
+      - "#45475a" # Medium gray
+    cherryPickedCommitBgColor:
+      - "#94e2d5" # Teal
+    cherryPickedCommitFgColor:
+      - "#89b4fa" # Blue
+    unstagedChangesColor:
+      - "#f38ba8" # Red
+    defaultFgColor:
+      - "#cdd6f4" # Light text
+    searchingActiveBorderColor:
+      - "#f9e2af" # Yellow
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never --line-numbers
+  commit:
+    signOff: false
+    autoWrapCommitMessage: true
+    autoWrapWidth: 72
+  merging:
+    manualCommit: false
+    args: ""
+  # Skip hooks if needed
+  skipHookPrefix: WIP
+  # Auto-fetch interval (0 to disable)
+  autoFetch: true
+  autoRefresh: true
+  branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --"
+  overrideGpg: false
+  disableForcePushing: false
+  parseEmoji: true
+  allBranchesLogCmds:
+    - git log --graph --all --color=always --abbrev-commit --decorate --date=relative --pretty=medium
+# Refresh settings
+refresher:
+  refreshInterval: 10
+  fetchInterval: 60
+# Confirmation prompts
+confirmOnQuit: false
+# Quit without confirm
+quitOnTopLevelReturn: false
+# Disable update check
+update:
+  method: never
+# Custom commands
+customCommands:
+  - key: "<c-p>"
+    command: "git push --force-with-lease"
+    context: "global"
+    description: "Force push with lease"
+  - key: "<c-a>"
+    command: "git commit --amend --no-edit"
+    context: "files"
+    loadingText: "Amending commit..."
+    description: "Amend commit without editing message"
+  - key: "E"
+    command: 'git commit --allow-empty -m "Empty commit"'
+    context: "commits"
+    description: "Create empty commit"
+  - key: "<c-r>"
+    command: "git rebase -i HEAD~10"
+    context: "commits"
+    description: "Interactive rebase last 10 commits"
+# Keybindings
+keybinding:
+  universal:
+    quit: "q"
+    quit-alt1: "<c-c>"
+    return: "<esc>"
+    quitWithoutChangingDirectory: "Q"
+    togglePanel: "<tab>"
+    prevItem: "<up>"
+    nextItem: "<down>"
+    prevItem-alt: "k"
+    nextItem-alt: "j"
+    prevPage: ","
+    nextPage: "."
+    gotoTop: "<"
+    gotoBottom: ">"
+    scrollLeft: "H"
+    scrollRight: "L"
+    prevBlock: "<left>"
+    nextBlock: "<right>"
+    prevBlock-alt: "h"
+    nextBlock-alt: "l"
+    jumpToBlock: ["1", "2", "3", "4", "5"]
+    nextMatch: "n"
+    prevMatch: "N"
+    optionMenu: "?"
+    optionMenu-alt1: <disabled>
+    select: "<space>"
+    goInto: "<enter>"
+    openRecentRepos: "<c-r>"
+    confirm: "<enter>"
+    remove: "d"
+    new: "n"
+    edit: "e"
+    openFile: "o"
+    scrollUpMain: "<pgup>"
+    scrollDownMain: "<pgdown>"
+    scrollUpMain-alt1: "K"
+    scrollDownMain-alt1: "J"
+    scrollUpMain-alt2: "<c-u>"
+    scrollDownMain-alt2: "<c-d>"
+    executeShellCommand: ":"
+    createRebaseOptionsMenu: "m"
+    pushFiles: "P"
+    pullFiles: "p"
+    refresh: "R"
+    createPatchOptionsMenu: "<c-p>"
+    nextTab: "]"
+    prevTab: "["
+    nextScreenMode: "+"
+    prevScreenMode: "_"
+    undo: "z"
+    redo: "<c-z>"
+    filteringMenu: "<c-s>"
+    diffingMenu: "W"
+    diffingMenu-alt: "<c-e>"
+    copyToClipboard: "<c-o>"
+    submitEditorText: "<enter>"
+    extrasMenu: "@"
+    toggleWhitespaceInDiffView: "<c-w>"
+    increaseContextInDiffView: "}"
+    decreaseContextInDiffView: "{"
+  status:
+    checkForUpdate: "u"
+    recentRepos: "<enter>"
+  files:
+    commitChanges: "c"
+    commitChangesWithoutHook: "w"
+    amendLastCommit: "A"
+    commitChangesWithEditor: "C"
+    ignoreFile: "i"
+    refreshFiles: "r"
+    stashAllChanges: "s"
+    viewStashOptions: "S"
+    toggleStagedAll: "a"
+    viewResetOptions: "D"
+    fetch: "f"
+    toggleTreeView: "`"
+  branches:
+    createPullRequest: "o"
+    viewPullRequestOptions: "O"
+    checkoutBranchByName: "c"
+    forceCheckoutBranch: "F"
+    rebaseBranch: "r"
+    renameBranch: "R"
+    mergeIntoCurrentBranch: "M"
+    viewGitFlowOptions: "i"
+    fastForward: "f"
+    pushTag: "P"
+    setUpstream: "u"
+    fetchRemote: "f"
+# OS-specific settings
+os:
+  editCommand: ""
+  editCommandTemplate: "{{editor}} {{filename}}"
+  openCommand: ""
+  openLinkCommand: ""
+# Disable startup popup
+disableStartupPopups: false
+# Notifications
+notARepository: "prompt"
+# Prompt to confirm on force push
+promptToReturnFromSubprocess: true
