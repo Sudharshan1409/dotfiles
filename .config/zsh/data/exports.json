@@ -2,38 +2,51 @@
     "General": {
         "bat_theme": {
             "os": "any",
+            "priority": 10,
             "type": "variable",
             "value": "tokyonight_night",
             "var_name": "BAT_THEME"
         },
         "npm_global_path": {
             "os": "any",
+            "priority": 10,
             "type": "path",
             "value": "~/.npm-global/bin",
             "var_name": "PATH"
+        },
+        "starship_config": {
+            "os": "any",
+            "priority": 10,
+            "type": "variable",
+            "value": "$HOME/.config/starship/starship.toml",
+            "var_name": "STARSHIP_CONFIG"
         }
     },
     "System (Linux)": {
         "Flatpak": {
             "os": "Linux",
+            "priority": 10,
             "type": "variable",
             "value": "/var/lib/flatpak/exports/share:/home/enigma/.local/share/flatpak/exports/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}",
             "var_name": "XDG_DATA_DIRS"
         },
         "brew_shellenv_linux": {
             "os": "Linux",
+            "priority": 1,
             "type": "eval",
             "value": "/home/linuxbrew/.linuxbrew/bin/brew shellenv",
             "var_name": ""
         },
         "ssh_add_linux": {
             "os": "Linux",
+            "priority": 10,
             "type": "run",
             "value": "ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1",
             "var_name": ""
         },
         "tmux_path_linux": {
             "os": "Linux",
+            "priority": 10,
             "type": "variable",
             "value": "/home/linuxbrew/.linuxbrew/bin/tmux",
             "var_name": "TMUX_PATH"
@@ -42,26 +55,37 @@
     "System (any)": {
         "ssh_agent": {
             "os": "any",
+            "priority": 2,
             "type": "eval",
             "value": "ssh-agent -s | grep '^SSH_'",
+            "var_name": ""
+        },
+        "starship": {
+            "os": "any",
+            "priority": 5,
+            "type": "eval",
+            "value": "starship init zsh",
             "var_name": ""
         }
     },
     "System (macOS)": {
         "brew_shellenv_mac": {
             "os": "Darwin",
+            "priority": 1,
             "type": "eval",
             "value": "/opt/homebrew/bin/brew shellenv",
             "var_name": ""
         },
         "ssh_add_mac": {
             "os": "Darwin",
+            "priority": 10,
             "type": "run",
             "value": "ssh-add --apple-use-keychain ~/.ssh/id_ed25519 > /dev/null 2>&1",
             "var_name": ""
         },
         "tmux_path_mac": {
             "os": "Darwin",
+            "priority": 10,
             "type": "variable",
             "value": "/opt/homebrew/bin/tmux",
             "var_name": "TMUX_PATH"

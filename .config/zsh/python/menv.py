@@ -66,10 +66,18 @@ def build_shell_command(entry_obj):
 def load_for_shell(args):
     data = read_registry(EXPORTS_JSON_PATH)
     current_os = get_current_os()
+    
+    all_entries = []
     for entries in data.values():
         for entry_obj in entries.values():
             if entry_obj.get("os", "any") in ("any", current_os):
-                print(build_shell_command(entry_obj))
+                all_entries.append(entry_obj)
+                
+    # Sort by priority, lower numbers first. Default to 10 if not set.
+    all_entries.sort(key=lambda x: x.get("priority", 10))
+    
+    for entry_obj in all_entries:
+        print(build_shell_command(entry_obj))
 
 
 def list_exports(args):
@@ -91,6 +99,7 @@ def list_exports(args):
         table.add_column("Name", style="cyan", no_wrap=True)
         table.add_column("Type", style="yellow")
         table.add_column("OS", style="green")
+        table.add_column("Priority", style="magenta")
         table.add_column("Variable Name")
         table.add_column("Value")
         table.add_column("Scope", style="yellow")
@@ -107,6 +116,7 @@ def list_exports(args):
                 name,
                 entry_obj.get("type", "N/A"),
                 entry_obj.get("os", "N/A"),
+                str(entry_obj.get("priority", 10)),
                 var_name_display,
                 entry_obj.get("value", ""),
                 scope,
@@ -183,6 +193,17 @@ def add_or_edit_export(args, entry_to_edit=None):
     )
     entry_os = prompt_with_interrupt_handler(prompt)
 
+    prompt = inquirer.number(
+        message="Set a priority for this entry (lower number runs first):",
+        default=original_obj.get("priority", 10),
+        min_allowed=1,
+        validate=lambda r: r.isdigit(),
+        invalid_message="Priority must be a positive integer.",
+        style=STYLE,
+        vi_mode=True
+    )
+    priority = int(prompt_with_interrupt_handler(prompt))
+
     if original_group:
         group_name = original_group
     else:
@@ -205,6 +226,7 @@ def add_or_edit_export(args, entry_to_edit=None):
         "os": entry_os,
         "var_name": var_name,
         "value": value,
+        "priority": priority,
     }
     registry_to_write[group_name][entry_to_edit] = new_entry
     write_registry(registry_to_write, EXPORTS_JSON_PATH, scope)
