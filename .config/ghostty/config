@@ -1,9 +1,161 @@
-# Appearance
+# ===================================
+# APPEARANCE
+# ===================================
 theme = "Catppuccin Mocha"
-background-opacity = 0.85
-background-blur-radius = 20
+background-opacity = 0.92
+background-blur-radius = 25
 font-size = 17
+font-family = "JetBrains Mono"
+font-feature = ss01
+font-feature = ss02
+font-feature = ss03
+font-feature = ss05
+font-feature = calt
+
+# Bold and italic variants
+font-style-bold = true
+font-style-italic = true
+font-synthetic-style = false
+
+# Cursor
 cursor-style = block
+cursor-style-blink = true
+cursor-opacity = 1.0
+cursor-color = #f5e0dc
+
+# Mouse
 mouse-hide-while-typing = true
+
+# Window
 window-decoration = true
+window-padding-x = 15
+window-padding-y = 15
+window-padding-balance = true
+window-padding-color = extend
+window-vsync = true
+window-inherit-working-directory = true
+window-inherit-font-size = true
+
+# Behavior
 confirm-close-surface = false
+quit-after-last-window-closed = false
+clipboard-read = allow
+clipboard-write = allow
+clipboard-paste-protection = true
+clipboard-paste-bracketed-safe = true
+
+# ===================================
+# SHELL & ENVIRONMENT
+# ===================================
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# ===================================
+# PERFORMANCE
+# ===================================
+resize-overlay = never
+resize-overlay-duration = 0
+
+# ===================================
+# KEYBINDINGS
+# ===================================
+# Window management
+keybind = cmd+n=new_window
+keybind = cmd+t=new_tab
+keybind = cmd+w=close_surface
+keybind = cmd+shift+w=close_all_windows
+
+# Tab navigation
+keybind = cmd+1=goto_tab:1
+keybind = cmd+2=goto_tab:2
+keybind = cmd+3=goto_tab:3
+keybind = cmd+4=goto_tab:4
+keybind = cmd+5=goto_tab:5
+keybind = cmd+6=goto_tab:6
+keybind = cmd+7=goto_tab:7
+keybind = cmd+8=goto_tab:8
+keybind = cmd+9=goto_tab:9
+keybind = cmd+shift+]= next_tab
+keybind = cmd+shift+[= previous_tab
+
+# Split management
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+h=goto_split:left
+keybind = cmd+j=goto_split:bottom
+keybind = cmd+k=goto_split:top
+keybind = cmd+l=goto_split:right
+keybind = cmd+shift+h=resize_split:left,10
+keybind = cmd+shift+j=resize_split:down,10
+keybind = cmd+shift+k=resize_split:up,10
+keybind = cmd+shift+l=resize_split:right,10
+
+# Font size
+keybind = cmd+equal=increase_font_size:1
+keybind = cmd+minus=decrease_font_size:1
+keybind = cmd+0=reset_font_size
+
+# Scroll
+keybind = cmd+shift+up=scroll_page_up
+keybind = cmd+shift+down=scroll_page_down
+
+# Search
+keybind = cmd+f=toggle_quick_terminal
+
+# Fullscreen
+keybind = cmd+enter=toggle_fullscreen
+
+# Copy/Paste
+keybind = cmd+c=copy_to_clipboard
+keybind = cmd+v=paste_from_clipboard
+
+# Clear screen
+keybind = cmd+k=clear_screen
+
+# ===================================
+# VISUAL ENHANCEMENTS
+# ===================================
+# Adjust colors for better visibility with transparency
+adjust-cell-height = 0
+adjust-cell-width = 0
+adjust-font-baseline = 0
+adjust-underline-position = 0
+adjust-underline-thickness = 0
+adjust-strikethrough-position = 0
+adjust-strikethrough-thickness = 0
+
+# Link handling
+link-url = true
+
+# Selection
+selection-background = #45475a
+selection-foreground = #cdd6f4
+selection-invert-fg-bg = false
+
+# Minimum contrast for text
+minimum-contrast = 1.1
+
+# ===================================
+# TERMINAL BEHAVIOR
+# ===================================
+command = /bin/zsh
+term = xterm-256color
+title = "Ghostty"
+working-directory = home
+
+# ===================================
+# BELL
+# ===================================
+visual-bell-color = #f38ba8
+visual-bell-duration = 0.1
+audible-bell = false
+
+# ===================================
+# ADVANCED
+# ===================================
+macos-option-as-alt = true
+macos-window-shadow = true
+macos-titlebar-style = tabs
+macos-icon = custom
+macos-icon-ghost-color = #cba6f7
+macos-icon-screen-color = #1e1e2e
