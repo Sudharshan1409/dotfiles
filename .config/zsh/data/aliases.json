@@ -2,6 +2,7 @@
     "Basic": {
         "cat": "bat",
         "cl": "clear && printf \"\\e[3J\"",
+        "man": "tldr",
         "pyglobalenv": "source ~/venv/bin/activate",
         "refresh": "source ~/.zshrc",
         "src": "source ~/.zshrc",
