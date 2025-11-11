@@ -77,7 +77,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo web-search dirhistory history jsontools zsh-interactive-cd)
+plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo web-search dirhistory history jsontools zsh-interactive-cd fzf-tab you-should-use zsh-autopair zsh-256color git-open)
 
 source $ZSH/oh-my-zsh.sh
 
