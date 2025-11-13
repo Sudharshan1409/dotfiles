@@ -24,7 +24,7 @@ function _mproj_cmd() {
             # If a path was selected (not cancelled)
             if [[ -n "$selected_path" ]]; then
                 # Call the python script with the name and selected path
-                "$_PYTHON_VENV_EXECUTABLE" "$_MPROJ_PY_SCRIPT" add "$proj_name" "$selected_path"
+                "$_PYTHON_VENV_EXECUTABLE" "$_MPROJ_PY_SCRIPT" add "$proj_name" --path "$selected_path"
             fi
             ;;
         

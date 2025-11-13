@@ -28,7 +28,7 @@ class ProjectManager(BaseManager):
         return name, item_obj.get("path"), item_obj.get("description", "")
 
     def _get_add_extra_args(self):
-        return {"path": "The path to the project directory."}
+        return {"--path": "The path to the project directory."}
 
     def _get_new_item_details(self, item_name, args):
         proj_path = args.path

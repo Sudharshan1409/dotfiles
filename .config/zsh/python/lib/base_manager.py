@@ -17,6 +17,7 @@ from .common import (
     print_help_panel,
     prompt_with_interrupt_handler,
     read_registry,
+    scope_item,
     write_registry,
 )
 
@@ -326,15 +327,14 @@ class BaseManager:
 
         parser.set_defaults(func=self.show_help)
 
+        # Handle 'add' command for managers that need extra args
+        if "add" in sys.argv and hasattr(self, "_get_add_extra_args"):
+            extra_args_spec = self._get_add_extra_args()
+            for arg_name, arg_help in extra_args_spec.items():
+                parser_add.add_argument(arg_name, help=arg_help)
+
         if len(sys.argv) == 1:
             self.show_help(None)
             sys.exit(0)
         args = parser.parse_args()
-        # Handle 'add' command for managers that need extra args
-        if args.command == "add" and hasattr(self, "_get_add_extra_args"):
-            extra_args_spec = self._get_add_extra_args()
-            for arg_name, arg_help in extra_args_spec.items():
-                parser_add.add_argument(arg_name, help=arg_help)
-            args = parser.parse_args()
-
         args.func(args)
