@@ -10,6 +10,7 @@ The core philosophy is to keep `~/.zshrc` as a minimal loader, with all logic se
 - **Python-Powered Tooling**: Custom backends for managing aliases, functions, environment variables, snippets, and projects, all with interactive TUI elements.
 - **Automated First-Time Setup**: The shell automatically creates a Python virtual environment and installs all dependencies on first launch.
 - **Polyglot Function Support**: Seamlessly create and run both Zsh and Python scripts as shell functions.
+- **GitHub Integration**: A powerful, `fzf`-driven interface for browsing and managing your GitHub repositories.
 - **Modern CLI Integrations**: Tightly integrated with best-in-class tools like `fzf`, `eza`, `bat`, and `zoxide`.
 
 ---
@@ -129,6 +130,20 @@ Manages project configurations for quick environment launching.
 - `enigma proj rm <name>`: Removes a project.
 - `enigma proj launch`: Interactively select and launch a project in a `tmux` session.
 
+### `enigma gh` - GitHub Integration
+
+Provides a powerful, `fzf`-driven interface for interacting with your GitHub repositories.
+
+- `enigma gh repos`: Opens an interactive browser of your GitHub repositories.
+    - **Smart Detection**: Automatically detects locally cloned repositories—even in custom directories—by maintaining a local database of clone locations.
+    - **Interactive Actions**: After selecting a repository, a menu provides options to:
+        - `cd` into the local directory.
+        - Clone the repository (with options for default or custom paths).
+        - Open the repository in the browser.
+        - View the README in the terminal.
+        - Copy the HTTPS or SSH clone URL.
+        - Remove a locally cloned repository (with a confirmation prompt).
+
 ---
 
 ## Convenience Commands
@@ -153,6 +168,7 @@ For the best experience, a number of modern command-line tools should be install
 | **bat**       | A `cat` clone with syntax highlighting      | `brew install bat`       |
 | **git-delta** | A syntax-highlighting pager for git         | `brew install git-delta` |
 | **jq**        | A command-line JSON processor               | `brew install jq`        |
+| **gh**        | The official GitHub command-line tool       | `brew install gh`        |
 
 **Important `fzf` Setup:** After installing `fzf`, you must also run its installation script:
 

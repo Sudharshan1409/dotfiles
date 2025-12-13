@@ -12,7 +12,8 @@ function enigma() {
         print -P "  %F{yellow}alias%f     Manage shell aliases"
         print -P "  %F{yellow}func%f      Manage shell functions"
         print -P "  %F{yellow}env%f       Manage environment variables"
-        print -P "  %F{yellow}proj%f      Manage and launch projects" # <--- ADD THIS LINE
+        print -P "  %F{yellow}proj%f      Manage and launch projects"
+        print -P "  %F{yellow}gh%f        Interact with GitHub"
         print ""
         print -P "Run 'enigma %F{cyan}<command>%f help' for more information on a specific command."
         return 1
@@ -22,7 +23,8 @@ function enigma() {
         alias) _malias_cmd "${@:2}" ;;
         func)  _mfunc_cmd "${@:2}" ;;
         env)   _menv_cmd "${@:2}" ;;
-        proj)  _mproj_cmd "${@:2}" ;; # <--- ADD THIS LINE
+        proj)  _mproj_cmd "${@:2}" ;;
+        gh) _mgithub_cmd "${@:2}" ;;
         *)
             echo "Error: Unknown command '$sub_command'." >&2
             enigma

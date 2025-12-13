@@ -8,6 +8,7 @@ source "$HOME/.config/zsh/cli/exports.sh"
 source "$HOME/.config/zsh/cli/aliases.sh"
 source "$HOME/.config/zsh/cli/functions.sh"
 source "$HOME/.config/zsh/cli/projects.sh"
+source "$HOME/.config/zsh/cli/gh.sh"
 
 # Source non-CLI configuration files
 source "$HOME/.config/zsh/tmux.sh"

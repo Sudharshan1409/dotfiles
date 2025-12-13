@@ -20,6 +20,13 @@
             "type": "variable",
             "value": "$HOME/.config/starship/starship.toml",
             "var_name": "STARSHIP_CONFIG"
+        },
+        "enigma_projects_dir": {
+            "os": "any",
+            "priority": 10,
+            "type": "variable",
+            "value": "$HOME/projects",
+            "var_name": "ENIGMA_PROJECTS_DIR"
         }
     },
     "System (Linux)": {
