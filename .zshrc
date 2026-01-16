@@ -121,3 +121,6 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$PATH:$HOME/.local/bin"
 
 source ~/.config/zsh/init.sh
+
+# opencode
+export PATH=/home/enigma/.opencode/bin:$PATH

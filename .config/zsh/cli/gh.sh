@@ -29,6 +29,8 @@ _mgithub_cmd() {
         print ""
         print -P "%BAvailable Subcommands:%b"
         print -P "  %F{yellow}repos%f     Browse and manage your GitHub repositories"
+        print -P "  %F{green}create%f    Create a new GitHub repository"
+        print -P "  %F{red}delete%f    Delete a GitHub repository (Local/Remote/Both)"
         print ""
         return 1
     fi
@@ -67,6 +69,27 @@ _mgithub_cmd() {
                 fi
             fi
             rm -f "$tmpfile"
+            ;;
+        create)
+            # Call the Python backend for repository creation
+            local tmpfile
+            tmpfile=$(mktemp) || return 1
+
+            "$_PYTHON_VENV_EXECUTABLE" "$_MGITHUB_PY_SCRIPT" create --outfile "$tmpfile" "$@"
+            local exit_code=$?
+
+            if [[ $exit_code -eq 0 && -s "$tmpfile" ]]; then
+                local cmd_to_run
+                cmd_to_run=$(cat "$tmpfile")
+                if [[ -n "$cmd_to_run" ]]; then
+                    eval "$cmd_to_run"
+                fi
+            fi
+            rm -f "$tmpfile"
+            ;;
+        delete)
+            # Call the Python backend for repository deletion
+            "$_PYTHON_VENV_EXECUTABLE" "$_MGITHUB_PY_SCRIPT" delete "$@"
             ;;
         *)
             echo "Error: Unknown gh subcommand '$subcommand'" >&2

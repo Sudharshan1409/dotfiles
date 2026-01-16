@@ -55,8 +55,19 @@ def get_github_repos():
             capture_output=True, text=True, check=True
         )
         return json.loads(result.stdout)
-    except (subprocess.CalledProcessError, FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error fetching GitHub repositories: {e}", file=sys.stderr)
+    except FileNotFoundError:
+        print("❌ Error: 'gh' (GitHub CLI) not found. Please install it.", file=sys.stderr)
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"❌ Error parsing GitHub CLI output: {e}", file=sys.stderr)
+        sys.exit(1)
+    except subprocess.CalledProcessError as e:
+        if "authentication required" in e.stderr.lower() or "not logged in" in e.stderr.lower():
+            print("❌ You are not logged into the GitHub CLI.", file=sys.stderr)
+            print("   Please run 'gh auth login' and then try again.", file=sys.stderr)
+        else:
+            print("❌ Error fetching GitHub repositories:", file=sys.stderr)
+            print(e.stderr, file=sys.stderr)
         sys.exit(1)
 
 def select_repo_with_fzf(repos):
@@ -153,6 +164,227 @@ def register_clone(repo_name, path):
     db[repo_name] = path
     write_cloned_repos_db(db)
 
+def handle_create_repo():
+    """Interactively creates a new GitHub repository."""
+    # 1. Get Repo Name
+    repo_name = inquirer.text(
+        message="Enter repository name:",
+        validate=EmptyInputValidator(),
+    ).execute()
+
+    # 2. Get Visibility
+    visibility = inquirer.select(
+        message="Select visibility:",
+        choices=["public", "private", "internal"],
+        default="public",
+        vi_mode=True,
+    ).execute()
+
+    # 3. Optional Description
+    description = inquirer.text(
+        message="Enter description (optional):",
+    ).execute()
+
+    # 4. Optional Initialization
+    initialize_readme = inquirer.confirm(
+        message="Initialize with README?",
+        default=True,
+        vi_mode=True,
+    ).execute()
+    
+    # 5. Gitignore template
+    gitignore = inquirer.text(
+        message="Gitignore template (e.g., Python, Node, optional):",
+    ).execute()
+    
+    # 6. License
+    license_key = inquirer.text(
+        message="License key (e.g., mit, apache-2.0, optional):",
+    ).execute()
+
+    # Construct the command
+    cmd = ["gh", "repo", "create", repo_name, f"--{visibility}"]
+    if description:
+        cmd.extend(["--description", description])
+    if initialize_readme:
+        cmd.append("--add-readme")
+    if gitignore:
+        cmd.extend(["--gitignore", gitignore])
+    if license_key:
+        cmd.extend(["--license", license_key])
+
+    # Execute creation
+    try:
+        print(f"\nCreating repository '{repo_name}' on GitHub...")
+        subprocess.run(cmd, check=True)
+        print("✅ Repository created successfully.")
+    except subprocess.CalledProcessError:
+        print("❌ Failed to create repository.")
+        return None
+
+    # Clone offer
+    should_clone = inquirer.confirm(
+        message="Do you want to clone this repository now?",
+        default=True,
+        vi_mode=True,
+    ).execute()
+
+    if should_clone:
+        # Get current username for full repo name
+        try:
+             username = subprocess.check_output(['gh', 'api', 'user', '-q', '.login'], text=True).strip()
+             full_repo_name = f"{username}/{repo_name}"
+        except:
+             full_repo_name = repo_name # Fallback
+
+        clone_cmd = handle_clone_flow(full_repo_name)
+        
+        if clone_cmd and clone_cmd != "cancel":
+            # Extract the destination path from the clone command to register it
+            # Command format: "gh repo clone <repo> <path>"
+            parts = clone_cmd.split()
+            if len(parts) >= 4:
+                # The path is the last argument, but might contain spaces so we join whatever is after 'clone <repo>'
+                # Actually handle_clone_flow returns simpler string. Let's parse carefully.
+                # In handle_clone_flow: return f"gh repo clone {repo_name} {path}"
+                # So we can just run this command.
+                
+                print(f"Cloning {full_repo_name}...")
+                try:
+                    subprocess.run(clone_cmd, shell=True, check=True)
+                    
+                    # Extract path for registration
+                    # repo_name is index 3 (0-based)
+                    # path starts at index 4
+                    dest_path = " ".join(parts[4:])
+                    
+                    register_clone(full_repo_name, dest_path)
+                    print(f"✅ Cloned to {dest_path}")
+                    
+                    return f"cd {dest_path}"
+                except subprocess.CalledProcessError:
+                    print("❌ Failed to clone repository.")
+                    return None
+    
+    return None
+
+def handle_delete_repo():
+    """Interactively deletes a repository (local and/or remote)."""
+    # 1. Select Repository (Local preferred, or fetch)
+    local_repos_map = read_cloned_repos_db()
+    fzf_input = []
+    selection_map = {}
+    
+    FETCH_OPTION = "⬇️  Fetch/Refresh all remote repositories from GitHub..."
+    fzf_input.append(FETCH_OPTION)
+    selection_map[FETCH_OPTION] = "FETCH_REMOTE"
+
+    if local_repos_map:
+        for repo_name, path in local_repos_map.items():
+            display_str = f"📂 {repo_name}  ({path})"
+            fzf_input.append(display_str)
+            selection_map[display_str] = repo_name
+
+    try:
+        fzf_process = subprocess.run(
+            ['fzf', '--ansi', '--no-sort', '--reverse', '--height', '40%', 
+             '--prompt', 'Select repository to DELETE: ', '--header', 'Local Repositories (or fetch remote)'],
+            input='\n'.join(fzf_input),
+            capture_output=True, text=True, check=True
+        )
+        selected_str = fzf_process.stdout.strip()
+        selection_value = selection_map.get(selected_str)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None # User cancelled
+
+    selected_repo_name = None
+    local_path = None
+    
+    if selection_value == "FETCH_REMOTE":
+        print("Fetching repositories from GitHub...", file=sys.stderr)
+        repos = get_github_repos()
+        repo_data = select_repo_with_fzf(repos)
+        if not repo_data:
+             return None
+        selected_repo_name = repo_data['nameWithOwner']
+    elif selection_value:
+        selected_repo_name = selection_value
+        local_path = local_repos_map.get(selected_repo_name)
+
+    if not selected_repo_name:
+        return None
+        
+    # Check again if we have a local path even if we fetched from remote
+    if not local_path:
+        local_path = get_local_path_from_db(selected_repo_name)
+
+    # 2. Choose deletion scope
+    options = []
+    if local_path:
+        options.append({"name": f"Delete LOCAL directory only ({local_path})", "value": "local"})
+    options.append({"name": "Delete REMOTE GitHub repository only (Destructive!)", "value": "remote"})
+    if local_path:
+        options.append({"name": "Delete BOTH local and remote (Destructive!)", "value": "both"})
+    options.append({"name": "Cancel", "value": "cancel"})
+
+    scope = inquirer.select(
+        message=f"Deleting '{selected_repo_name}'. What do you want to do?",
+        choices=options,
+        default="cancel",
+        vi_mode=True,
+    ).execute()
+
+    if scope == "cancel":
+        return None
+
+    # 3. Execution & Confirmation
+    
+    # --- Local Deletion ---
+    if scope in ["local", "both"] and local_path:
+        confirm_local = inquirer.confirm(
+            message=f"Are you sure you want to delete folder '{local_path}'?",
+            default=False,
+            vi_mode=True
+        ).execute()
+        
+        if confirm_local:
+            try:
+                shutil.rmtree(local_path)
+                # Update DB
+                db = read_cloned_repos_db()
+                if selected_repo_name in db:
+                    del db[selected_repo_name]
+                    write_cloned_repos_db(db)
+                print(f"✅ Local directory deleted.")
+            except Exception as e:
+                print(f"❌ Error deleting local directory: {e}")
+        else:
+            print("Skipping local deletion.")
+
+    # --- Remote Deletion ---
+    if scope in ["remote", "both"]:
+        print(f"\n⚠️  WARNING: You are about to permanently delete '{selected_repo_name}' from GitHub.")
+        print("This action cannot be undone.")
+        
+        confirm_input = inquirer.text(
+            message=f"Type '{selected_repo_name}' to confirm:",
+            validate=lambda x: x == selected_repo_name,
+            invalid_message="Repository name does not match.",
+        ).execute()
+
+        if confirm_input == selected_repo_name:
+            try:
+                print(f"Deleting remote repository '{selected_repo_name}'...")
+                # gh repo delete <repo> --confirm
+                subprocess.run(['gh', 'repo', 'delete', selected_repo_name, '--confirm'], check=True)
+                print(f"✅ Remote repository deleted.")
+            except subprocess.CalledProcessError:
+                print(f"❌ Failed to delete remote repository.")
+        else:
+             print("Confirmation failed. Aborting remote deletion.")
+    
+    return None
+
 def main():
     """Main function to handle command-line arguments and orchestrate actions."""
     parser = argparse.ArgumentParser(description="Enigma GitHub command backend.")
@@ -168,9 +400,65 @@ def main():
                 register_clone(args.repo_name, args.path)
             return
 
+        if args.subcommand == 'create':
+            final_command = handle_create_repo()
+            if final_command and args.outfile:
+                with open(args.outfile, 'w') as f:
+                    f.write(final_command)
+            return
+
+        if args.subcommand == 'delete':
+            handle_delete_repo()
+            return
+
         if args.subcommand == 'repos':
-            repos = get_github_repos()
-            selected_repo = select_repo_with_fzf(repos)
+            # --- MODIFIED: Lazy Loading Logic ---
+            local_repos_map = read_cloned_repos_db()
+            
+            # Prepare initial choices (Local repos + Fetch option)
+            fzf_input = []
+            selection_map = {}
+            
+            FETCH_OPTION = "⬇️  Fetch/Refresh all remote repositories from GitHub..."
+            fzf_input.append(FETCH_OPTION)
+            selection_map[FETCH_OPTION] = "FETCH_REMOTE"
+
+            if local_repos_map:
+                for repo_name, path in local_repos_map.items():
+                    display_str = f"📂 {repo_name}  ({path})"
+                    fzf_input.append(display_str)
+                    selection_map[display_str] = repo_name
+
+            # First FZF selection (Local vs Remote)
+            try:
+                fzf_process = subprocess.run(
+                    ['fzf', '--ansi', '--no-sort', '--reverse', '--height', '40%', 
+                     '--prompt', 'Select a local repo or fetch remote: ', '--header', 'Local Repositories'],
+                    input='\n'.join(fzf_input),
+                    capture_output=True, text=True, check=True
+                )
+                selected_str = fzf_process.stdout.strip()
+                selection_value = selection_map.get(selected_str)
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                return # User cancelled
+
+            selected_repo = None
+            
+            if selection_value == "FETCH_REMOTE":
+                # Original logic: fetch all from API
+                print("Fetching repositories from GitHub...", file=sys.stderr)
+                repos = get_github_repos()
+                selected_repo = select_repo_with_fzf(repos)
+            elif selection_value:
+                # Local repo selected. Reconstruct the 'repo' dict expected by the rest of the code
+                repo_name = selection_value
+                selected_repo = {
+                    'nameWithOwner': repo_name,
+                    'url': f"https://github.com/{repo_name}",
+                    'sshUrl': f"git@github.com:{repo_name}.git",
+                    'description': f"Locally cloned at {local_repos_map[repo_name]}",
+                }
+
             if not selected_repo:
                 return
 
