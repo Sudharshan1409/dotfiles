@@ -5,15 +5,7 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 M.mason_tools_ensure_installed = {
 	"prettier",
 	"stylua",
-	"isort",
-	"black",
 	"ruff",
-	"eslint_d",
-	"markdownlint",
-	"luacheck",
-	"jsonlint",
-	"shellcheck",
-	"yamllint",
 	"pyproject-fmt",
 }
 

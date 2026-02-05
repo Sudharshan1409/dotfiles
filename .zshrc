@@ -124,3 +124,6 @@ source ~/.config/zsh/init.sh
 
 # opencode
 export PATH=/home/enigma/.opencode/bin:$PATH
+
+# opencode
+export PATH=/home/sudharshan/.opencode/bin:$PATH

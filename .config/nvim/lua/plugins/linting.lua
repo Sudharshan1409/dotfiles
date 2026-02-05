@@ -8,20 +8,28 @@ return {
 	config = function()
 		local lint = require("lint")
 		lint.linters_by_ft = {
-			javascript = { "eslint_d" },
-			typescript = { "eslint_d" },
-			javascriptreact = { "eslint_d" },
-			typescriptreact = { "eslint_d" },
-			svelte = { "eslint_d" },
 			python = { "ruff" },
-			markdown = { "markdownlint" },
-			lua = { "luacheck" },
 			sh = { "shellcheck" },
-			json = { "jsonlint" },
-			yaml = { "yamllint" },
 		}
+
+		-- Configure ruff linter to use line-length 100
+		local ruff = lint.linters.ruff
+		ruff.args = {
+			"check",
+			"--force-exclude",
+			"--quiet",
+			"--stdin-filename",
+			function()
+				return vim.api.nvim_buf_get_name(0)
+			end,
+			"--no-fix",
+			"--output-format=json",
+			"-",
+			"--line-length=100",
+		}
+
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
-		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "BufReadPost" }, {
 			group = lint_augroup,
 			callback = function()
 				lint.try_lint()

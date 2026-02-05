@@ -18,8 +18,13 @@ return {
 				markdown = { "prettier" },
 				graphql = { "prettier" },
 				lua = { "stylua" },
-				python = { "ruff", "isort", "black" },
+				python = { "ruff_format", "ruff_organize_imports" },
 				toml = { "pyproject-fmt" },
+			},
+			formatters = {
+				ruff_format = {
+					append_args = { "--line-length", "100" },
+				},
 			},
 			format_on_save = {
 				lsp_fallback = true,

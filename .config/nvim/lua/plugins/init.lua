@@ -2,6 +2,7 @@
 local basicUtils = require("utils.basic")
 return {
 	"nvim-lua/plenary.nvim",
+	"tpope/vim-sleuth",
 	{
 		"mbbill/undotree",
 		config = function()

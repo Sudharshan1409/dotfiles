@@ -35,9 +35,15 @@ return {
 				lua_ls = function()
 					-- (Optional) Configure lua language server for neovim
 					lspconfig.lua_ls.setup(lspUtils.lua_opts)
+				end,
+				yamlls = function()
 					lspconfig.yamlls.setup(lspUtils.yamlls_setup)
+				end,
+				pylsp = function()
 					lspconfig.pylsp.setup(lspUtils.pylsp_setup)
-					lspconfig.ts_ls.setup({ capabilities = capabilities, on_attach = require("lsp-zero").on_attach })
+				end,
+				ts_ls = function()
+					lspconfig.ts_ls.setup({ capabilities = capabilities, on_attach = lsp_zero.on_attach })
 				end,
 			},
 		})

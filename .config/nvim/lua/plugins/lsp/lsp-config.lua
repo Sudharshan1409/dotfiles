@@ -26,7 +26,6 @@ return {
 		},
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "saghen/blink.cmp" },
 		},
 		config = function(_, _)
 			-- This is where all the LSP shenanigans will live
