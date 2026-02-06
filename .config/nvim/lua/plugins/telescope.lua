@@ -6,6 +6,7 @@ return {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 
+			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 			"ThePrimeagen/git-worktree.nvim",
 			"theprimeagen/harpoon",
 		},
@@ -19,6 +20,8 @@ return {
 			local custom_actions = {}
 			require("telescope").load_extension("git_worktree")
 			require("telescope").load_extension("harpoon")
+			-- FZF Native loading
+			pcall(require("telescope").load_extension, "fzf")
 
 			function custom_actions.fzf_multi_select(prompt_bufnr)
 				local picker = action_state.get_current_picker(prompt_bufnr)

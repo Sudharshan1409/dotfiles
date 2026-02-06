@@ -1,4 +1,5 @@
 return {
+	enabled = false,
 	"codota/tabnine-nvim",
 	build = "./dl_binaries.sh",
 	config = function()

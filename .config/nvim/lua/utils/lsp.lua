@@ -30,10 +30,34 @@ M.lua_opts = {
 	capabilities = capabilities,
 	settings = {
 		Lua = {
-			diagnostics = { globals = { "vim" } },
+			diagnostics = {
+				globals = { "vim" },
+			},
 			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true),
 				checkThirdParty = false,
+			},
+		},
+	},
+}
+
+M.pylsp_setup = {
+	settings = {
+		pylsp = {
+			plugins = {
+				pyflakes = { enabled = true },
+				pycodestyle = {
+					enabled = true,
+					ignore = { "W391" },
+					maxLineLength = 120,
+				},
+				autopep8 = { enabled = false },
+				yapf = { enabled = false },
+				mccabe = { enabled = true },
+				black = { enabled = false },
+				pylsp_mypy = { enabled = false },
+				pylsp_black = { enabled = false },
+				jedi_completion = { fuzzy = true },
+				pyls_isort = { enabled = false },
 			},
 		},
 	},
@@ -100,29 +124,6 @@ M.yamlls_setup = {
 			}
 		}
 	}
-}
-
-M.pylsp_setup = {
-	settings = {
-		pylsp = {
-			plugins = {
-				pyflakes = { enabled = false },
-				pycodestyle = {
-					enabled = false,
-					ignore = { "W391" },
-					maxLineLength = 120,
-				},
-				autopep8 = { enabled = false },
-				yapf = { enabled = false },
-				mccabe = { enabled = false },
-				black = { enabled = false },
-				pylsp_mypy = { enabled = false },
-				pylsp_black = { enabled = false },
-				jedi_completion = { fuzzy = true },
-				pyls_isort = { enabled = false },
-			},
-		},
-	},
 }
 
 return M

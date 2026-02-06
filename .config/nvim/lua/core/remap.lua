@@ -127,7 +127,7 @@ keymap(
 -- Re-order to previous/next
 keymap("n", "<leader>bp", "<Cmd>BufferPick<CR>", basicUtils.addDesc(opts, "Pick Buffer"))
 
-keymap("n", "zs", "<Cmd>SymbolsOutline<CR>", basicUtils.addDesc(opts, "Open Symbols Outline"))
+keymap("n", "zs", "<Cmd>Outline<CR>", basicUtils.addDesc(opts, "Toggle Outline"))
 
 -- Replace ' by " in entire file
 keymap("n", "<leader>std", ":%s/'/\"/g<CR>")

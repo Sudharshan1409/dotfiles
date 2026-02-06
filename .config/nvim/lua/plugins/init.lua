@@ -36,7 +36,7 @@ return {
 			-- add any options here
 		},
 	},
-	"ryanoasis/vim-devicons",
+	-- "ryanoasis/vim-devicons", -- Deprecated: using nvim-web-devicons instead
 
 	-- These optional plugins should be loaded directly because of a bug in Packer lazy loading
 	"nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
@@ -44,10 +44,10 @@ return {
 	"christoomey/vim-tmux-navigator",
 	"petertriho/nvim-scrollbar",
 	"zyedidia/vim-snake",
-	"sharkdp/fd",
+	-- "sharkdp/fd", -- Tool should be installed via package manager/mason, not as a plugin
 
 	{
-		"HiPhish/nvim-ts-rainbow2",
+		"HiPhish/rainbow-delimiters.nvim",
 	},
 	"alvan/vim-closetag",
 	{
@@ -69,9 +69,10 @@ return {
 		end,
 	},
 	{
-		"simrat39/symbols-outline.nvim",
+		"hedyhli/outline.nvim",
 		config = function()
-			require("symbols-outline").setup(basicUtils.symbols_opts)
+			-- Using default options for now to ensure stability
+			require("outline").setup({})
 		end,
 	},
 	-- lazy.nvim

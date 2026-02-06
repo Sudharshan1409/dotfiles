@@ -48,7 +48,9 @@ opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 opt.undofile = true
 
 -- Cursor and highlight settings
-vim.api.nvim_command('let &t_SI = "\\e[6 q"')
+-- Modern cursor shape configuration
+vim.opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20"
+
 vim.api.nvim_create_augroup("custom_buffer", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = "custom_buffer",
@@ -75,8 +77,15 @@ opt.ttimeoutlen = 10
 opt.showmode = true
 opt.isfname:append("@-@")
 opt.formatoptions:remove("r")
-vim.g["netrw_localrmdir"] = "rm -r"
-vim.cmd([[autocmd FileType * set formatoptions-=ro]])
+-- vim.g["netrw_localrmdir"] = "rm -r" -- Not needed with oil.nvim
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "*",
+	callback = function()
+		vim.opt_local.formatoptions:remove({ "r", "o" })
+	end,
+})
+
 vim.api.nvim_create_augroup("Mkdir", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {
 	group = "Mkdir",

@@ -85,7 +85,9 @@ return {
 
 			lsp_zero.setup()
 			vim.diagnostic.config({
-				virtual_text = true,
+				virtual_text = {
+					source = "always", -- Force show source
+				},
 			})
 		end,
 	},

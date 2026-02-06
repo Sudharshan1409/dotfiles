@@ -42,6 +42,12 @@ return {
 				pylsp = function()
 					lspconfig.pylsp.setup(lspUtils.pylsp_setup)
 				end,
+				pyright = function()
+					-- Explicitly disable pyright to prevent it from attaching
+				end,
+				ruff = function()
+					-- Explicitly disable ruff LSP to prevent it from attaching
+				end,
 				ts_ls = function()
 					lspconfig.ts_ls.setup({ capabilities = capabilities, on_attach = lsp_zero.on_attach })
 				end,
