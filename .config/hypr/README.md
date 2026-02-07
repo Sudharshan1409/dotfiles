@@ -12,7 +12,7 @@ This is a personalized Hyprland configuration. It is modular and sources several
 - `envs.conf`: Environment variables.
 - `input.conf`: Keyboard and mouse settings.
 - `looknfeel.conf`: General look and feel settings, including gaps, borders, and animations.
-- `monitors.conf`: Monitor configuration and workspace assignments.
+- `~/.config/kanshi/config`: Dynamic monitor configuration (kanshi handles hotplugging).
 - `apps/`: Directory with application-specific window rules.
 - `bindings/`: Directory with categorized keybindings.
 - `scripts/`: Directory with various scripts used in the configuration.
@@ -23,6 +23,7 @@ This configuration depends on a number of external packages. Here is a list of t
 
 ### Core Components
 - `hyprland`: The Wayland compositor itself.
+- `kanshi`: Dynamic monitor configuration daemon.
 - `waybar`: The status bar.
 - `sway-notification-center`: The notification daemon.
 - `hyprpaper`: The wallpaper daemon.
@@ -32,13 +33,13 @@ This configuration depends on a number of external packages. Here is a list of t
 
 **Arch Linux Installation:**
 ```bash
-sudo pacman -S hyprland waybar sway-notification-center hyprpaper hypridle hyprlock rofi kitty nautilus
+sudo pacman -S hyprland kanshi waybar sway-notification-center hyprpaper hypridle hyprlock rofi kitty nautilus
 ```
 
 **Ubuntu Installation:**
 ```bash
 sudo add-apt-repository ppa:cppiber/hyprland -y && sudo apt update
-sudo apt install hyprland waybar sway-notification-center hyprpaper hypridle rofi kitty nautilus
+sudo apt install hyprland kanshi waybar sway-notification-center hyprpaper hypridle rofi kitty nautilus
 ```
 
 **Note:** `hyprlock` may not be available in the PPA. If it is not, you can build it from source:

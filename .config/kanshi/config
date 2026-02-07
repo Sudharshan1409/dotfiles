@@ -1,0 +1,42 @@
+# kanshi - Dynamic monitor configuration
+# Profiles are matched automatically based on connected monitors
+# Using port names: eDP-1, DP-1, HDMI-A-1, etc.
+#
+# IMPORTANT: More specific profiles (more monitors) should be listed FIRST
+# kanshi matches the first profile where ALL listed outputs are connected
+
+# =============================================================================
+# TRIPLE MONITOR SETUPS (must be first - most specific)
+# =============================================================================
+
+# Laptop + DP-1 + HDMI-A-1
+profile work-home {
+    output eDP-1 mode 1920x1080@60 position 0,0 scale 1
+    output DP-1 mode 2560x1440@60 position 1920,0 scale 1
+    output HDMI-A-1 mode 1920x1080@60 position 4480,0 scale 1
+    exec /home/sudharshan/.config/hypr/scripts/monitor_profiles.sh apply
+}
+
+# =============================================================================
+# DUAL MONITOR SETUPS (after triple - less specific)
+# =============================================================================
+
+profile work-2-monitors-dp {
+    output eDP-1 mode 1920x1080@60 position 0,0 scale 1
+    output DP-1 mode 2560x1440@60 position 1920,0 scale 1
+    exec /home/sudharshan/.config/hypr/scripts/monitor_profiles.sh apply
+}
+
+profile work-2-monitors-hdmi {
+    output eDP-1 mode 1920x1080@60 position 0,0 scale 1
+    output HDMI-A-1 mode 1920x1080@60 position 1920,0 scale 1
+    exec /home/sudharshan/.config/hypr/scripts/monitor_profiles.sh apply
+}
+
+# =============================================================================
+# LAPTOP ONLY (fallback - least specific, must be last)
+# =============================================================================
+profile laptop-only {
+    output eDP-1 mode 1920x1080@60 position 0,0 scale 1
+    exec /home/sudharshan/.config/hypr/scripts/monitor_profiles.sh apply
+}
