@@ -152,7 +152,7 @@ show_selector() {
     local selected=$(echo "$profiles" | rofi -dmenu -i \
         -p "$prompt" \
         -mesg "Select a monitor profile (cached: ${cached_profile:-none})" \
-        -theme-str 'window {width: 400px;}')
+        -theme ~/.config/rofi/monitor-menu.rasi)
     
     if [[ -n "$selected" ]]; then
         # Save to cache and apply
