@@ -1,0 +1,116 @@
+/* ~/.config/rofi/monitor-profile.rasi */
+/* Rofi theme for monitor profile selection */
+
+* {
+    /* Catppuccin Mocha Palette */
+    background:       #1E1D2F;
+    background-alt:   #181926;
+    foreground:       #CDD6F4;
+    selected:         #89B4FA;
+    urgent:           #F38BA8;
+    success:          #A6E3A1;
+    warning:          #F9E2AF;
+
+    font:             "JetBrains Mono Nerd Font 16";
+    background-color: transparent;
+    text-color:       @foreground;
+}
+
+window {
+    background-color: @background;
+    border:           2px;
+    border-color:     @selected;
+    border-radius:    16px;
+    width:            800px;
+    height:           500px;
+    location:         center;
+    anchor:           center;
+    padding:          25px;
+}
+
+mainbox {
+    children:   [ "inputbar", "message", "listview" ];
+    spacing:    20px;
+}
+
+/* --- Input Bar --- */
+inputbar {
+    children:         [ "prompt", "entry" ];
+    padding:          12px 16px;
+    background-color: @background-alt;
+    border-radius:    10px;
+    spacing:          10px;
+}
+
+prompt {
+    background-color: inherit;
+    text-color:       @selected;
+    font:             "JetBrains Mono Nerd Font 18";
+}
+
+entry {
+    background-color: inherit;
+    placeholder:      "Type to filter profiles...";
+    placeholder-color: rgba(205, 214, 244, 0.5);
+    font:             "JetBrains Mono Nerd Font 16";
+}
+
+/* --- Message Bar --- */
+message {
+    background-color: @background-alt;
+    border-radius:    8px;
+    padding:          10px 15px;
+}
+
+textbox {
+    background-color: transparent;
+    text-color:       rgba(205, 214, 244, 0.7);
+    font:             "JetBrains Mono Nerd Font 12";
+}
+
+/* --- Results List --- */
+listview {
+    margin:           10px 0 0 0;
+    lines:            10;
+    cycle:            true;
+    dynamic:          true;
+    layout:           vertical;
+    spacing:          5px;
+}
+
+element {
+    padding:          12px 15px;
+    border-radius:    10px;
+    spacing:          0px;
+}
+
+element-text {
+    vertical-align:   0.5;
+    font:             "JetBrains Mono Nerd Font 15";
+}
+
+/* Highlight the selected item */
+element selected {
+    background-color: @selected;
+    text-color:       @background;
+}
+
+/* --- Urgent items (for special options) --- */
+element urgent {
+    text-color:       @urgent;
+}
+
+element selected.urgent {
+    background-color: @urgent;
+    text-color:       @background;
+}
+
+/* --- Active items --- */
+element active {
+    text-color:       @success;
+}
+
+element selected.active {
+    background-color: @success;
+    text-color:       @background;
+}

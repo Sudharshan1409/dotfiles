@@ -1,3 +1,6 @@
 GEMINI.md
 monitors.gen.conf
 monitor_config
+.cache/
+.logs/
+*.log

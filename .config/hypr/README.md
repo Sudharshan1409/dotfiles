@@ -176,3 +176,89 @@ Before the scripts in the `scripts/` directory can be used, they need to be made
 ```bash
 chmod +x ~/.config/hypr/scripts/*.sh
 ```
+
+## Monitor Profile System
+
+An intelligent, self-learning monitor configuration system that automatically detects your monitor setup and applies the correct profile.
+
+### Features
+
+- **Auto-Detection**: Automatically detects monitor configurations when connecting/disconnecting monitors
+- **Smart Caching**: Remembers which profile to use based on MAC address + monitor fingerprint
+- **Interactive Menu**: Rofi-based profile selector with create/edit capabilities
+- **Multiple Locations**: Supports unlimited monitor configurations (home, office, coffee shop, etc.)
+
+### How It Works
+
+The system creates a unique "fingerprint" for each monitor setup: `<MAC_ADDRESS>|<PORT1>:<MONITOR_DESC1>|<PORT2>:<MONITOR_DESC2>`
+
+When monitors change:
+1. Gets current fingerprint
+2. Checks cache for matching profile
+3. **If found** → Applies profile with notification
+4. **If not found** → Opens profile selector menu
+5. Saves association for next time
+
+### Keyboard Shortcuts
+
+- **`Ctrl + Super + D`**: Open monitor profile selector menu
+- **`Ctrl + Super + Shift + D`**: Auto-apply cached profile
+
+### Profile Files
+
+Profiles are stored in `~/.config/hypr/monitors/*.conf`:
+
+```conf
+# Description: Home office setup
+monitor = eDP-1, 1920x1080@120, 0x0, 1
+monitor = DP-1, 2560x1440@60, 1920x0, 1
+
+workspace=1,monitor:eDP-1
+workspace=2,monitor:DP-1
+workspace=3,monitor:eDP-1
+```
+
+### Commands
+
+```bash
+# Auto-detect and apply
+~/.config/hypr/scripts/monitor_profile_manager.sh auto
+
+# Show profile menu
+~/.config/hypr/scripts/monitor_profile_manager.sh menu
+
+# List all profiles
+~/.config/hypr/scripts/monitor_profile_manager.sh list
+
+# Show current fingerprint
+~/.config/hypr/scripts/monitor_profile_manager.sh current
+
+# Apply specific profile
+~/.config/hypr/scripts/monitor_profile_manager.sh apply <profile_name>
+```
+
+### Troubleshooting
+
+**Monitor changes not detected:**
+```bash
+# Check if listener is running
+ps aux | grep monitor_event_listener
+
+# View logs
+tail -f ~/.config/hypr/.logs/monitor_listener.log
+```
+
+**Profile not auto-loading:**
+```bash
+# Check cache
+~/.config/hypr/scripts/monitor_profile_manager.sh cache
+
+# Clear cache from profile menu (Ctrl+Super+D → Clear Cache)
+```
+
+### Files
+
+- **Profiles**: `~/.config/hypr/monitors/*.conf`
+- **Cache**: `~/.config/hypr/.cache/monitor_profile_cache.json`
+- **Logs**: `~/.config/hypr/.logs/monitor_listener.log`
+- **Rofi Theme**: `~/.config/rofi/monitor-profile.rasi`
