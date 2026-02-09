@@ -114,3 +114,20 @@ git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 ```bash
 stow .
 ```
+
+## System Dependencies
+
+Some configurations (like Hyprland scripts) rely on external tools.
+
+### Hyprland OCR (Screenshot to Text)
+Required for the OCR script (`Super+Shift+T`).
+
+**Arch Linux:**
+```bash
+sudo pacman -S tesseract tesseract-data-eng grim slurp wl-clipboard
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt install tesseract-ocr tesseract-ocr-eng grim slurp wl-clipboard
+```
