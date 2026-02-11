@@ -177,6 +177,120 @@ Before the scripts in the `scripts/` directory can be used, they need to be made
 chmod +x ~/.config/hypr/scripts/*.sh
 ```
 
+## New Features & Utilities
+
+### Keybinding Help Menu
+
+A searchable, interactive menu showing all 77+ keyboard shortcuts organized by category.
+
+**Usage:**
+- Press **`Super + /`** to open the keybinding menu
+- Type to search for specific keybindings
+- Press Enter to execute any keybinding instantly
+
+**Categories:**
+- 📱 Apps (Spotify, file manager, clipboard, etc.)
+- ⚙️ System (lock, suspend, wallpaper, monitor profiles)
+- 🔧 Utils (calculator, process killer, audio switcher)
+- 🪟 Windows (close, float, fullscreen, resize)
+- 🧭 Navigation (focus movement, mouse drag)
+- 🗂️ Workspaces (1-10, special workspaces, move windows)
+- 📦 Groups (tabbed windows)
+- 🎵 Media (volume, brightness, playback)
+- 📸 Screenshots
+- ⌨️ Input (universal copy/paste)
+
+### Quick Calculator
+
+A rofi-based calculator with expression history and clipboard support.
+
+**Keybinding:** `Super + Alt + C`
+
+**Features:**
+- Math expressions (e.g., `2+2`, `130000-55000`, `sqrt(16)`)
+- History of previous calculations
+- Copy results to clipboard
+- Supports large numbers and basic operations
+
+### Process Killer
+
+Kill hung or unwanted processes via an interactive rofi menu.
+
+**Keybinding:** `Super + Alt + P`
+
+**Features:**
+- Lists all processes with CPU/Memory usage
+- Search and filter processes
+- Kill with TERM (graceful) or Force Kill (KILL -9)
+- View process details before killing
+
+### Audio Device Switcher
+
+Quickly toggle between audio input/output devices.
+
+**Keybinding:** `Super + Alt + A`
+
+**Features:**
+- Switch between output devices (speakers, headphones)
+- Switch between input devices (microphones)
+- Toggle mute for input/output
+- Open pavucontrol for detailed control
+- Menu closes automatically after any action
+
+### App-Specific Help
+
+Shows keyboard shortcuts for the currently active application.
+
+**Keybinding:** `Super + Shift + ?`
+
+**Supported Apps:**
+- Ghostty/Terminal
+- Firefox/Brave/Chrome
+- VS Code
+- JetBrains IDEs (IntelliJ, PyCharm, etc.)
+- Sublime Text
+- Spotify
+- GIMP/Image editors
+- VLC/MPV
+- Generic shortcuts for unsupported apps
+
+### Hot Corners
+
+Trigger actions by moving your mouse to screen corners.
+
+**Auto-starts with Hyprland**
+
+**Corner Actions:**
+- **Top-left** → Lock screen (hyprlock) 🔒
+- **Top-right** → Workspace overview 🔲
+- **Bottom-left** → App launcher (rofi) 🚀
+- **Bottom-right** → Keybinding help menu ⌨️
+
+**Features:**
+- Visual notification before executing
+- 300ms delay with cancel option (move mouse away to cancel)
+- 2-second cooldown prevents accidental re-triggers
+- 15px detection zone in each corner
+
+---
+
+## Utility Scripts Reference
+
+| Script | Purpose | Keybinding |
+|--------|---------|------------|
+| `keybinding_menu.sh` | Searchable keybinding help | `Super + /` |
+| `calculator.sh` | Quick calculator | `Super + Alt + C` |
+| `process_killer.sh` | Kill processes | `Super + Alt + P` |
+| `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
+| `app_help.sh` | App-specific shortcuts | `Super + Shift + ?` |
+| `hot_corners.sh` | Screen corner triggers | Auto-starts |
+| `workspace_overview.sh` | Show all workspaces | `Super + Ctrl + Tab` |
+| `ocr.sh` | Extract text from screen | `Super + Shift + T` |
+| `set_wallpaper.sh` | Change wallpaper | `Super + Ctrl + W` |
+| `monitor_profile_manager.sh` | Monitor configurations | `Super + Ctrl + D` |
+
+---
+
 ## Monitor Profile System
 
 An intelligent, self-learning monitor configuration system that automatically detects your monitor setup and applies the correct profile.

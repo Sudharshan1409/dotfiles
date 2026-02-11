@@ -32,7 +32,13 @@ case "$rofi_exit_code" in
     confirm=$(echo -e "Yes\nNo" | rofi -dmenu -i -p "Confirmation" -mesg "Are you sure you want to clear all history?" -theme ~/.config/rofi/confirmation.rasi -no-search)
     if [ "$confirm" = "Yes" ]; then
       cliphist wipe
-      notify-send "Clipboard History" "All clipboard history has been cleared." -i clipboard
+      notify-send \
+        --app-name="Clipboard Manager" \
+        --icon="edit-clear" \
+        --urgency=normal \
+        "🗑️  Clipboard Cleared" \
+        "All clipboard history has been\nsuccessfully wiped clean." \
+        -t 4000
     fi
     ;; 
 esac

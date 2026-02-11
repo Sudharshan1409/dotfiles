@@ -41,7 +41,13 @@ done
 echo "$(date): Starting monitor listener with DISPLAY=$DISPLAY, DBUS=$DBUS_SESSION_BUS_ADDRESS" >> "$HOME/.config/hypr/.logs/monitor_wrapper.log"
 
 # Test if notifications are working
-if notify-send "Monitor Profile" "Monitor event listener started" 2>/dev/null; then
+if notify-send \
+    --app-name="Monitor Manager" \
+    --icon="preferences-system" \
+    --urgency=low \
+    "🔔 Monitor Manager Starting" \
+    "Initializing monitor detection..." \
+    -t 3000 2>/dev/null; then
     echo "$(date): Test notification sent successfully" >> "$HOME/.config/hypr/.logs/monitor_wrapper.log"
 else
     echo "$(date): Test notification failed" >> "$HOME/.config/hypr/.logs/monitor_wrapper.log"

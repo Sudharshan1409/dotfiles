@@ -195,7 +195,13 @@ create_new_profile() {
     name=$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr -cd 'a-z0-9_-')
     
     if [ -f "$CONFIG_DIR/$name.conf" ]; then
-        notify-send -u critical "Profile Exists" "A profile named '$name' already exists!"
+        notify-send \
+            --app-name="Monitor Manager" \
+            --icon="dialog-error" \
+            --urgency=critical \
+            "❌ Profile Already Exists" \
+            "A profile named '$name' already exists.\nPlease choose a different name." \
+            -t 5000
         return
     fi
     
@@ -271,7 +277,13 @@ edit_profile() {
     local profile_path="$CONFIG_DIR/$selected.conf"
     
     if [ -z "$editor" ]; then
-        notify-send -u critical "Error" "No text editor found! Please install vim, nano, or set \$EDITOR."
+        notify-send \
+            --app-name="Monitor Manager" \
+            --icon="dialog-error" \
+            --urgency=critical \
+            "❌ No Editor Found" \
+            "Please install a text editor (vim, nano, etc.)\nor set \$EDITOR environment variable." \
+            -t 6000
         return
     fi
     
@@ -287,7 +299,13 @@ edit_profile() {
             ;;
     esac
     
-    notify-send "Editor Opened" "Editing profile: $selected.conf"
+    notify-send \
+        --app-name="Monitor Manager" \
+        --icon="text-editor" \
+        --urgency=low \
+        "✏️  Editor Opened" \
+        "Now editing profile: $selected.conf" \
+        -t 3000
 }
 
 # Function to clear cache
@@ -297,7 +315,13 @@ clear_cache() {
     
     if [ "$confirm" = "Yes" ]; then
         rm -f "$CACHE_FILE"
-        notify-send "Cache Cleared" "Monitor profile cache has been cleared."
+        notify-send \
+            --app-name="Monitor Manager" \
+            --icon="edit-clear" \
+            --urgency=normal \
+            "🗑️  Cache Cleared" \
+            "All monitor profile cache data\nhas been successfully cleared." \
+            -t 4000
     fi
 }
 
@@ -307,7 +331,13 @@ apply_profile() {
     local skip_cache="${2:-false}"
     
     if [ ! -f "$CONFIG_DIR/$profile_name.conf" ]; then
-        notify-send -u critical "Error" "Profile '$profile_name' not found!"
+        notify-send \
+            --app-name="Monitor Manager" \
+            --icon="dialog-error" \
+            --urgency=critical \
+            "❌ Profile Not Found" \
+            "Profile file '$profile_name.conf' does not exist.\nThe profile may have been deleted or renamed." \
+            -t 5000
         return 1
     fi
     
@@ -329,7 +359,13 @@ apply_profile() {
     # Debug: log environment variables
     echo "$(date): DEBUG - DISPLAY=$DISPLAY, DBUS=$DBUS_SESSION_BUS_ADDRESS" >> "$LOG_FILE"
     
-    if notify-send -i "video-display" "Monitor Profile Applied" "Loaded profile: $profile_name" 2>>"$LOG_FILE"; then
+    if notify-send \
+        --app-name="Monitor Manager" \
+        --icon="video-display" \
+        --urgency=normal \
+        "🖥️  Profile Applied Successfully" \
+        "Loaded profile: '$profile_name'\nMonitor configuration updated" \
+        -t 4000 2>>"$LOG_FILE"; then
         echo "$(date): Notification sent successfully" >> "$LOG_FILE"
     else
         echo "$(date): Notification failed with exit code $?" >> "$LOG_FILE"
@@ -380,7 +416,13 @@ main() {
                 # Check if the profile file actually exists
                 if [ ! -f "$CONFIG_DIR/$cached.conf" ]; then
                     echo "$(date): Cached profile '$cached' not found on disk, showing menu..." >> "$LOG_FILE"
-                    notify-send -i "dialog-warning" "Monitor Profile" "Cached profile '$cached' not found. Please select a new profile." -t 4000
+                    notify-send \
+                        --app-name="Monitor Manager" \
+                        --icon="dialog-warning" \
+                        --urgency=normal \
+                        "⚠️  Cached Profile Missing" \
+                        "Cached profile '$cached' was not found on disk.\nPlease select a new profile from the menu." \
+                        -t 5000
                     show_profile_switcher
                 else
                     echo "$(date): Found cached profile: $cached" >> "$LOG_FILE"

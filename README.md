@@ -131,3 +131,15 @@ sudo pacman -S tesseract tesseract-data-eng grim slurp wl-clipboard
 ```bash
 sudo apt install tesseract-ocr tesseract-ocr-eng grim slurp wl-clipboard
 ```
+
+### Hypr-Expose (Visual Workspace Overview)
+Required for the Mission Control style overview (`Super+Grave`). This requires compiling plugins.
+
+1. **Install Dependencies:**
+   - **Arch:** `sudo pacman -S cmake make cpio pkg-config hyprland-headers`
+   - **Ubuntu:** `sudo apt install cmake build-essential pkg-config` (ensure headers are present)
+
+2. **Run Install Script:**
+   ```bash
+   ~/.config/hypr/scripts/install_hyprexpo.sh
+   ```

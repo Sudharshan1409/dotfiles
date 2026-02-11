@@ -1,17 +1,19 @@
 #!/bin/bash
-
 # Workspace Overview
 # Shows all workspaces with their windows in a rofi menu
 # Press Super+Tab to activate
 
 # Get workspace info from hyprctl
-workspaces=$(hyprctl workspaces -j | jq -r '.[] | "\(.id): \(.windows) windows"' | sort -t: -k1 -n)
+# Using `hyprctl workspaces` is good for getting active workspaces
+# Using `hyprctl clients` is good for getting windows
+# We want to group windows by workspace
 
-# Get all windows with their workspace
-windows=$(hyprctl clients -j | jq -r '.[] | select(.workspace.id > 0) | "[\(.workspace.id)] \(.title)"' | sort)
+# Get all windows with their workspace ID and Title
+# Format: "[ID] Title"
+windows=$(hyprctl clients -j | jq -r '.[] | select(.workspace.id > 0) | "[\(.workspace.id)] \(.title)"' | sort -n)
 
 # Show rofi menu
-selected=$(echo -e "${windows}" | rofi -dmenu \
+selected=$(echo "$windows" | rofi -dmenu \
     -p "Workspaces" \
     -theme ~/.config/rofi/workspace-overview.rasi \
     -i)

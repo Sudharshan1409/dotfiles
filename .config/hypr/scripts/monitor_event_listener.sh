@@ -115,7 +115,13 @@ handle_monitor_change() {
         # Check if the cached profile file actually exists
         if [ ! -f "$HOME/.config/hypr/monitors/$cached_profile.conf" ]; then
             log "Cached profile '$cached_profile' does not exist, showing menu"
-            notify-send -i "dialog-warning" "Monitor Profile" "Cached profile '$cached_profile' not found. Please select a new profile." -t 4000
+            notify-send \
+                --app-name="Monitor Manager" \
+                --icon="dialog-warning" \
+                --urgency=normal \
+                "⚠️  Profile Not Found" \
+                "Cached profile '$cached_profile' is missing.\nPlease select a new profile from the menu." \
+                -t 5000
             
             # Show the profile menu
             if ! pgrep -x "rofi" > /dev/null; then
@@ -211,7 +217,12 @@ while [ $DBUS_WAIT_COUNT -lt $MAX_WAIT ]; do
     fi
 
     # 3. Try to verify notification service is actually responsive
-    if notify-send -t 1 "Hyprland Monitor" "Daemon check" >/dev/null 2>&1; then
+    if notify-send -t 500 \
+        --app-name="Hyprland" \
+        --icon="dialog-information" \
+        --urgency=low \
+        "Monitor System Ready" \
+        "Notification daemon initialized successfully" >/dev/null 2>&1; then
         log "Notification daemon is ready."
         break
     fi
@@ -253,7 +264,13 @@ trap 'rm -f "$LOCK_FILE" "$HANDLING_LOCK"; log "Listener stopped"; exit 0' EXIT 
 log "Monitor listener started (PID: $$)"
 
 # Test notification on startup
-if notify-send "Monitor Profile" "Listener started" 2>/dev/null; then
+if notify-send \
+    --app-name="Monitor Manager" \
+    --icon="video-display" \
+    --urgency=low \
+    "🖥️  Monitor Listener Active" \
+    "Auto-detecting monitor changes...\nProfile switching enabled" \
+    -t 4000 2>/dev/null; then
     log "Startup notification sent successfully"
 else
     log "Startup notification failed"
