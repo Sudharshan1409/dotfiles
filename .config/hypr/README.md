@@ -254,26 +254,6 @@ Shows keyboard shortcuts for the currently active application.
 - VLC/MPV
 - Generic shortcuts for unsupported apps
 
-### Hot Corners
-
-Trigger actions by moving your mouse to screen corners.
-
-**Auto-starts with Hyprland**
-
-**Corner Actions:**
-- **Top-left** → Lock screen (hyprlock) 🔒
-- **Top-right** → Workspace overview 🔲
-- **Bottom-left** → App launcher (rofi) 🚀
-- **Bottom-right** → Keybinding help menu ⌨️
-
-**Features:**
-- Visual notification before executing
-- 300ms delay with cancel option (move mouse away to cancel)
-- 2-second cooldown prevents accidental re-triggers
-- 15px detection zone in each corner
-
----
-
 ## Utility Scripts Reference
 
 | Script | Purpose | Keybinding |
@@ -283,7 +263,6 @@ Trigger actions by moving your mouse to screen corners.
 | `process_killer.sh` | Kill processes | `Super + Alt + P` |
 | `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
 | `app_help.sh` | App-specific shortcuts | `Super + Shift + ?` |
-| `hot_corners.sh` | Screen corner triggers | Auto-starts |
 | `workspace_overview.sh` | Show all workspaces | `Super + Ctrl + Tab` |
 | `ocr.sh` | Extract text from screen | `Super + Shift + T` |
 | `set_wallpaper.sh` | Change wallpaper | `Super + Ctrl + W` |
