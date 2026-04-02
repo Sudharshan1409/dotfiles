@@ -1,3 +1,7 @@
+-- trouble.nvim provides a pretty list for showing diagnostics, references, 
+-- telescope results, and more. It enhances productivity by offering a 
+-- clear and actionable overview of issues and symbols. Features include 
+-- various viewing modes and seamless LSP integration.
 return {
 	{
 		"folke/trouble.nvim",

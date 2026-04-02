@@ -1,3 +1,7 @@
+-- before.nvim tracks your edit history and allows you to jump back and forth 
+-- between recent edits. It enhances productivity by providing quick access 
+-- to previously modified locations. Features include jump history, 
+-- quickfix integration, and Telescope support.
 -- luacheck: globals vim
 return {
 	"bloznelis/before.nvim",

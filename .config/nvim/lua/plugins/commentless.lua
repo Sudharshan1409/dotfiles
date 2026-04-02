@@ -1,3 +1,7 @@
+-- commentless.nvim is a productivity tool that allows you to easily toggle 
+-- comments in your code. It leverages Treesitter for context-aware 
+-- commenting, ensuring that the correct comment syntax is used for 
+-- different languages and nested sections.
 return {
 	"soemre/commentless.nvim",
 	cmd = "Commentless",

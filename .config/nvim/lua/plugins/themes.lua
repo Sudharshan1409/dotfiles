@@ -1,3 +1,7 @@
+-- This file contains a collection of popular color schemes for Neovim. 
+-- It allows for easy switching between different visual styles like 
+-- gruvbox, tokyonight, and dracula. High-quality themes enhance the 
+-- overall UI and reduce eye strain during long coding sessions.
 -- luacheck: globals vim
 return {
 	-- themes

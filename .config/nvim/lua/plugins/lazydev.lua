@@ -1,3 +1,7 @@
+-- lazydev.nvim provides a specialized development environment for Neovim 
+-- and Lua development. It enhances the coding experience by providing 
+-- accurate types and completion for the Neovim API. Features include 
+-- luvit-meta integration and automatic library management.
 return {
 	{
 		"folke/lazydev.nvim",

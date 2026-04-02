@@ -1,3 +1,7 @@
+-- flash.nvim provides a powerful and fast way to navigate your code by jumping to 
+-- labels. It enhances productivity by allowing quick movement to any visible 
+-- character or Treesitter node. Features include jumping, searching, and 
+-- remote actions.
 return {
 	"folke/flash.nvim",
 	event = "VeryLazy",

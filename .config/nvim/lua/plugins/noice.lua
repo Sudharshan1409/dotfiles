@@ -1,3 +1,7 @@
+-- noice.nvim completely overhauls the Neovim UI for messages, the command line, 
+-- and the popup menu. It provides a more modern and informative experience 
+-- by using NUI for rendering. Features include message filtering, 
+-- notification integration, and customizable view presets.
 -- luacheck: globals vim
 return {
 	"folke/noice.nvim",

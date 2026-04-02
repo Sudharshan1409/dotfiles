@@ -1,3 +1,7 @@
+-- nvim-autopairs is a simple but essential plugin that automatically closes 
+-- brackets, quotes, and other pairs as you type. It improves coding speed and 
+-- reduces syntax errors. It features Treesitter integration for smarter 
+-- pairing and works seamlessly with nvim-cmp.
 return {
 	"windwp/nvim-autopairs",
 	event = "InsertEnter",

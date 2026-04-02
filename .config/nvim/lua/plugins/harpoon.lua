@@ -1,3 +1,7 @@
+-- harpoon allows you to mark and quickly switch between frequently used files. 
+-- It enhances productivity by reducing the time spent searching for files 
+-- in your project. Key features include marking files, a quick menu for 
+-- selection, and direct navigation keys.
 -- luacheck: globals vim
 return {
 	"theprimeagen/harpoon",

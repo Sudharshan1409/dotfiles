@@ -1,3 +1,7 @@
+-- nvim-config-local allows you to use project-specific Neovim 
+-- configurations. It enhances management by allowing you to tailor 
+-- settings for different projects. Features include support for lua and 
+-- vimrc files, security hashing, and automatic loading on directory change.
 -- luacheck: globals vim
 return {
 	"klen/nvim-config-local",

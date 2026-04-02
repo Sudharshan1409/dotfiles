@@ -1,3 +1,7 @@
+-- LuaSnip is a powerful snippet engine written entirely in Lua. It 
+-- enhances coding speed by providing extensible and programmable snippets. 
+-- Features include support for VS Code snippets, complex jump points, 
+-- and dynamic snippet expansion.
 -- luacheck: globals vim
 return {
 	"L3MON4D3/LuaSnip",

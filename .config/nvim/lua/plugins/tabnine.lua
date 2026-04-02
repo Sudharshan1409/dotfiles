@@ -1,3 +1,7 @@
+-- tabnine-nvim provides AI-powered code completion by integrating Tabnine into 
+-- Neovim. It enhances coding assistance with smart, context-aware 
+-- suggestions. Features include support for various languages, 
+-- customizable suggestion colors, and debounced completion.
 return {
 	enabled = false,
 	"codota/tabnine-nvim",

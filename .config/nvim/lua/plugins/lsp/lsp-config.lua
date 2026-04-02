@@ -1,3 +1,7 @@
+-- This file contains the core LSP configuration using lsp-zero and 
+-- nvim-lspconfig. It provides an easy way to set up language servers with 
+-- sensible defaults and customized keybindings for definition jumps, 
+-- code actions, and diagnostic navigation.
 -- luacheck: globals vim
 local basicUtils = require("utils.basic")
 

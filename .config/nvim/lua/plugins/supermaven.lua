@@ -1,3 +1,7 @@
+-- supermaven-nvim is an AI-powered code completion plugin that provides 
+-- high-speed and accurate suggestions. It enhances coding assistance by 
+-- offering real-time inline completions. Features include customizable 
+-- keymaps and low-latency performance.
 return {
 	{
 		"supermaven-inc/supermaven-nvim",

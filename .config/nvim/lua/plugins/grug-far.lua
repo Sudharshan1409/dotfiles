@@ -1,3 +1,7 @@
+-- grug-far.nvim is a powerful search and replace plugin that provides a 
+-- user-friendly interface for project-wide modifications. It enhances 
+-- productivity by simplifying complex find-and-replace tasks with 
+-- features like real-time previews and prefilled searches.
 return {
 	{
 		"MagicDuck/grug-far.nvim",

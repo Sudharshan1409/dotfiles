@@ -1,3 +1,7 @@
+-- vim-illuminate automatically highlights other uses of the word under your 
+-- cursor. It provides a subtle UI enhancement that helps in identifying 
+-- references and navigating within a file. It features customizable 
+-- delays, file size cutoffs, and LSP integration.
 return {
 	{
 		"RRethy/vim-illuminate",

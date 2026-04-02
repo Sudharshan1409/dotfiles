@@ -1,3 +1,7 @@
+-- telescope.nvim is a highly extensible fuzzy finder for Neovim. It 
+-- is a core productivity tool that allows you to search for files, text, 
+-- and more across your entire project. Features include a powerful 
+-- extension system, customizable mappings, and real-time previews.
 -- luacheck: globals vim
 return {
 	{

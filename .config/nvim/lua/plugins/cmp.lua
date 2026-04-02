@@ -1,3 +1,7 @@
+-- nvim-cmp is the core autocompletion engine for this setup. It provides a 
+-- flexible and extensible platform for showing completion suggestions from 
+-- multiple sources like LSP, snippets, and buffers. It is essential for 
+-- efficient coding and provides a modern completion UI.
 -- Autocompletion
 return {
 	"hrsh7th/nvim-cmp",

@@ -1,3 +1,7 @@
+-- indent-blankline.nvim adds indentation guides to all lines, including 
+-- blank lines. This UI enhancement helps in visualizing code structure 
+-- and indentation levels. It features customizable highlight groups and 
+-- Treesitter integration for scoped indentation guides.
 -- luacheck: globals vim
 return {
 	"lukas-reineke/indent-blankline.nvim",

@@ -1,3 +1,7 @@
+-- This file serves as a collection of miscellaneous core plugins and 
+-- utilities. It includes essential tools like plenary, undotree for 
+-- advanced undo history, nvim-surround for pair manipulation, and 
+-- various UI and productivity enhancements.
 -- luacheck: globals vim
 local basicUtils = require("utils.basic")
 return {

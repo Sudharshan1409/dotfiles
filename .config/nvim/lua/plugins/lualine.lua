@@ -1,3 +1,7 @@
+-- lualine.nvim is a fast and customizable statusline plugin for Neovim. 
+-- It enhances the UI by providing a clear and informative statusline that 
+-- includes information about the current mode, Git status, diagnostics, 
+-- and more. It features various themes and easy configuration.
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {

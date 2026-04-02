@@ -1,3 +1,7 @@
+-- nvim-neoclip.lua provides a persistent clipboard history for Neovim. 
+-- It enhances productivity by allowing you to easily access and reuse 
+-- previously yanked text. Features include persistent storage using 
+-- SQLite, Telescope integration, and support for macros.
 -- luacheck: globals vim
 return {
 	"AckslD/nvim-neoclip.lua",

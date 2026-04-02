@@ -1,3 +1,7 @@
+-- nvim-lint provides asynchronous linting support for various languages. 
+-- It enhances the coding experience by identifying potential errors and 
+-- style issues in real-time. Features include custom linter configurations 
+-- and integration with Mason for easy tool management.
 -- luacheck: globals vim
 return {
 	"mfussenegger/nvim-lint",

@@ -1,3 +1,7 @@
+-- diffview.nvim provides an interactive and highly customizable interface 
+-- for viewing Git diffs and file history within Neovim. It enhances the Git 
+-- workflow by offering a clear side-by-side comparison and easy 
+-- navigation between changes.
 return {
 	{
 		"sindrets/diffview.nvim",

@@ -1,3 +1,7 @@
+-- nvim-treesitter provides an interface to use tree-sitter library in 
+-- Neovim. It is essential for advanced syntax highlighting, indentation, 
+-- and code navigation. Features include fast parsing, support for 
+-- numerous languages, and a powerful text objects extension.
 local function setup_treesitter()
 	local parsers = {
 		"javascript",

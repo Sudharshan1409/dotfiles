@@ -1,3 +1,7 @@
+-- mason.nvim is a portable package manager for Neovim that simplifies the 
+-- installation and management of LSP servers, linters, and formatters. It 
+-- ensures that all necessary external tools are easily accessible. Features 
+-- include automatic installation and a user-friendly UI.
 local lspUtils = require("utils.lsp")
 
 return {

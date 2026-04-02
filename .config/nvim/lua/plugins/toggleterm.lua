@@ -1,3 +1,7 @@
+-- toggleterm.nvim provides a flexible and easily accessible terminal within 
+-- Neovim. It enhances productivity by allowing you to quickly toggle 
+-- terminals and manage multiple terminal instances. Features include 
+-- floating terminals and integration with tools like lazygit.
 -- luacheck: globals vim
 return {
 	"akinsho/toggleterm.nvim",

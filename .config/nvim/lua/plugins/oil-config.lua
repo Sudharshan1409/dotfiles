@@ -1,3 +1,7 @@
+-- oil.nvim is a unique file explorer that lets you edit your file system 
+-- like a normal Neovim buffer. It improves productivity by allowing you to 
+-- use buffer commands to move, rename, or delete files. Features include 
+-- icon support, customizable columns, and a smooth preview experience.
 return {
 	"stevearc/oil.nvim",
 	opts = {},

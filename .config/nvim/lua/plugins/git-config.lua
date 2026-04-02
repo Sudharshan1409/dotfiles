@@ -1,3 +1,7 @@
+-- This file configures essential Git plugins including gitsigns, fugitive, 
+-- and git-worktree. These tools enhance productivity by providing 
+-- inline git indicators, a comprehensive Git CLI wrapper, and 
+-- efficient management of Git worktrees.
 -- luacheck: globals vim
 return {
 	{

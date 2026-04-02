@@ -1,3 +1,7 @@
+-- snacks.nvim is a collection of small, high-quality QoL plugins for Neovim. 
+-- It enhances the overall experience by providing various utilities like 
+-- debugging tools, toggleable options, and UI enhancements. It is 
+-- designed to be lightweight and highly customizable.
 -- luacheck: globals vim
 local snacksUtils = require("utils.snacks-utils")
 return {

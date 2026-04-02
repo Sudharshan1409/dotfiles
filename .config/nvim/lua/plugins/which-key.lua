@@ -1,3 +1,7 @@
+-- which-key.nvim is a productivity tool that displays a popup with 
+-- available keybindings as you start typing. It improves discoverability 
+-- of keymaps and simplifies complex command sequences. Features include 
+-- automatic integration with Neovim and customizable layouts.
 return {
 	{
 		"folke/which-key.nvim",

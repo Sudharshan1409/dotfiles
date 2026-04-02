@@ -1,3 +1,7 @@
+-- barbecue.nvim is a VS Code-like winbar that displays the current code context 
+-- and breadcrumbs. It enhances the UI by providing a clear visual indicator of 
+-- where you are in a file. It uses nvim-navic for context and supports 
+-- various UI customizations.
 -- luacheck: globals vim
 return {
 	"utilyre/barbecue.nvim",

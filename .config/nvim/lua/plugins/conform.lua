@@ -1,3 +1,7 @@
+-- conform.nvim is a lightweight yet powerful formatter plugin that enables 
+-- consistent code styling across various languages. It supports multiple 
+-- formatters and can be configured to format on save. Key features include 
+-- LSP fallback and asynchronous formatting for a smooth experience.
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },
