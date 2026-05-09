@@ -237,6 +237,18 @@ Quickly toggle between audio input/output devices.
 - Open pavucontrol for detailed control
 - Menu closes automatically after any action
 
+### Movie Mode (Solo Display)
+
+Turn off secondary monitors and disable screen locking for an immersive movie experience.
+
+**Keybinding:** `Super + Alt + M`
+
+**Features:**
+- Select a "Solo" monitor to stay on
+- Powers off all other monitors via DPMS
+- Automatically stops `hypridle` to prevent screen lock/sleep
+- "Restore" option to bring back all displays and re-enable `hypridle`
+
 ### App-Specific Help
 
 Shows keyboard shortcuts for the currently active application.
@@ -261,6 +273,7 @@ Shows keyboard shortcuts for the currently active application.
 | `keybinding_menu.sh` | Searchable keybinding help | `Super + /` |
 | `calculator.sh` | Quick calculator | `Super + Alt + C` |
 | `process_killer.sh` | Kill processes | `Super + Alt + P` |
+| `movie_mode.sh` | Solo display for movies | `Super + Alt + M` |
 | `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
 | `app_help.sh` | App-specific shortcuts | `Super + Shift + ?` |
 | `workspace_overview.sh` | Show all workspaces | `Super + Ctrl + Tab` |
@@ -345,6 +358,17 @@ tail -f ~/.config/hypr/.logs/monitor_listener.log
 ```bash
 # Check cache
 ~/.config/hypr/scripts/monitor_profile_manager.sh cache
+
+# Clear cache from profile menu (Ctrl+Super+D → Clear Cache)
+```
+
+### Files
+
+- **Profiles**: `~/.config/hypr/monitors/*.conf`
+- **Cache**: `~/.config/hypr/.cache/monitor_profile_cache.json`
+- **Logs**: `~/.config/hypr/.logs/monitor_listener.log`
+- **Rofi Theme**: `~/.config/rofi/monitor-profile.rasi`
+er.sh cache
 
 # Clear cache from profile menu (Ctrl+Super+D → Clear Cache)
 ```

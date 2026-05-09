@@ -37,6 +37,7 @@ cat > "$TEMP_FILE" << 'EOF'
 ⚙️ SYSTEM | Super + Shift + ? | App-specific shortcuts help
 🔧 UTILS | Super + Alt + C | Open calculator
 🔧 UTILS | Super + Alt + P | Kill a process
+🔧 UTILS | Super + Alt + M | Movie Mode (Solo Display)
 🔧 UTILS | Super + Alt + A | Audio device switcher
 🪟 WINDOWS | Super + C | Close active window
 🪟 WINDOWS | Super + V | Toggle floating mode
@@ -181,6 +182,8 @@ case "$DESCRIPTION" in
         hyprctl dispatch exec ~/.config/hypr/scripts/calculator.sh ;;
     "Kill a process")
         hyprctl dispatch exec ~/.config/hypr/scripts/process_killer.sh ;;
+    "Movie Mode (Solo Display)")
+        hyprctl dispatch exec ~/.config/hypr/scripts/movie_mode.sh ;;
     "Audio device switcher")
         hyprctl dispatch exec ~/.config/hypr/scripts/audio_switcher.sh ;;
     "Close active window")

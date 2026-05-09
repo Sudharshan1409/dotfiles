@@ -127,3 +127,11 @@ export PATH=/home/enigma/.opencode/bin:$PATH
 
 # opencode
 export PATH=/home/sudharshan/.opencode/bin:$PATH
+
+# pnpm
+export PNPM_HOME="/home/sudharshan/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
