@@ -85,6 +85,35 @@ sudo pacman -S grim slurp satty
 ```bash
 sudo apt install grim slurp
 ```
+
+### Screen Recording
+- `wf-recorder`: For recording the screen (used by the screen recorder utility, `Super + Alt + R`).
+
+**Arch Linux Installation:**
+```bash
+sudo pacman -S wf-recorder
+```
+
+**Ubuntu Installation:**
+```bash
+sudo apt install wf-recorder
+```
+**Note:** `wf-recorder` is available in Ubuntu 22.04+ universe repository. On older releases, build from source: https://github.com/ammen99/wf-recorder
+
+### Power Management
+- `power-profiles-daemon`: Provides the `powerprofilesctl` CLI used by the battery monitor for auto-switching between `performance` / `balanced` / `power-saver`.
+
+**Arch Linux Installation:**
+```bash
+sudo pacman -S power-profiles-daemon
+sudo systemctl enable --now power-profiles-daemon
+```
+
+**Ubuntu Installation:**
+```bash
+sudo apt install power-profiles-daemon
+sudo systemctl enable --now power-profiles-daemon
+```
 For Satty, clone the repository, build from source, and copy the binary to `/usr/local/bin`:
 ```bash
 git clone https://github.com/Satty-org/Satty.git
@@ -266,6 +295,91 @@ Shows keyboard shortcuts for the currently active application.
 - VLC/MPV
 - Generic shortcuts for unsupported apps
 
+### MRU Window Switcher (Alt-Tab)
+
+A classic Alt-Tab style switcher that lists every window across every workspace, sorted by most-recently-focused. Selecting a window jumps to it (and its workspace) directly.
+
+**Keybinding:** `Alt + Tab`
+
+**Features:**
+- MRU order via `focusHistoryID` from `hyprctl clients` — no event-tracking daemon
+- Current window is excluded, so the top entry is your *previous* window (Alt-Tab feel)
+- Selecting any window auto-switches to its workspace
+- Type to fuzzy-search across class and title
+
+### Move Workspace Between Monitors
+
+Push the current workspace to a neighboring monitor in any direction — useful when reshuffling content between displays without manually moving each window.
+
+**Keybindings:**
+- `Super + Shift + Left` — move current workspace to monitor on the left
+- `Super + Shift + Right` — move current workspace to monitor on the right
+- `Super + Shift + Up` — move current workspace to monitor above
+- `Super + Shift + Down` — move current workspace to monitor below
+
+Uses Hyprland's built-in `movecurrentworkspacetomonitor` dispatcher; no script required. Up/Down only have effect on vertically-arranged multi-monitor setups.
+
+### Workspace History Toggle
+
+Ping-pong between the current workspace and the last-focused one — the workspace equivalent of Alt-Tab.
+
+**Keybinding:** `Super + Backspace`
+
+Uses Hyprland's built-in `workspace previous` dispatcher; press again to jump back. Lives entirely in `bindings/workspaces.conf`, no script needed.
+
+### Battery Monitor (Auto)
+
+A background daemon that watches battery state and automatically:
+
+- **Notifies** on low-charge thresholds while discharging (≤20% normal, ≤10% critical, ≤5% urgent)
+- **Toasts** on AC plug/unplug transitions and at full charge
+- **Switches power profiles** via `powerprofilesctl`:
+  - AC plugged in → `performance` (falls back to `balanced` if performance isn't available)
+  - On battery, >30% → `balanced`
+  - On battery, ≤30% → `power-saver`
+
+Poll interval: 30 seconds. Battery and AC paths are auto-detected (BAT0/BAT1, AC/ADP1/ACAD).
+
+The monitor starts automatically on Hyprland session start via `launch_battery_monitor.sh`, which kills stale instances first. Requires `power-profiles-daemon` (see Dependencies → Power Management).
+
+### Focus Mode
+
+A one-key toggle for distraction-free work — similar to Movie Mode but for *coding*, not entertainment (multi-monitor and idle lock are left intact).
+
+**Keybinding:** `Super + Alt + F`
+
+**Features:**
+- Toggles swaync DND (notifications silenced and replayed on exit)
+- Hides waybar (via `SIGUSR1`)
+- Dims inactive windows (`decoration:dim_inactive`) so the focused window stands out
+- State tracked in `/tmp/focus_mode.state`; same key reverses everything
+- Pre-flight notification fires before DND so you always see the "ON" toast
+
+### Scratchpad Terminal
+
+A toggleable floating Ghostty terminal on a dedicated `special:scratch` workspace.
+
+**Keybinding:** `Super + S`
+
+**Features:**
+- First press spawns a Ghostty (forced as a fresh process with `--gtk-single-instance=false`) on its own special workspace
+- Subsequent presses hide/show the terminal without losing the session
+- Floats, centered, sized 85% × 80% — looks like an overlay panel
+- Window placement is enforced via inline dispatcher rules so it works regardless of class matching
+
+### Screen Recorder
+
+Toggle-based screen recorder built on `wf-recorder`.
+
+**Keybinding:** `Super + Alt + R`
+
+**Features:**
+- When idle, opens a rofi menu: region / active window / full screen, each with optional audio
+- When already recording, the same key stops and finalizes the file
+- Output: `~/Videos/Recordings/screen-<timestamp>.mp4`
+- Stopped recording's full path is auto-copied to the clipboard
+- Audio capture uses the default PulseAudio source (mic by default — set default source to a sink monitor with `pactl set-default-source <sink>.monitor` to capture system audio)
+
 ## Utility Scripts Reference
 
 | Script | Purpose | Keybinding |
@@ -275,6 +389,12 @@ Shows keyboard shortcuts for the currently active application.
 | `process_killer.sh` | Kill processes | `Super + Alt + P` |
 | `movie_mode.sh` | Solo display for movies | `Super + Alt + M` |
 | `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
+| `screen_recorder.sh` | Screen recorder (toggle) | `Super + Alt + R` |
+| `focus_mode.sh` | Focus mode (DND + hide bar + dim) | `Super + Alt + F` |
+| `battery_monitor.sh` | Battery alerts + auto power-profile | _autostart_ |
+| `window_switcher.sh` | MRU window switcher (all workspaces) | `Alt + Tab` |
+| `scratchpad_terminal.sh` | Floating dropdown terminal | `Super + S` |
+| `exit_hyprland.sh` | Exit Hyprland (confirmation) | `Super + Ctrl + M` |
 | `app_help.sh` | App-specific shortcuts | `Super + Shift + ?` |
 | `workspace_overview.sh` | Show all workspaces | `Super + Ctrl + Tab` |
 | `ocr.sh` | Extract text from screen | `Super + Shift + T` |

@@ -12,6 +12,7 @@ TEMP_FILE=$(mktemp)
 
 cat > "$TEMP_FILE" << 'EOF'
 📱 APPS | Super + Enter | Open terminal (Ghostty)
+📱 APPS | Super + S | Toggle scratchpad terminal
 📱 APPS | Super + Space | Open application launcher (Rofi)
 📱 APPS | Super + Alt + S | Open Spotify
 📱 APPS | Super + Alt + D | Open Downloads folder
@@ -39,6 +40,8 @@ cat > "$TEMP_FILE" << 'EOF'
 🔧 UTILS | Super + Alt + P | Kill a process
 🔧 UTILS | Super + Alt + M | Movie Mode (Solo Display)
 🔧 UTILS | Super + Alt + A | Audio device switcher
+🔧 UTILS | Super + Alt + R | Screen recorder (toggle)
+🔧 UTILS | Super + Alt + F | Focus mode (toggle DND + hide waybar)
 🪟 WINDOWS | Super + C | Close active window
 🪟 WINDOWS | Super + V | Toggle floating mode
 🪟 WINDOWS | Super + F | Toggle fullscreen mode
@@ -59,6 +62,7 @@ cat > "$TEMP_FILE" << 'EOF'
 🧭 NAVIGATION | Super + L | Move focus right
 🧭 NAVIGATION | Super + Mouse Left Drag | Move window
 🧭 NAVIGATION | Super + Mouse Right Drag | Resize window
+🧭 NAVIGATION | Alt + Tab | MRU window switcher (all workspaces)
 🗂️ WORKSPACES | Super + 1 | Switch to workspace 1
 🗂️ WORKSPACES | Super + 2 | Switch to workspace 2
 🗂️ WORKSPACES | Super + 3 | Switch to workspace 3
@@ -81,6 +85,11 @@ cat > "$TEMP_FILE" << 'EOF'
 🗂️ WORKSPACES | Super + Shift + 0 | Move window to workspace 10
 🗂️ WORKSPACES | Super + Mouse Scroll Down | Next workspace
 🗂️ WORKSPACES | Super + Mouse Scroll Up | Previous workspace
+🗂️ WORKSPACES | Super + Backspace | Jump to previously focused workspace
+🗂️ WORKSPACES | Super + Shift + Left | Move workspace to monitor on the left
+🗂️ WORKSPACES | Super + Shift + Right | Move workspace to monitor on the right
+🗂️ WORKSPACES | Super + Shift + Up | Move workspace to monitor above
+🗂️ WORKSPACES | Super + Shift + Down | Move workspace to monitor below
 🗂️ WORKSPACES | Super + M | Toggle Magic workspace (special)
 🗂️ WORKSPACES | Super + Shift + M | Send to Magic workspace
 🗂️ WORKSPACES | Super + A | Toggle Ad-Hoc workspace (special)
@@ -132,6 +141,8 @@ DESCRIPTION=$(echo "$SELECTED" | cut -d'|' -f3 | xargs)
 case "$DESCRIPTION" in
     "Open terminal (Ghostty)")
         hyprctl dispatch exec ghostty ;;
+    "Toggle scratchpad terminal")
+        hyprctl dispatch exec ~/.config/hypr/scripts/scratchpad_terminal.sh ;;
     "Open application launcher (Rofi)")
         hyprctl dispatch exec "rofi -show drun -show-icons -display-drune 'Apps' -theme ~/.config/rofi/launcher-elegant.rasi" ;;
     "Open Spotify")
@@ -186,6 +197,10 @@ case "$DESCRIPTION" in
         hyprctl dispatch exec ~/.config/hypr/scripts/movie_mode.sh ;;
     "Audio device switcher")
         hyprctl dispatch exec ~/.config/hypr/scripts/audio_switcher.sh ;;
+    "Screen recorder (toggle)")
+        hyprctl dispatch exec ~/.config/hypr/scripts/screen_recorder.sh ;;
+    "Focus mode (toggle DND + hide waybar)")
+        hyprctl dispatch exec ~/.config/hypr/scripts/focus_mode.sh ;;
     "Close active window")
         hyprctl dispatch killactive ;;
     "Toggle floating mode")
@@ -226,6 +241,8 @@ case "$DESCRIPTION" in
         hyprctl dispatch movewindow ;;
     "Resize window")
         hyprctl dispatch resizewindow ;;
+    "MRU window switcher (all workspaces)")
+        hyprctl dispatch exec ~/.config/hypr/scripts/window_switcher.sh ;;
     "Switch to workspace 1")
         hyprctl dispatch workspace 1 ;;
     "Switch to workspace 2")
@@ -270,6 +287,16 @@ case "$DESCRIPTION" in
         hyprctl dispatch workspace e+1 ;;
     "Previous workspace")
         hyprctl dispatch workspace e-1 ;;
+    "Jump to previously focused workspace")
+        hyprctl dispatch workspace previous ;;
+    "Move workspace to monitor on the left")
+        hyprctl dispatch movecurrentworkspacetomonitor l ;;
+    "Move workspace to monitor on the right")
+        hyprctl dispatch movecurrentworkspacetomonitor r ;;
+    "Move workspace to monitor above")
+        hyprctl dispatch movecurrentworkspacetomonitor u ;;
+    "Move workspace to monitor below")
+        hyprctl dispatch movecurrentworkspacetomonitor d ;;
     "Toggle Magic workspace (special)")
         hyprctl dispatch togglespecialworkspace Magic ;;
     "Send to Magic workspace")
