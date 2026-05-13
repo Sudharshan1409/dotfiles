@@ -1,8 +1,7 @@
 #!/bin/zsh
 
 # --- Paths ---
-_PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
-_MFUNC_PY_SCRIPT="$HOME/.config/zsh/python/mfunc.py"
+_MFUNC_PY_SCRIPT="$_PYTHON_DIR/mfunc.py"
 
 # --- Sanity Check ---
 if [ ! -f "$_MFUNC_PY_SCRIPT" ]; then
@@ -26,6 +25,9 @@ function _mfunc_cmd() {
                 _generate_cache "functions.sh" $_PYTHON_VENV_EXECUTABLE $_MFUNC_PY_SCRIPT
             fi
             rm -f "$tmpfile"
+            ;;
+        ls|help|run|"")
+            "$_PYTHON_VENV_EXECUTABLE" "$_MFUNC_PY_SCRIPT" "$@"
             ;;
         *)
             "$_PYTHON_VENV_EXECUTABLE" "$_MFUNC_PY_SCRIPT" "$@"

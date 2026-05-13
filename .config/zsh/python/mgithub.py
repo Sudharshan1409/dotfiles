@@ -4,9 +4,11 @@ import os
 import sys
 import argparse
 import shutil
+import shlex
 from InquirerPy import inquirer
 from InquirerPy.validator import EmptyInputValidator
 from InquirerPy.prompts.filepath import FilePathPrompt
+from lib.common import STYLE, read_registry, write_registry
 
 # --- Constants ---
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,24 +28,6 @@ def get_copy_command():
         if shutil.which('xclip'):
             return 'xclip -selection clipboard'
     return None
-
-def read_cloned_repos_db():
-    """Reads the cloned repos JSON database."""
-    if not os.path.exists(CLONED_REPOS_DB):
-        return {}
-    try:
-        with open(CLONED_REPOS_DB, 'r') as f:
-            return json.load(f)
-    except (json.JSONDecodeError, IOError):
-        return {}
-
-def write_cloned_repos_db(data):
-    """Writes data to the cloned repos JSON database."""
-    try:
-        with open(CLONED_REPOS_DB, 'w') as f:
-            json.dump(data, f, indent=4)
-    except IOError as e:
-        print(f"Error writing to DB: {e}", file=sys.stderr)
 
 # --- Core Logic ---
 
@@ -96,14 +80,14 @@ def select_repo_with_fzf(repos):
 
 def get_local_path_from_db(repo_name):
     """Gets a repo's local path from the DB and validates it."""
-    db = read_cloned_repos_db()
+    db = read_registry(CLONED_REPOS_DB, read_local=False)
     path = db.get(repo_name)
     if path and os.path.isdir(path):
         return path
     elif path:
         # Path in DB is invalid (e.g., user deleted folder), so remove it.
         del db[repo_name]
-        write_cloned_repos_db(db)
+        write_registry(db, CLONED_REPOS_DB, scope="global")
     return None
 
 def handle_clone_flow(repo_name):
@@ -118,10 +102,11 @@ def handle_clone_flow(repo_name):
         ],
         default="default",
         vi_mode=True,
+        style=STYLE,
     ).execute()
 
     if choice == "default":
-        return f"gh repo clone {repo_name} {default_path}"
+        return f"gh repo clone {shlex.quote(repo_name)} {shlex.quote(default_path)}"
     elif choice == "custom":
         parent_dir = inquirer.filepath(
             message="Select a parent directory to clone into:",
@@ -129,11 +114,12 @@ def handle_clone_flow(repo_name):
             default=PROJECTS_DIR,
             only_directories=True,
             vi_mode=True,
+            style=STYLE,
         ).execute()
         if parent_dir:
             repo_folder_name = repo_name.split('/')[1]
             final_path = os.path.join(parent_dir, repo_folder_name)
-            return f"gh repo clone {repo_name} {final_path}"
+            return f"gh repo clone {shlex.quote(repo_name)} {shlex.quote(final_path)}"
     return "cancel"
 
 def handle_remove_repo(repo_name, local_path):
@@ -142,16 +128,17 @@ def handle_remove_repo(repo_name, local_path):
         message=f"Are you sure you want to permanently delete '{local_path}'?",
         default=False,
         vi_mode=True,
+        style=STYLE,
     ).execute()
 
     if confirmed:
         try:
             print(f"Removing {local_path}...")
             shutil.rmtree(local_path)
-            db = read_cloned_repos_db()
+            db = read_registry(CLONED_REPOS_DB, read_local=False)
             if repo_name in db:
                 del db[repo_name]
-                write_cloned_repos_db(db)
+                write_registry(db, CLONED_REPOS_DB, scope="global")
             print(f"✅ Successfully removed '{repo_name}'.")
         except Exception as e:
             print(f"❌ Error removing repository: {e}", file=sys.stderr)
@@ -160,9 +147,9 @@ def handle_remove_repo(repo_name, local_path):
 
 def register_clone(repo_name, path):
     """Registers a newly cloned repository in the database."""
-    db = read_cloned_repos_db()
+    db = read_registry(CLONED_REPOS_DB, read_local=False)
     db[repo_name] = path
-    write_cloned_repos_db(db)
+    write_registry(db, CLONED_REPOS_DB, scope="global")
 
 def handle_create_repo():
     """Interactively creates a new GitHub repository."""
@@ -170,6 +157,8 @@ def handle_create_repo():
     repo_name = inquirer.text(
         message="Enter repository name:",
         validate=EmptyInputValidator(),
+        vi_mode=True,
+        style=STYLE,
     ).execute()
 
     # 2. Get Visibility
@@ -178,11 +167,14 @@ def handle_create_repo():
         choices=["public", "private", "internal"],
         default="public",
         vi_mode=True,
+        style=STYLE,
     ).execute()
 
     # 3. Optional Description
     description = inquirer.text(
         message="Enter description (optional):",
+        vi_mode=True,
+        style=STYLE,
     ).execute()
 
     # 4. Optional Initialization
@@ -190,16 +182,21 @@ def handle_create_repo():
         message="Initialize with README?",
         default=True,
         vi_mode=True,
+        style=STYLE,
     ).execute()
     
     # 5. Gitignore template
     gitignore = inquirer.text(
         message="Gitignore template (e.g., Python, Node, optional):",
+        vi_mode=True,
+        style=STYLE,
     ).execute()
     
     # 6. License
     license_key = inquirer.text(
         message="License key (e.g., mit, apache-2.0, optional):",
+        vi_mode=True,
+        style=STYLE,
     ).execute()
 
     # Construct the command
@@ -227,6 +224,7 @@ def handle_create_repo():
         message="Do you want to clone this repository now?",
         default=True,
         vi_mode=True,
+        style=STYLE,
     ).execute()
 
     if should_clone:
@@ -240,28 +238,17 @@ def handle_create_repo():
         clone_cmd = handle_clone_flow(full_repo_name)
         
         if clone_cmd and clone_cmd != "cancel":
-            # Extract the destination path from the clone command to register it
-            # Command format: "gh repo clone <repo> <path>"
-            parts = clone_cmd.split()
+            # Parse the clone command — shlex.split respects shell quoting so paths
+            # with spaces or special chars survive intact.
+            parts = shlex.split(clone_cmd)
             if len(parts) >= 4:
-                # The path is the last argument, but might contain spaces so we join whatever is after 'clone <repo>'
-                # Actually handle_clone_flow returns simpler string. Let's parse carefully.
-                # In handle_clone_flow: return f"gh repo clone {repo_name} {path}"
-                # So we can just run this command.
-                
                 print(f"Cloning {full_repo_name}...")
                 try:
                     subprocess.run(clone_cmd, shell=True, check=True)
-                    
-                    # Extract path for registration
-                    # repo_name is index 3 (0-based)
-                    # path starts at index 4
-                    dest_path = " ".join(parts[4:])
-                    
+                    dest_path = parts[-1]
                     register_clone(full_repo_name, dest_path)
                     print(f"✅ Cloned to {dest_path}")
-                    
-                    return f"cd {dest_path}"
+                    return f"cd {shlex.quote(dest_path)}"
                 except subprocess.CalledProcessError:
                     print("❌ Failed to clone repository.")
                     return None
@@ -271,7 +258,7 @@ def handle_create_repo():
 def handle_delete_repo():
     """Interactively deletes a repository (local and/or remote)."""
     # 1. Select Repository (Local preferred, or fetch)
-    local_repos_map = read_cloned_repos_db()
+    local_repos_map = read_registry(CLONED_REPOS_DB, read_local=False)
     fzf_input = []
     selection_map = {}
     
@@ -332,6 +319,7 @@ def handle_delete_repo():
         choices=options,
         default="cancel",
         vi_mode=True,
+        style=STYLE,
     ).execute()
 
     if scope == "cancel":
@@ -344,17 +332,18 @@ def handle_delete_repo():
         confirm_local = inquirer.confirm(
             message=f"Are you sure you want to delete folder '{local_path}'?",
             default=False,
-            vi_mode=True
+            vi_mode=True,
+            style=STYLE,
         ).execute()
         
         if confirm_local:
             try:
                 shutil.rmtree(local_path)
                 # Update DB
-                db = read_cloned_repos_db()
+                db = read_registry(CLONED_REPOS_DB, read_local=False)
                 if selected_repo_name in db:
                     del db[selected_repo_name]
-                    write_cloned_repos_db(db)
+                    write_registry(db, CLONED_REPOS_DB, scope="global")
                 print(f"✅ Local directory deleted.")
             except Exception as e:
                 print(f"❌ Error deleting local directory: {e}")
@@ -370,13 +359,15 @@ def handle_delete_repo():
             message=f"Type '{selected_repo_name}' to confirm:",
             validate=lambda x: x == selected_repo_name,
             invalid_message="Repository name does not match.",
+            vi_mode=True,
+            style=STYLE,
         ).execute()
 
         if confirm_input == selected_repo_name:
             try:
                 print(f"Deleting remote repository '{selected_repo_name}'...")
-                # gh repo delete <repo> --confirm
-                subprocess.run(['gh', 'repo', 'delete', selected_repo_name, '--confirm'], check=True)
+                # gh repo delete <repo> --yes
+                subprocess.run(['gh', 'repo', 'delete', selected_repo_name, '--yes'], check=True)
                 print(f"✅ Remote repository deleted.")
             except subprocess.CalledProcessError:
                 print(f"❌ Failed to delete remote repository.")
@@ -413,7 +404,7 @@ def main():
 
         if args.subcommand == 'repos':
             # --- MODIFIED: Lazy Loading Logic ---
-            local_repos_map = read_cloned_repos_db()
+            local_repos_map = read_registry(CLONED_REPOS_DB, read_local=False)
             
             # Prepare initial choices (Local repos + Fetch option)
             fzf_input = []
@@ -469,22 +460,22 @@ def main():
             
             actions = []
             if local_path:
-                actions.append({"name": f"cd into local repo ({local_path})", "value": f"cd {local_path}"})
+                actions.append({"name": f"cd into local repo ({local_path})", "value": f"cd {shlex.quote(local_path)}"})
                 actions.append({"name": "Remove local repo...", "value": "remove_repo"})
             else:
                 actions.append({"name": "Clone repo", "value": "clone_flow"})
             
             actions.extend([
-                {"name": f"Open repo in browser ({repo_url_https})", "value": f"gh repo view --web {repo_name}"},
-                {"name": f"View README in terminal", "value": f"gh repo view {repo_name} | bat --paging=always --language=markdown"},
+                {"name": f"Open repo in browser ({repo_url_https})", "value": f"gh repo view --web {shlex.quote(repo_name)}"},
+                {"name": f"View README in terminal", "value": f"gh repo view {shlex.quote(repo_name)} | bat --paging=always --language=markdown"},
             ])
 
             copy_cmd = get_copy_command()
             if copy_cmd:
                 actions.extend([
-                    {"name": "Copy HTTPS clone URL", "value": f"echo '{repo_url_https}.git' | {copy_cmd}"},
-                    {"name": "Copy SSH clone URL", "value": f"echo '{repo_url_ssh}' | {copy_cmd}"},
-                    {"name": "Copy repo name to clipboard", "value": f"echo '{repo_name}' | {copy_cmd}"},
+                    {"name": "Copy HTTPS clone URL", "value": f"echo {shlex.quote(repo_url_https + '.git')} | {copy_cmd}"},
+                    {"name": "Copy SSH clone URL", "value": f"echo {shlex.quote(repo_url_ssh)} | {copy_cmd}"},
+                    {"name": "Copy repo name to clipboard", "value": f"echo {shlex.quote(repo_name)} | {copy_cmd}"},
                 ])
             actions.append({"name": "Cancel", "value": "cancel"})
 
@@ -494,6 +485,7 @@ def main():
                 default=actions[0]['value'] if actions else None,
                 vi_mode=True,
                 long_instruction="Use arrow keys to navigate, Enter to select.",
+                style=STYLE,
             ).execute()
 
             final_command = None

@@ -98,13 +98,19 @@ def write_registry(data, path, scope="global"):
     """Writes a dictionary back to the specified JSON registry file."""
     write_path = path if scope == "global" else path + ".local"
     os.makedirs(os.path.dirname(write_path), exist_ok=True)
+    tmp_path = write_path + ".tmp"
     try:
-        with open(write_path, "w") as f:
+        with open(tmp_path, "w") as f:
             json.dump(data, f, indent=4, sort_keys=True)
+        os.replace(tmp_path, write_path)
     except IOError:
         CONSOLE.print(
             f"[red]Error: Could not write to {os.path.basename(write_path)}.[/red]"
         )
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
 
 def find_item(data, item_name):

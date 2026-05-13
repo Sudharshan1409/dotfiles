@@ -1,7 +1,6 @@
 #!/bin/zsh
 
-_PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
-_MPROJ_PY_SCRIPT="$HOME/.config/zsh/python/mproj.py"
+_MPROJ_PY_SCRIPT="$_PYTHON_DIR/mproj.py"
 
 # This is the internal command called by the 'enigma' dispatcher.
 # It's a dispatcher itself, handling special cases like 'add' and 'launch'.

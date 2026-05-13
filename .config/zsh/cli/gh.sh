@@ -1,9 +1,6 @@
 #!/usr/bin/env zsh
 
 # --- Paths ---
-_VENV_DIR="$HOME/.config/zsh/venv"
-_PYTHON_DIR="$HOME/.config/zsh/python"
-_PYTHON_VENV_EXECUTABLE="$_VENV_DIR/bin/python3"
 _MGITHUB_PY_SCRIPT="$_PYTHON_DIR/mgithub.py"
 
 # --- Sanity Checks ---

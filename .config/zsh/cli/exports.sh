@@ -1,8 +1,7 @@
 #!/bin/zsh
 
 
-_PYTHON_VENV_EXECUTABLE="$HOME/.config/zsh/venv/bin/python3"
-_MENV_PY_SCRIPT="$HOME/.config/zsh/python/menv.py"
+_MENV_PY_SCRIPT="$_PYTHON_DIR/menv.py"
 
 # On shell startup, execute the python script's 'load' command.
 _load_cache "exports.sh" $_PYTHON_VENV_EXECUTABLE $_MENV_PY_SCRIPT
@@ -21,6 +20,9 @@ function _menv_cmd() {
                 _generate_cache "exports.sh" $_PYTHON_VENV_EXECUTABLE $_MENV_PY_SCRIPT
             fi
             rm -f "$tmpfile"
+            ;;
+        ls|help|"")
+            "$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" "$@"
             ;;
         *)
             "$_PYTHON_VENV_EXECUTABLE" "$_MENV_PY_SCRIPT" "$@"
