@@ -46,3 +46,7 @@ source "$HOME/.config/zsh/tmux.sh"
 
 # Source the master command dispatcher from its new location
 source "$HOME/.config/zsh/cli/dispatcher.sh"
+
+# Tab completion for `enigma` / `en` (depends on compinit, which fzf.sh
+# triggers via `eval "$(fzf --zsh)"` earlier in this file)
+source "$HOME/.config/zsh/cli/completion.zsh"
