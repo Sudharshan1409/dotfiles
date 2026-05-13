@@ -42,5 +42,5 @@ _fzf_compgen_dir() {
     fd --type=d --hidden --exclude .git . "$1"
 }
 
-# shellcheck source=/Users/enigma/.config/zsh/fzf-git.sh/fzf-git.sh
+# shellcheck source=fzf-git.sh
 source "$HOME/.config/zsh/fzf/fzf-git.sh"

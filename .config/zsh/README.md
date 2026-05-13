@@ -7,7 +7,7 @@ The core philosophy is to keep `~/.zshrc` as a minimal loader, with all logic se
 ### Core Features
 
 - **Unified Management CLI (`enigma`)**: A single, elegant entry point to manage every aspect of the shell environment.
-- **Python-Powered Tooling**: Custom backends for managing aliases, functions, environment variables, snippets, and projects, all with interactive TUI elements.
+- **Python-Powered Tooling**: Custom backends for managing aliases, functions, environment variables, and projects, all with interactive TUI elements.
 - **Automated First-Time Setup**: The shell automatically creates a Python virtual environment and installs all dependencies on first launch.
 - **Polyglot Function Support**: Seamlessly create and run both Zsh and Python scripts as shell functions.
 - **GitHub Integration**: A powerful, `fzf`-driven interface for browsing and managing your GitHub repositories.
@@ -17,7 +17,7 @@ The core philosophy is to keep `~/.zshrc` as a minimal loader, with all logic se
 
 ## Installation
 
-Follow these steps to set up the configuration on a new macOS machine.
+Follow these steps to set up the configuration on a new machine (macOS or Linux).
 
 ### Step 1: Prerequisites
 
@@ -26,7 +26,7 @@ Ensure you have the following installed first:
 - [Homebrew](https://brew.sh/)
 - [Git](https://git-scm.com/downloads)
 - [Stow](https://www.gnu.org/software/stow/) (for symlinking dotfiles)
-- Python 3 & Pip (macOS comes with a compatible version)
+- Python 3 & Pip
 
 ### Step 2: Clone the Dotfiles
 
@@ -62,11 +62,11 @@ The next step is the easiest. **Simply open a new terminal window or tab.**
 The first time you start a new shell, you will see a message like this:
 
 ```
-Alias Manager: First-time setup detected. Please wait...
+Enigma: First-time setup detected. Please wait...
   -> Found requirements.txt file.
-  -> Creating Python virtual environment at /Users/enigma/.config/zsh/venv...
+  -> Creating Python virtual environment at ~/.config/zsh/venv...
   -> Installing dependencies from requirements.txt...
-✅ Alias Manager setup complete. Your shell will now load.
+✅ Enigma setup complete. Your shell will now load.
 ```
 
 This process automatically creates a dedicated Python virtual environment and installs the required libraries (`rich`, `InquirerPy`, etc.). This only happens once.
@@ -110,16 +110,6 @@ Manages environment variables, exports, and OS-specific configurations.
 - `enigma env edit`: Interactively edits an existing entry.
 - `enigma env rm`: Removes an environment entry.
 
-### `enigma snip` - Snippet Management
-
-Manages a personal library of code snippets.
-
-- `enigma snip ls`: Lists all configured snippets.
-- `enigma snip add <name>`: Interactively adds a new snippet.
-- `enigma snip edit <name>`: Edits an existing snippet.
-- `enigma snip rm <name>`: Removes a snippet.
-- `enigma snip mv <name>`: Moves a snippet to a different group.
-
 ### `enigma proj` - Project Management
 
 Manages project configurations for quick environment launching.
@@ -148,16 +138,15 @@ Provides a powerful, `fzf`-driven interface for interacting with your GitHub rep
 
 ## Convenience Commands
 
-For frequent operations, two short, user-facing commands are available:
+For frequent operations, a short, user-facing command is available:
 
-- **`snip`**: A powerful, `fzf`-based fuzzy finder to search, preview, and copy a snippet to your clipboard.
 - **`proj`**: A convenience alias for `enigma proj launch`. Simply type `proj` to open the project launcher.
 
 ---
 
 ## Recommended Tools (Dependencies)
 
-For the best experience, a number of modern command-line tools should be installed via Homebrew.
+For the best experience, a number of modern command-line tools should be installed via Homebrew (macOS native, or linuxbrew on Linux).
 
 | Tool          | Description                                 | Installation Command     |
 | ------------- | ------------------------------------------- | ------------------------ |
