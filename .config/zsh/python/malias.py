@@ -52,13 +52,13 @@ class AliasManager(BaseManager):
     def _post_add_hook(self, args, item_name, item_obj):
         if args.outfile:
             with open(args.outfile, "w") as f:
-                command_quoted = item_obj.replace("'", "''''")
+                command_quoted = item_obj.replace("'", "'\\''")
                 f.write(f"alias {item_name}='{command_quoted}'\n")
 
     def _post_edit_hook(self, args, item_name, new_item_obj, old_item_obj):
         if args.outfile:
             with open(args.outfile, "w") as f:
-                command_quoted = new_item_obj.replace("'", "''''")
+                command_quoted = new_item_obj.replace("'", "'\\''")
                 f.write(f"alias {item_name}='{command_quoted}'\n")
 
     def _post_remove_hook(self, args, item_name, item_obj):
@@ -70,7 +70,7 @@ class AliasManager(BaseManager):
         data = self._read_registry()
         for group, aliases in data.items():
             for name, command in aliases.items():
-                command_quoted = command.replace("'", "''''")
+                command_quoted = command.replace("'", "'\\''")
                 print(f"alias {name}='{command_quoted}'")
         print(f"alias getrepo='{os.path.expanduser('~/.config/zsh/getrepo.sh')}'")
 

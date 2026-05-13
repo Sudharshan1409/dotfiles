@@ -2,7 +2,7 @@ function tmux() {
     # If no arguments are provided, simply start tmux
     if [ $# -eq 0 ]; then
         $TMUX_PATH
-        return 1
+        return $?
     fi
 
     # Switch case to handle different commands
@@ -15,7 +15,7 @@ function tmux() {
             # If only 'cns' is provided without any session name, start tmux
             if [ $# -eq 1 ]; then
                 $TMUX_PATH
-                return 1
+                return $?
             fi
 
             # If window name is not provided, set window name to session name
@@ -37,7 +37,7 @@ function tmux() {
             # If only 'kp' is provided without any pane id, kill active pane
             if [ $# -eq 1 ]; then
                 $TMUX_PATH kill-pane
-                return 1
+                return $?
             fi
 
             # Kill the specified pane
