@@ -23,8 +23,7 @@ if [ "$chosen_option" ]; then
             ;;
         *)
             ssid=$(echo "$chosen_option" | sed 's/^\*//' | awk '{print $1}')
-            echo "DEBUG: SSID is '$ssid'" >> /tmp/rofi_wifi_debug.log
-            
+
             # Check if the network requires a password
             security=$(nmcli -fields security device wifi list | grep "$ssid" | awk '{print $2}')
 

@@ -23,8 +23,7 @@ This directory contains various scripts that are used by the modules in the `con
 *   `toggle-bluetooth.sh`: Toggles Bluetooth on and off. **Requires `sudo`**.
 *   `toggle-wifi.sh`: Toggles Wi-Fi on and off. **Requires `sudo`**.
 *   `volume-control.sh`: Controls the speaker volume.
-*   `waybar-wttr.py`: A Python script that fetches and displays weather information from `wttr.in`.
-*   `wifi-menu.sh`: Displays a menu of available Wi-Fi networks using `rofi` and allows you to connect to them.
+*   `rofi-wifi-menu.sh`: Displays a menu of available Wi-Fi networks using `rofi` and allows you to connect to them.
 
 ## Dependencies
 

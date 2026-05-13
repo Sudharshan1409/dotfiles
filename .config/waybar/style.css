@@ -31,16 +31,18 @@ tooltip {
 #workspaces,
 #clock,
 #window,
-#custom-mediaplayer,
+#mpris,
 #custom-network,
 #tray,
 #custom-bluetooth,
 #custom-cpu,
 #custom-memory,
+#disk,
 #battery,
 #backlight,
 #pulseaudio,
 #pulseaudio.microphone,
+#idle_inhibitor,
 #custom-power,
 #custom-swaync {
   /* <-- THIS LINE IS CORRECTED */
@@ -49,6 +51,39 @@ tooltip {
   padding: 0px 10px;
   margin-top: 10px;
   border: 1px solid #181825;
+}
+
+/* ####################################################################################### */
+/* #  Recording Indicator (kept outside the shared module-box rule so it can collapse)   # */
+/* ####################################################################################### */
+#custom-recorder {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  color: transparent;
+  min-width: 0;
+}
+#custom-recorder.recording {
+  color: #ffffff;
+  background: rgba(243, 139, 168, 0.25);
+  border: 1px solid #f38ba8;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-left: 10px;
+  padding: 0 12px;
+  font-weight: bold;
+  animation: pulse-record 1.2s ease-in-out infinite alternate;
+}
+@keyframes pulse-record {
+  from {
+    background-color: rgba(243, 139, 168, 0.20);
+    color: #ffdde3;
+  }
+  to {
+    background-color: rgba(243, 139, 168, 0.65);
+    color: #ffffff;
+  }
 }
 
 /* ####################################################################################### */
@@ -96,15 +131,18 @@ tooltip {
 
 /* --- Center Module --- */
 
-#custom-mediaplayer {
+#mpris {
   border-radius: 10px;
   color: #cba6f7;
 }
-#custom-mediaplayer.Playing {
+#mpris.playing {
   color: #a6e3a1;
 }
-#custom-mediaplayer.Paused {
+#mpris.paused {
   color: #f9e2af;
+}
+#mpris.stopped {
+  color: #6c7086;
 }
 
 /* --- Right Modules --- */
@@ -161,6 +199,19 @@ tooltip {
   border-right: 0;
 }
 
+#disk {
+  color: #f9e2af;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+#disk.warning {
+  color: #fab387;
+}
+#disk.critical {
+  color: #f38ba8;
+}
+
 #battery {
   color: #a6e3a1;
   border-radius: 0;
@@ -190,6 +241,18 @@ tooltip {
   border-radius: 0 10px 10px 0;
   border-left: 0;
   margin-right: 10px;
+}
+
+#idle_inhibitor {
+  border-radius: 10px;
+  margin-right: 10px;
+  font-size: 18px;
+}
+#idle_inhibitor.activated {
+  color: #f9e2af;
+}
+#idle_inhibitor.deactivated {
+  color: #6c7086;
 }
 
 #custom-power {

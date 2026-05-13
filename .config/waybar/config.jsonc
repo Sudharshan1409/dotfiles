@@ -15,10 +15,11 @@
     "modules-left": [
         "clock",
         "hyprland/window",
-        "hyprland/workspaces"
+        "hyprland/workspaces",
+        "custom/recorder"
     ],
     "modules-center": [
-        "custom/mediaplayer"
+        "mpris"
     ],
     "modules-right": [
         "custom/network",
@@ -26,10 +27,12 @@
         "custom/bluetooth",
         "custom/cpu",
         "custom/memory",
+        "disk",
         "battery",
         "backlight",
         "pulseaudio",
         "pulseaudio#microphone",
+        "idle_inhibitor",
         "custom/power",
         "custom/swaync"
     ],
@@ -40,12 +43,44 @@
     "clock": {
         "format": "{:%H:%M}  ",
         "format-alt": "{:%A, %B %d, %Y (%R)}  ",
-        "tooltip-format": "{calendar}"
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
+            "format": {
+                "months":   "<span color='#fab387'><b>{}</b></span>",
+                "days":     "<span color='#cdd6f4'>{}</span>",
+                "weeks":    "<span color='#94e2d5'><b>W{}</b></span>",
+                "weekdays": "<span color='#f9e2af'><b>{}</b></span>",
+                "today":    "<span color='#f38ba8'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
     },
     "hyprland/window": {
         "format": "{}",
-        "max-length": 25,
-        "tooltip": true
+        "max-length": 50,
+        "separate-outputs": true,
+        "tooltip": true,
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "🦊 $1",
+            "(.*) - Mozilla Firefox": "🦊 $1",
+            "(.*) - Google Chrome": " $1",
+            "(.*) - Chromium": " $1",
+            "(.*) - Visual Studio Code": "󰨞 $1",
+            "(.*) - Code - OSS": "󰨞 $1",
+            "(.*) — Discord": "󰙯 $1",
+            "(.*) - Spotify( Free| Premium)?": " $1",
+            "(.*) - kitty": " $1",
+            "(.*) — kitty": " $1",
+            "": " desktop"
+        }
     },
     "hyprland/workspaces": {
         "format": "{name}",
@@ -54,15 +89,44 @@
         "sort-by-number": true,
         "persistent_workspaces": {}
     },
+    "custom/recorder": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 1,
+        "exec": "~/.config/waybar/scripts/recorder-status.sh",
+        "on-click": "~/.config/hypr/scripts/screen_recorder.sh",
+        "on-click-right": "xdg-open ~/Videos/Recordings",
+        "tooltip": true,
+        "escape": false
+    },
     // #######################################################################################
     // #  Center Module Configuration                                                        #
     // #######################################################################################
-    "custom/mediaplayer": {
-        "format": "{icon} {text}",
-        "return-type": "json",
-        "max-length": 30,
-        "exec": "playerctl -a metadata --format '{\"text\": \"{{markup_escape(artist)}} - {{markup_escape(title)}}\", \"tooltip\": \"<b>Player:</b> {{playerName}} | <b>Artist:</b> {{markup_escape(artist)}} | <b>Title:</b> {{markup_escape(title)}} | <b>Album:</b> {{markup_escape(album)}} | <b>Track:</b> {{xesam:trackNumber}} | <b>Duration:</b> {{duration(mpris:length)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+    "mpris": {
+        "format": "{player_icon} {dynamic}",
+        "format-paused": "{status_icon} <i>{dynamic}</i>",
+        "format-stopped": "",
+        "player-icons": {
+            "default": "▶",
+            "mpv": "🎵",
+            "spotify": " ",
+            "firefox": " ",
+            "chromium": " ",
+            "vlc": "󰕼 ",
+            "kdeconnect": " "
+        },
+        "status-icons": {
+            "playing": "▶",
+            "paused": "⏸",
+            "stopped": "⏹"
+        },
+        "dynamic-len": 35,
+        "dynamic-order": ["title", "artist"],
+        "interval": 1,
+        "tooltip-format": "{player} • {status}\n{title}\n{artist} — {album}",
+        "tooltip-format-paused": "{player} • paused\n{title}\n{artist} — {album}",
         "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl stop",
         "on-scroll-up": "playerctl next",
         "on-scroll-down": "playerctl previous"
     },
@@ -92,12 +156,10 @@
     },
     "custom/cpu": {
         "format": "󰾆 {}%",
-        "interval": 5,
+        "return-type": "json",
+        "interval": 3,
         "exec": "~/.config/waybar/scripts/cpu.sh",
-        "on-click": "kitty htop",
-        "states": {
-            "critical": 90
-        }
+        "on-click": "kitty htop"
     },
     "custom/memory": {
         "return-type": "json",
@@ -105,6 +167,18 @@
         "interval": 30,
         "exec": "~/.config/waybar/scripts/memory.sh",
         "on-click": "kitty htop"
+    },
+    "disk": {
+        "interval": 60,
+        "format": "󰋊 {percentage_used}%",
+        "format-alt": "󰋊 {used} / {total}",
+        "path": "/",
+        "tooltip": true,
+        "tooltip-format": "<b>Disk /</b>\n{used} used of {total}\n{free} free ({percentage_used}%)",
+        "states": {
+            "warning": 80,
+            "critical": 95
+        }
     },
     "battery": {
         "states": {
@@ -116,6 +190,8 @@
         "format-charging": " {capacity}%",
         "format-plugged": " {capacity}%",
         "format-alt": "{time} {icon}",
+        "tooltip-format": "{capacity}% • {timeTo}\nPower draw: {power}W",
+        "on-click": "~/.config/waybar/scripts/power-profile-cycle.sh",
         "format-icons": [
             "󰂎",
             "󰁺",
@@ -159,14 +235,39 @@
         "on-scroll-down": "~/.config/waybar/scripts/mic-control.sh up",
         "scroll-step": 5
     },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "󰅶",
+            "deactivated": "󰾪"
+        },
+        "tooltip": true,
+        "tooltip-format-activated": "Keep-awake: ON (click to disable)",
+        "tooltip-format-deactivated": "Keep-awake: OFF (click to enable)"
+    },
     "custom/power": {
         "format": "⏻",
         "tooltip": false,
         "on-click": "~/.config/waybar/scripts/power-menu.sh"
     },
     "custom/swaync": {
-        "format": "󰂚",
-        "tooltip": false,
-        "on-click": "~/.config/waybar/scripts/swaync-client.sh"
+        "tooltip": true,
+        "format": "{icon} {}",
+        "format-icons": {
+            "notification": "<span foreground='#f38ba8'><sup></sup></span>󰂚",
+            "none": "󰂚",
+            "dnd-notification": "<span foreground='#f38ba8'><sup></sup></span>󰂛",
+            "dnd-none": "󰂛",
+            "inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>󰂚",
+            "inhibited-none": "󰂚",
+            "dnd-inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>󰂛",
+            "dnd-inhibited-none": "󰂛"
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
     }
 }
