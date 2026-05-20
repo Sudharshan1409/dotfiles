@@ -60,7 +60,7 @@ _enigma() {
         '*::arg:->args'
 
     case "$state" in
-        cmd) _values 'enigma subcommand' alias func env proj gh ;;
+        cmd) _values 'enigma subcommand' alias func env proj gh ai ;;
         args)
             case "${words[1]}" in
                 alias) _enigma_manager aliases ;;
@@ -68,6 +68,7 @@ _enigma() {
                 env)   _enigma_manager env ;;
                 proj)  _enigma_proj ;;
                 gh)    _enigma_gh ;;
+                ai)    _values 'ai action' config help ;;
             esac
             ;;
     esac

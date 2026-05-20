@@ -40,6 +40,7 @@ source "$HOME/.config/zsh/cli/aliases.sh"
 source "$HOME/.config/zsh/cli/functions.sh"
 source "$HOME/.config/zsh/cli/projects.sh"
 source "$HOME/.config/zsh/cli/gh.sh"
+source "$HOME/.config/zsh/cli/ai.sh"
 
 # Source non-CLI configuration files
 source "$HOME/.config/zsh/tmux.sh"

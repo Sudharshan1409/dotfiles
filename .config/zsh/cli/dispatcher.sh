@@ -14,6 +14,7 @@ function enigma() {
         print -P "  %F{yellow}env%f       Manage environment variables"
         print -P "  %F{yellow}proj%f      Manage and launch projects"
         print -P "  %F{yellow}gh%f        Interact with GitHub"
+        print -P "  %F{yellow}ai%f        AI shell assistant (Gemini)"
         print ""
         print -P "Run 'enigma %F{cyan}<command>%f help' for more information on a specific command."
         return 1
@@ -25,6 +26,7 @@ function enigma() {
         env)   _menv_cmd "${@:2}" ;;
         proj)  _mproj_cmd "${@:2}" ;;
         gh) _mgithub_cmd "${@:2}" ;;
+        ai) _mai_cmd "${@:2}" ;;
         *)
             echo "Error: Unknown command '$sub_command'." >&2
             enigma
