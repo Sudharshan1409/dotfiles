@@ -396,7 +396,7 @@ show_profile_switcher() {
             ;;
         *)
             # Extract profile name (remove description if present)
-            local profile=$(echo "$selected" | cut -d'-' -f1 | xargs)
+            local profile=$(echo "$selected" | sed 's/ - .*//' | xargs)
             apply_profile "$profile"
             ;;
     esac

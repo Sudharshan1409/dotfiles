@@ -1,6 +1,6 @@
 # Dotfiles Repository
 
-This repository contains configuration files for various tools and applications. Each configuration is organized into its own directory under the `.config` directory. Below is an overview of the configurations available in this repository, along with links to their respective documentation.
+This repository contains configuration files for various tools and applications. Each tool is organized into its own top-level package directory, making it fully modular and compatible with GNU Stow. Below is an overview of the configurations available in this repository, along with links to their respective documentation.
 
 ## Configurations
 
@@ -9,23 +9,23 @@ This repository contains configuration files for various tools and applications.
 
 - **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
 
-  - [Zsh README](.config/zsh/README.md)
+  - [Zsh README](zsh/.config/zsh/README.md)
 
 - **Kitty**: Configuration files for Kitty, a fast, feature-rich, GPU-accelerated terminal emulator.
 
-  - [Kitty README](.config/kitty/README.md)
+  - [Kitty README](kitty/.config/kitty/README.md)
 
 - **WezTerm**: Configuration files for WezTerm, a GPU-accelerated terminal emulator.
 
-  - [WezTerm README](.config/wezterm/README.md)
+  - [WezTerm README](wezterm/.config/wezterm/README.md)
 
 - **Tmux**: Configuration files for Tmux, a terminal multiplexer.
 
-  - [Tmux README](.config/tmux/README.md)
+  - [Tmux README](tmux/.config/tmux/README.md)
 
 - **Zellij**: Configuration files for Zellij, a terminal workspace and multiplexer.
 
-  - [Zellij README](.config/zellij/README.md)
+  - [Zellij README](zellij/.config/zellij/README.md)
 
 </details>
 
@@ -34,25 +34,25 @@ This repository contains configuration files for various tools and applications.
 
 - **Hypr**: Configuration files for Hyprland, a dynamic tiling Wayland compositor.
 
-  - [Hypr README](.config/hypr/README.md)
+  - [Hypr README](hypr/.config/hypr/README.md)
 
 - **Waybar**: Configuration files for Waybar, a highly customizable Wayland bar for Sway and Wlroots based compositors.
 
-  - [Waybar README](.config/waybar/README.md)
+  - [Waybar README](waybar/.config/waybar/README.md)
 
   - **Note on Bluetooth**: The Waybar configuration uses an OS-specific script to launch the appropriate Bluetooth manager. On Arch Linux, it uses `blueberry`, and on Ubuntu, it uses `bzmenu`.
 
 - **Swaync**: Configuration for Swaync, a notification daemon for Wayland.
 
-  - [Swaync README](.config/swaync/README.md)
+  - [Swaync README](swaync/.config/swaync/README.md)
 
 - **Aerospace**: Configuration files for aerospace-related tools.
 
-  - [Aerospace README](.config/aerospace/README.md)
+  - [Aerospace README](aerospace/.config/aerospace/README.md)
 
 - **SketchyBar**: Configuration files for SketchyBar, a customizable status bar for macOS.
 
-  - [SketchyBar README](.config/sketchybar/README.md)
+  - [SketchyBar README](sketchybar/.config/sketchybar/README.md)
 
 </details>
 
@@ -61,11 +61,11 @@ This repository contains configuration files for various tools and applications.
 
 - **Neovim**: Configuration files for Neovim, a highly customizable text editor.
 
-  - [Neovim README](.config/nvim/README.md)
+  - [Neovim README](nvim/.config/nvim/README.md)
 
 - **Git**: Configuration files for Git version control system.
 
-  - [Git README](.config/git/README.md)
+  - [Git README](git/.config/git/README.md)
 
 </details>
 
@@ -73,11 +73,11 @@ This repository contains configuration files for various tools and applications.
 <summary>Command-Line Tools</summary>
 
 - **Bat**: Configuration files for Bat, a better alternative for Cat command.
-  - [Bat README](.config/bat/README.md)
+  - [Bat README](bat/.config/bat/README.md)
 
 - **Yazi**: Configuration files for Yazi, a terminal file manager.
 
-  - [Yazi README](.config/yazi/README.md)
+  - [Yazi README](yazi/.config/yazi/README.md)
 
 </details>
 
@@ -109,10 +109,20 @@ git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 ```
 
-### Refer configs
+### Apply configurations
+
+Use `stow` to link the specific configurations you need. For example:
 
 ```bash
-stow .
+cd ~/dotfiles
+stow zsh hypr waybar
+```
+
+To install all configurations at once:
+
+```bash
+cd ~/dotfiles
+stow */
 ```
 
 ## System Dependencies
