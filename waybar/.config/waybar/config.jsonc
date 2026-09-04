@@ -22,11 +22,11 @@
         "mpris"
     ],
     "modules-right": [
-        "custom/network",
+        "network",
         "tray",
-        "custom/bluetooth",
-        "custom/cpu",
-        "custom/memory",
+        "bluetooth",
+        "cpu",
+        "memory",
         "disk",
         "battery",
         "backlight",
@@ -133,40 +133,42 @@
     // #######################################################################################
     // #  Right Modules Configuration                                                        #
     // #######################################################################################
-    "custom/network": {
-        "format": "{}",
-        "return-type": "json",
-        "interval": 5,
-        "exec": "~/.config/waybar/scripts/network-manager.sh",
+    "network": {
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-ethernet": " {ipaddr}",
+        "format-disconnected": "睊 Disconnected",
+        "tooltip-format": "{ifname} via {gwaddr}",
         "on-click": "~/.config/waybar/scripts/toggle-wifi.sh",
-        "on-click-right": "~/.config/waybar/scripts/rofi-wifi-menu.sh",
-        "tooltip": true
+        "on-click-right": "~/.config/waybar/scripts/rofi-wifi-menu.sh"
     },
     "tray": {
         "icon-size": 18,
         "spacing": 10
     },
-    "custom/bluetooth": {
-        "format": "{}",
-        "return-type": "json",
-        "interval": 5,
-        "exec": "~/.config/waybar/scripts/bluetooth-manager.sh",
+    "bluetooth": {
+        "format": " {status}",
+        "format-on": " On",
+        "format-disabled": " Off",
+        "format-connected": " {num_connections}",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
         "on-click": "~/.config/waybar/scripts/toggle-bluetooth.sh",
         "on-click-right": "~/.config/waybar/scripts/launch_bluetooth.sh"
     },
-    "custom/cpu": {
-        "format": "󰾆 {}%",
-        "return-type": "json",
+    "cpu": {
+        "format": "󰾆 {usage}%",
         "interval": 3,
-        "exec": "~/.config/waybar/scripts/cpu.sh",
-        "on-click": "kitty htop"
+        "on-click": "ghostty -e htop",
+        "states": {
+            "critical": 90
+        }
     },
-    "custom/memory": {
-        "return-type": "json",
-        "format": "{}",
+    "memory": {
+        "format": "🧠 {used:0.1f}G/{total:0.1f}G",
         "interval": 30,
-        "exec": "~/.config/waybar/scripts/memory.sh",
-        "on-click": "kitty htop"
+        "on-click": "ghostty -e htop",
+        "tooltip-format": "Memory: {percentage}%\nSwap: {swapUsed:0.1f}G/{swapTotal:0.1f}G"
     },
     "disk": {
         "interval": 60,

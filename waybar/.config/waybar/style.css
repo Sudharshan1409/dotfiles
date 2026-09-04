@@ -32,11 +32,11 @@ tooltip {
 #clock,
 #window,
 #mpris,
-#custom-network,
+#network,
 #tray,
-#custom-bluetooth,
-#custom-cpu,
-#custom-memory,
+#bluetooth,
+#cpu,
+#memory,
 #disk,
 #battery,
 #backlight,
@@ -147,19 +147,19 @@ tooltip {
 
 /* --- Right Modules --- */
 
-#custom-network {
+#network {
   border-radius: 10px 0 0 10px;
 }
-#custom-network.ethernet {
+#network.ethernet {
   color: #a6e3a1;
 }
-#custom-network.wifi-connected {
+#network.wifi-connected {
   color: #89b4fa;
 }
-#custom-network.wifi-disconnected {
+#network.wifi-disconnected {
   color: #f9e2af;
 }
-#custom-network.wifi-off {
+#network.wifi-off {
   color: #eba0ac;
 }
 
@@ -169,30 +169,30 @@ tooltip {
   border-right: 0;
 }
 
-#custom-bluetooth {
+#bluetooth {
   border-radius: 0 10px 10px 0;
   border-left: 0;
   margin-right: 10px;
 }
-#custom-bluetooth.bt-connected {
+#bluetooth.bt-connected {
   color: #89b4fa;
 }
-#custom-bluetooth.bt-on {
+#bluetooth.bt-on {
   color: #cdd6f4;
 }
-#custom-bluetooth.bt-off {
+#bluetooth.bt-off {
   color: #eba0ac;
 }
 
-#custom-cpu {
+#cpu {
   border-radius: 10px 0 0 10px;
   border-right: 0;
 }
-#custom-cpu.critical {
+#cpu.critical {
   color: #f00;
 }
 
-#custom-memory {
+#memory {
   color: #eba0ac;
   border-radius: 0;
   border-left: 0;
