@@ -81,6 +81,8 @@ PACMAN_PACKAGES=(
     lazygit
     fd
     ripgrep
+    ttf-jetbrains-mono-nerd
+    ttf-cascadia-mono-nerd
 )
 
 # Install packages with error tolerance for optionally named packages

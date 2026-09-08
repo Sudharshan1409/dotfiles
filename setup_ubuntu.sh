@@ -157,6 +157,16 @@ if ! command -v satty >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/satty" ]; then
     chmod +x "$HOME/.local/bin/satty" 2>/dev/null || true
 fi
 
+# Install Nerd Fonts (JetBrainsMono, CascadiaMono, Symbols)
+if ! fc-list : family 2>/dev/null | grep -qi "JetBrainsMono.*Nerd"; then
+    echo "==> Installing JetBrainsMono and CascadiaMono Nerd Fonts..."
+    mkdir -p "$HOME/.local/share/fonts/JetBrainsMono" "$HOME/.local/share/fonts/CascadiaMono" "$HOME/.local/share/fonts/NerdFontsSymbolsOnly"
+    curl -sL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/JetBrainsMono.tar.xz | tar -xJ -C "$HOME/.local/share/fonts/JetBrainsMono/" 2>/dev/null || true
+    curl -sL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/CascadiaMono.tar.xz | tar -xJ -C "$HOME/.local/share/fonts/CascadiaMono/" 2>/dev/null || true
+    curl -sL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/NerdFontsSymbolsOnly.tar.xz | tar -xJ -C "$HOME/.local/share/fonts/NerdFontsSymbolsOnly/" 2>/dev/null || true
+    fc-cache -f 2>/dev/null || true
+fi
+
 # 6. Apply Stow configuration for all Linux packages
 echo "==> Linking dotfiles via GNU Stow..."
 cd "$DOTFILES_DIR"
