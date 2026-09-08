@@ -36,6 +36,7 @@ PACMAN_PACKAGES=(
     python
     python-pip
     hyprland
+    hyprland-qtutils
     waybar
     sway-notification-center
     hyprpaper

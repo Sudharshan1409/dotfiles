@@ -38,6 +38,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-pip \
     libfuse2t64 \
     hyprland \
+    hyprland-qtutils \
     waybar \
     sway-notification-center \
     hyprpaper \
