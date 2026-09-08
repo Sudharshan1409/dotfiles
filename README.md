@@ -85,16 +85,34 @@ This repository contains configuration files for various tools and applications.
 
 To use these configurations, clone the repository and copy the desired configuration files to your home directory. Make sure to back up your existing configuration files before replacing them.
 
-## Installation
+## Quick Start (Fresh Installation)
 
-To manage your dotfiles efficiently, we recommend using `stow`. Below are the installation instructions.
+To perform an end-to-end automated installation and setup of all system packages, desktop environment, CLI utilities, dotfiles symlinks, shell environment, and plugins:
 
-You can install `stow` using Homebrew:
+### Ubuntu Linux
+
+```bash
+cd ~/dotfiles
+./setup_ubuntu.sh
+```
+
+### Arch Linux
+
+```bash
+cd ~/dotfiles
+./setup_arch.sh
+```
+
+These scripts ask for `sudo` password only once at the beginning, keep authentication alive in the background, and execute the complete setup unattended.
+
+## Manual Installation
+
+To manage individual dotfile packages modularly with GNU Stow:
 
 ### Install stow
 
 ```bash
-brew install stow
+brew install stow  # or: sudo apt install stow / sudo pacman -S stow
 ```
 
 ### Using SSH
@@ -111,18 +129,18 @@ git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
 
 ### Apply configurations
 
-Use `stow` to link the specific configurations you need. For example:
+Use `stow` to link specific configurations:
 
 ```bash
 cd ~/dotfiles
 stow zsh hypr waybar
 ```
 
-To install all configurations at once:
+To link all Linux configurations:
 
 ```bash
 cd ~/dotfiles
-stow */
+stow backgrounds bat ghostty git hypr kitty lazygit nvim rofi starship swaync tmux walker waybar wezterm wofi yazi zellij zsh
 ```
 
 ## System Dependencies
