@@ -106,7 +106,8 @@ NONINTERACTIVE=1 brew install \
     ripgrep \
     python \
     node \
-    htop
+    htop \
+    nvtop
 
 # 4. Configure fzf shell integration
 echo "==> Configuring fzf..."
@@ -115,7 +116,7 @@ if [ -d "$(brew --prefix 2>/dev/null)/opt/fzf" ]; then
 fi
 
 # Symlink core CLI tools to ~/.local/bin
-for bin in node npm npx htop; do
+for bin in node npm npx htop nvtop; do
     if [ -x "/home/linuxbrew/.linuxbrew/bin/$bin" ]; then
         ln -sf "/home/linuxbrew/.linuxbrew/bin/$bin" "$HOME/.local/bin/$bin"
     fi

@@ -27,6 +27,7 @@
         "bluetooth",
         "cpu",
         "memory",
+        "custom/gpu",
         "disk",
         "battery",
         "backlight",
@@ -169,6 +170,14 @@
         "interval": 30,
         "on-click": "ghostty -e htop",
         "tooltip-format": "Memory: {percentage}%\nSwap: {swapUsed:0.1f}G/{swapTotal:0.1f}G"
+    },
+    "custom/gpu": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 3,
+        "exec": "~/.config/waybar/scripts/gpu.sh",
+        "on-click": "ghostty -e nvtop",
+        "tooltip": true
     },
     "disk": {
         "interval": 60,
