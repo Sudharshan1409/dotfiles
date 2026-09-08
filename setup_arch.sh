@@ -65,6 +65,7 @@ PACMAN_PACKAGES=(
     brightnessctl
     playerctl
     pamixer
+    libpulse
     power-profiles-daemon
     libnotify
     polkit-gnome
@@ -192,11 +193,20 @@ sudo chmod 0440 /etc/sudoers.d/enigma-rfkill
 
 # 16. Set default login shell to Zsh
 echo "==> Setting default login shell to Zsh..."
-ZSH_BIN="$(which zsh 2>/dev/null || echo '/usr/bin/zsh')"
+ZSH_BIN="$(which zsh 2>/dev/null || echo '/bin/zsh')"
 if ! grep -Fxq "$ZSH_BIN" /etc/shells; then
     echo "$ZSH_BIN" | sudo tee -a /etc/shells > /dev/null
 fi
 sudo chsh -s "$ZSH_BIN" "$USER" 2>/dev/null || true
+
+# 17. Configure permissions for hardware brightness control
+echo "==> Configuring video group and udev rules for backlight..."
+sudo usermod -aG video "$USER" 2>/dev/null || true
+sudo tee /etc/udev/rules.d/90-backlight.rules > /dev/null << 'UDEVEOF'
+ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chmod a+w /sys/class/backlight/%k/brightness"
+UDEVEOF
+sudo udevadm control --reload-rules 2>/dev/null || true
+sudo udevadm trigger --subsystem-match=backlight 2>/dev/null || true
 
 echo "=================================================================="
 echo "✅ Complete setup for Arch Linux finished successfully!"

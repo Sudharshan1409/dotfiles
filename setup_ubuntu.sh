@@ -61,6 +61,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     playerctl \
     pamixer \
     pavucontrol \
+    pulseaudio-utils \
     blueman \
     power-profiles-daemon \
     libnotify-bin \
@@ -267,6 +268,15 @@ if ! grep -Fxq "$ZSH_BIN" /etc/shells; then
     echo "$ZSH_BIN" | sudo tee -a /etc/shells > /dev/null
 fi
 sudo chsh -s "$ZSH_BIN" "$USER" 2>/dev/null || true
+
+# 19. Configure permissions for hardware brightness control
+echo "==> Configuring video group and udev rules for backlight..."
+sudo usermod -aG video "$USER" 2>/dev/null || true
+sudo tee /etc/udev/rules.d/90-backlight.rules > /dev/null << 'UDEVEOF'
+ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chmod a+w /sys/class/backlight/%k/brightness"
+UDEVEOF
+sudo udevadm control --reload-rules 2>/dev/null || true
+sudo udevadm trigger --subsystem-match=backlight 2>/dev/null || true
 
 echo "=================================================================="
 echo "✅ Complete setup for Ubuntu finished successfully!"
