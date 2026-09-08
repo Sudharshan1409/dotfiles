@@ -31,7 +31,6 @@
   "hide-on-action": true,
   "script-fail-notify": true,
   "widgets": [
-    "menubar#bar",
     "title",
     "buttons-grid",
     "volume",
@@ -63,65 +62,6 @@
       "show-per-app": true,
       "show-per-app-icon": true
     },
-    "menubar#bar": {
-      "menu#power": {
-        "label": "  ",
-        "position": "right",
-        "actions": [
-          {
-            "label": "  Lock",
-            "command": "sh -c 'command -v hyprlock >/dev/null 2>&1 && hyprlock || (command -v swaylock >/dev/null 2>&1 && swaylock || loginctl lock-session)'"
-          },
-          {
-            "label": "  Logout",
-            "command": "sh -c 'if pidof Hyprland >/dev/null 2>&1; then hyprctl dispatch exit; elif [ -n \"$SWAYSOCK\" ]; then swaymsg exit; else loginctl terminate-user \"$USER\"; fi'"
-          },
-          {
-            "label": "  Reboot",
-            "command": "systemctl reboot"
-          },
-          {
-            "label": "  Shutdown",
-            "command": "systemctl poweroff"
-          }
-        ]
-      },
-      "menu#powermode": {
-        "label": "  󰓅  ",
-        "position": "left",
-        "actions": [
-          {
-            "label": "  Performance",
-            "command": "powerprofilesctl set performance"
-          },
-          {
-            "label": "  Balanced",
-            "command": "powerprofilesctl set balanced"
-          },
-          {
-            "label": "󰌪  Power-saver",
-            "command": "powerprofilesctl set power-saver"
-          }
-        ]
-      },
-      "buttons#tools": {
-        "position": "left",
-        "actions": [
-          {
-            "label": " 󰄀 ",
-            "command": "sh -c 'sleep 0.2 && grim -g \"$(slurp)\" - | (command -v swappy >/dev/null 2>&1 && swappy -f - || wl-copy)'"
-          },
-          {
-            "label": " 󰹑 ",
-            "command": "sh -c 'mkdir -p \"$HOME/Pictures/Screenshots\" && grim \"$HOME/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png\"'"
-          },
-          {
-            "label": " 󰍶 ",
-            "command": "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
-          }
-        ]
-      }
-    },
     "buttons-grid": {
       "actions": [
         {
@@ -138,7 +78,7 @@
         },
         {
           "label": "󰍬",
-          "command": "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+          "command": "~/.config/waybar/scripts/mic-control.sh mute"
         },
         {
           "label": "󰃝",
