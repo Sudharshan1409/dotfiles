@@ -21,7 +21,7 @@ BLUE="\033[1;34m"
 DIM="\033[2m"
 RESET="\033[0m"
 
-TOTAL_STEPS=18
+TOTAL_STEPS=19
 CURRENT_STEP=0
 
 ACTIONS_DONE=0
@@ -109,6 +109,7 @@ trap 'kill $SUDO_PID 2>/dev/null' EXIT
 step_header "Verifying Pacman system packages & Wayland environment"
 PACMAN_PACKAGES=(
     base-devel
+    dkms
     git
     curl
     wget
@@ -464,6 +465,85 @@ else
         log_skip "All ($ETH_TOTAL) Ethernet connection profiles already use DHCP (auto)"
     else
         log_ok "Configured DHCP (auto) on $ETH_UPDATED Ethernet connection profile(s)"
+    fi
+fi
+
+# 19. Verify DisplayLink driver & EVDI module
+step_header "Verifying DisplayLink driver & EVDI module"
+if (pacman -Qi displaylink >/dev/null 2>&1 || pacman -Qi displaylink-connect >/dev/null 2>&1) && \
+   (pacman -Qi evdi >/dev/null 2>&1 || pacman -Qi evdi-dkms >/dev/null 2>&1 || pacman -Qi evdi-git >/dev/null 2>&1) && \
+   systemctl is-active displaylink >/dev/null 2>&1; then
+    log_skip "DisplayLink driver and service are already installed and active"
+else
+    log_info "Configuring DisplayLink driver and EVDI kernel module..."
+
+    # 1. Install DKMS and matching kernel headers via pacman
+    KERNEL_HEADERS="linux-headers"
+    if uname -r | grep -q "lts"; then
+        KERNEL_HEADERS="linux-lts-headers"
+    elif uname -r | grep -q "zen"; then
+        KERNEL_HEADERS="linux-zen-headers"
+    elif uname -r | grep -q "hardened"; then
+        KERNEL_HEADERS="linux-hardened-headers"
+    fi
+
+    ARCH_DL_DEPS=(dkms "$KERNEL_HEADERS")
+    MISSING_ARCH_DEPS=()
+    for dep in "${ARCH_DL_DEPS[@]}"; do
+        if ! pacman -Qi "$dep" >/dev/null 2>&1; then
+            MISSING_ARCH_DEPS+=("$dep")
+        fi
+    done
+
+    if [ ${#MISSING_ARCH_DEPS[@]} -gt 0 ]; then
+        log_info "Installing kernel headers and DKMS dependencies: ${MISSING_ARCH_DEPS[*]}"
+        sudo pacman -S --needed --noconfirm "${MISSING_ARCH_DEPS[@]}" 2>/dev/null || true
+    fi
+
+    # 2. Detect or bootstrap AUR helper (yay / paru)
+    AUR_HELPER=""
+    if command -v yay >/dev/null 2>&1; then
+        AUR_HELPER="yay"
+    elif command -v paru >/dev/null 2>&1; then
+        AUR_HELPER="paru"
+    else
+        log_info "Bootstrapping yay AUR helper from source..."
+        YAY_BUILD_DIR="$(mktemp -d)"
+        if git clone --depth=1 https://aur.archlinux.org/yay-bin.git "$YAY_BUILD_DIR/yay-bin" 2>/dev/null; then
+            (cd "$YAY_BUILD_DIR/yay-bin" && makepkg -si --noconfirm) 2>/dev/null || true
+            rm -rf "$YAY_BUILD_DIR"
+            command -v yay >/dev/null 2>&1 && AUR_HELPER="yay"
+        fi
+    fi
+
+    # 3. Install evdi and displaylink via AUR helper
+    if [ -n "$AUR_HELPER" ]; then
+        MISSING_AUR_PACKAGES=()
+        if ! pacman -Qi evdi >/dev/null 2>&1 && ! pacman -Qi evdi-dkms >/dev/null 2>&1 && ! pacman -Qi evdi-git >/dev/null 2>&1; then
+            MISSING_AUR_PACKAGES+=(evdi)
+        fi
+        if ! pacman -Qi displaylink >/dev/null 2>&1; then
+            MISSING_AUR_PACKAGES+=(displaylink)
+        fi
+
+        if [ ${#MISSING_AUR_PACKAGES[@]} -gt 0 ]; then
+            log_info "Installing AUR package(s): ${MISSING_AUR_PACKAGES[*]} using $AUR_HELPER..."
+            $AUR_HELPER -S --needed --noconfirm "${MISSING_AUR_PACKAGES[@]}"
+            log_ok "Installed DisplayLink & EVDI AUR packages"
+        fi
+    else
+        log_warn "AUR helper (yay/paru) not found; please install 'evdi' and 'displaylink' from AUR manually"
+    fi
+
+    # 4. Enable and start displaylink systemd service
+    sudo modprobe evdi 2>/dev/null || true
+    if systemctl is-active displaylink >/dev/null 2>&1; then
+        log_skip "displaylink service is active"
+    else
+        log_info "Enabling and starting displaylink service..."
+        sudo systemctl daemon-reload 2>/dev/null || true
+        sudo systemctl enable --now displaylink 2>/dev/null || true
+        log_ok "Enabled and started displaylink service"
     fi
 fi
 

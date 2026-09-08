@@ -21,7 +21,7 @@ BLUE="\033[1;34m"
 DIM="\033[2m"
 RESET="\033[0m"
 
-TOTAL_STEPS=21
+TOTAL_STEPS=22
 CURRENT_STEP=0
 
 ACTIONS_DONE=0
@@ -588,6 +588,66 @@ else
         log_skip "All ($ETH_TOTAL) Ethernet connection profiles already use DHCP (auto)"
     else
         log_ok "Configured DHCP (auto) on $ETH_UPDATED Ethernet connection profile(s)"
+    fi
+fi
+
+# 22. Verify DisplayLink driver & EVDI module
+step_header "Verifying DisplayLink driver & EVDI module"
+if dpkg-query -W -f='${Status}' displaylink-driver 2>/dev/null | grep -q "ok installed" && systemctl is-active displaylink-driver >/dev/null 2>&1; then
+    log_skip "DisplayLink driver and service are already installed and active"
+else
+    log_info "Configuring DisplayLink driver and EVDI kernel module..."
+
+    # 1. Ensure kernel build headers and DKMS dependencies
+    DL_DEPS=(dkms libdrm-dev)
+    if [ ! -d "/lib/modules/$(uname -r)/build" ]; then
+        DL_DEPS+=(linux-headers-generic)
+    fi
+
+    MISSING_DL_DEPS=()
+    for dep in "${DL_DEPS[@]}"; do
+        if ! dpkg-query -W -f='${Status}' "$dep" 2>/dev/null | grep -q "ok installed"; then
+            MISSING_DL_DEPS+=("$dep")
+        fi
+    done
+    if [ ${#MISSING_DL_DEPS[@]} -gt 0 ]; then
+        log_info "Installing DisplayLink dependencies: ${MISSING_DL_DEPS[*]}"
+        sudo apt-get update -qq
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${MISSING_DL_DEPS[@]}"
+    fi
+
+    # 2. Configure Synaptics official APT repository keyring
+    if ! dpkg-query -W -f='${Status}' synaptics-repository-keyring 2>/dev/null | grep -q "ok installed"; then
+        log_info "Installing Synaptics official repository keyring..."
+        KEYRING_DEB="$(mktemp --suffix=.deb)"
+        if curl -fsSL -o "$KEYRING_DEB" "https://www.synaptics.com/sites/default/files/Ubuntu/pool/stable/main/all/synaptics-repository-keyring.deb"; then
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$KEYRING_DEB"
+            rm -f "$KEYRING_DEB"
+            sudo apt-get update -qq
+            log_ok "Configured Synaptics repository"
+        else
+            log_err "Failed to download Synaptics repository keyring"
+            rm -f "$KEYRING_DEB"
+        fi
+    fi
+
+    # 3. Install displaylink-driver
+    if ! dpkg-query -W -f='${Status}' displaylink-driver 2>/dev/null | grep -q "ok installed"; then
+        log_info "Installing displaylink-driver package..."
+        sudo apt-get update -qq
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y displaylink-driver
+        log_ok "Installed displaylink-driver package"
+    fi
+
+    # 4. Load EVDI kernel module & enable/start displaylink-driver service
+    sudo modprobe evdi 2>/dev/null || true
+    if systemctl is-active displaylink-driver >/dev/null 2>&1; then
+        log_skip "displaylink-driver service is active"
+    else
+        log_info "Enabling and starting displaylink-driver service..."
+        sudo systemctl daemon-reload 2>/dev/null || true
+        sudo systemctl enable --now displaylink-driver 2>/dev/null || true
+        log_ok "Enabled and started displaylink-driver service"
     fi
 fi
 
