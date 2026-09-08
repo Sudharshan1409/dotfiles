@@ -208,6 +208,12 @@ UDEVEOF
 sudo udevadm control --reload-rules 2>/dev/null || true
 sudo udevadm trigger --subsystem-match=backlight 2>/dev/null || true
 
+# 18. Ensure Ethernet connections use DHCP
+echo "==> Ensuring Ethernet connections use DHCP (auto)..."
+for con in $(nmcli -t -f NAME,TYPE connection show 2>/dev/null | grep ":802-3-ethernet" | cut -d: -f1); do
+    nmcli connection modify "$con" ipv4.method auto ipv6.method auto 2>/dev/null || true
+done
+
 echo "=================================================================="
 echo "✅ Complete setup for Arch Linux finished successfully!"
 echo "=================================================================="
