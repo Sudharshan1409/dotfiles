@@ -104,7 +104,9 @@ NONINTERACTIVE=1 brew install \
     lazygit \
     fd \
     ripgrep \
-    python
+    python \
+    node \
+    htop
 
 # 4. Configure fzf shell integration
 echo "==> Configuring fzf..."

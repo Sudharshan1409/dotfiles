@@ -35,6 +35,8 @@ PACMAN_PACKAGES=(
     zsh
     python
     python-pip
+    nodejs
+    npm
     hyprland
     hyprland-qtutils
     waybar
