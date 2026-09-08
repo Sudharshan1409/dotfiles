@@ -78,16 +78,82 @@ local function setup_treesitter()
 	})
 
 	require("nvim-treesitter.install").compilers = { "gcc", "clang", "clan" }
+
+	-- Compatibility shim for Neovim 0.10+ / 0.11 / 0.12 where query directives
+	-- receive captures as a table of nodes (TSNode[]) rather than a single TSNode.
+	local query = require("vim.treesitter.query")
+	local function unwrap_node(node)
+		if type(node) == "table" and not node.range then
+			return node[#node] or node[1]
+		end
+		return node
+	end
+
+	query.add_directive("downcase!", function(match, _, bufnr, pred, metadata)
+		local id = pred[2]
+		local node = unwrap_node(match[id])
+		if not node then
+			return
+		end
+
+		local text = vim.treesitter.get_node_text(node, bufnr, { metadata = metadata[id] }) or ""
+		if not metadata[id] then
+			metadata[id] = {}
+		end
+		metadata[id].text = string.lower(text)
+	end, { force = true })
+
+	query.add_directive("set-lang-from-info-string!", function(match, _, bufnr, pred, metadata)
+		local capture_id = pred[2]
+		local node = unwrap_node(match[capture_id])
+		if not node then
+			return
+		end
+		local injection_alias = vim.treesitter.get_node_text(node, bufnr):lower()
+		local aliases = {
+			ex = "elixir",
+			pl = "perl",
+			sh = "bash",
+			uxn = "uxntal",
+			ts = "typescript",
+		}
+		local match_ft = vim.filetype.match({ filename = "a." .. injection_alias })
+		metadata["injection.language"] = match_ft or aliases[injection_alias] or injection_alias
+	end, { force = true })
+
+	query.add_directive("set-lang-from-mimetype!", function(match, _, bufnr, pred, metadata)
+		local capture_id = pred[2]
+		local node = unwrap_node(match[capture_id])
+		if not node then
+			return
+		end
+		local type_attr_value = vim.treesitter.get_node_text(node, bufnr)
+		local html_script_type_languages = {
+			["importmap"] = "json",
+			["module"] = "javascript",
+			["application/ecmascript"] = "javascript",
+			["text/ecmascript"] = "javascript",
+		}
+		local configured = html_script_type_languages[type_attr_value]
+		if configured then
+			metadata["injection.language"] = configured
+		else
+			local parts = vim.split(type_attr_value, "/", {})
+			metadata["injection.language"] = parts[#parts]
+		end
+	end, { force = true })
 end
 
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "master",
 		build = ":TSUpdate",
 		config = setup_treesitter,
 	},
 	{ "nvim-treesitter/playground" },
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch = "master",
 	},
 }

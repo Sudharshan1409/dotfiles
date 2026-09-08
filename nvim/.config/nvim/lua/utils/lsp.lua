@@ -7,6 +7,7 @@ M.mason_tools_ensure_installed = {
 	"stylua",
 	"ruff",
 	"pyproject-fmt",
+	"shellcheck",
 }
 
 M.lspconfig_ensure_installed = {

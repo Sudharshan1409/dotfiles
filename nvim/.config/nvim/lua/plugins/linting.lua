@@ -38,7 +38,22 @@ return {
 		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "BufReadPost", "InsertLeave", "TextChanged" }, {
 			group = lint_augroup,
 			callback = function()
-				lint.try_lint()
+				local ft = vim.bo.filetype
+				local linters = lint.linters_by_ft[ft] or {}
+				local valid_linters = {}
+				for _, linter_name in ipairs(linters) do
+					local linter = lint.linters[linter_name]
+					local cmd = (type(linter) == "table" and linter.cmd) or linter_name
+					if type(cmd) == "function" then
+						cmd = cmd()
+					end
+					if vim.fn.executable(cmd) == 1 then
+						table.insert(valid_linters, linter_name)
+					end
+				end
+				if #valid_linters > 0 then
+					lint.try_lint(valid_linters)
+				end
 			end,
 		})
 
