@@ -51,6 +51,7 @@ PACMAN_PACKAGES=(
     blueman
     grim
     slurp
+    satty
     wf-recorder
     wl-clipboard
     cliphist

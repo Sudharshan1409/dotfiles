@@ -150,6 +150,13 @@ if ! command -v walker >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/walker" ]; th
     fi
 fi
 
+# Satty screenshot annotation tool
+if ! command -v satty >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/satty" ]; then
+    echo "==> Installing Satty screenshot editor..."
+    curl -sL https://github.com/Satty-org/Satty/releases/download/v0.22.0/satty-x86_64-unknown-linux-gnu.tar.gz | tar -xz -C "$HOME/.local/bin/" 2>/dev/null || true
+    chmod +x "$HOME/.local/bin/satty" 2>/dev/null || true
+fi
+
 # 6. Apply Stow configuration for all Linux packages
 echo "==> Linking dotfiles via GNU Stow..."
 cd "$DOTFILES_DIR"
