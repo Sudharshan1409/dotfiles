@@ -47,6 +47,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     rofi \
     wofi \
     ghostty \
+    htop \
     nautilus \
     grim \
     slurp \

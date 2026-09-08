@@ -46,6 +46,7 @@ PACMAN_PACKAGES=(
     wofi
     kitty
     wezterm
+    htop
     nautilus
     pavucontrol
     blueman
