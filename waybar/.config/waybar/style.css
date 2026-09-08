@@ -44,6 +44,7 @@ tooltip {
 #pulseaudio,
 #pulseaudio.microphone,
 #idle_inhibitor,
+#custom-caffeine,
 #custom-power,
 #custom-swaync {
   /* <-- THIS LINE IS CORRECTED */
@@ -257,15 +258,18 @@ tooltip {
   margin-right: 10px;
 }
 
-#idle_inhibitor {
+#idle_inhibitor,
+#custom-caffeine {
   border-radius: 10px;
   margin-right: 10px;
   font-size: 18px;
 }
-#idle_inhibitor.activated {
+#idle_inhibitor.activated,
+#custom-caffeine.activated {
   color: #f9e2af;
 }
-#idle_inhibitor.deactivated {
+#idle_inhibitor.deactivated,
+#custom-caffeine.deactivated {
   color: #6c7086;
 }
 

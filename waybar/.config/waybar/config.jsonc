@@ -33,7 +33,7 @@
         "backlight",
         "pulseaudio",
         "pulseaudio#microphone",
-        "idle_inhibitor",
+        "custom/caffeine",
         "custom/power",
         "custom/swaync"
     ],
@@ -261,15 +261,14 @@
         "on-scroll-down": "~/.config/waybar/scripts/mic-control.sh up",
         "scroll-step": 5
     },
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": {
-            "activated": "󰅶",
-            "deactivated": "󰾪"
-        },
-        "tooltip": true,
-        "tooltip-format-activated": "Keep-awake: ON (click to disable)",
-        "tooltip-format-deactivated": "Keep-awake: OFF (click to enable)"
+    "custom/caffeine": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/caffeine.sh status",
+        "interval": 2,
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/caffeine.sh toggle",
+        "tooltip": true
     },
     "custom/power": {
         "format": "⏻",
