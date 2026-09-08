@@ -35,15 +35,27 @@
   background: transparent;
 }
 
-.notification-row {
-  outline: none;
-  background: transparent;
-  padding: 0;
+:root {
+  --noti-bg-focus: transparent;
 }
 
+.notification-row,
 .notification-row:focus,
-.notification-row:hover {
+.notification-row:hover,
+.notification-row:selected,
+.notification-group,
+.notification-group:focus,
+.notification-group:hover,
+.notification-group:selected,
+.notification-background,
+.notification-background:focus,
+.notification-background:hover,
+.notification-background:selected {
+  outline: none;
   background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0;
 }
 
 .notification {
@@ -189,8 +201,17 @@
 }
 
 /* Notifications inside the panel */
-.control-center .notification-row {
+.control-center .notification-row,
+.control-center .notification-row:focus,
+.control-center .notification-row:hover,
+.control-center .notification-row:selected,
+.control-center .notification-background {
   margin: 2px 0;
+  padding: 0;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  border: none;
 }
 
 .control-center .notification {
