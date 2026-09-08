@@ -84,6 +84,7 @@ PACMAN_PACKAGES=(
     ripgrep
     ttf-jetbrains-mono-nerd
     ttf-cascadia-mono-nerd
+    ttf-nerd-fonts-symbols-mono
 )
 
 # Install packages with error tolerance for optionally named packages

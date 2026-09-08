@@ -135,8 +135,8 @@
     // #######################################################################################
     "network": {
         "format-wifi": " {essid} ({signalStrength}%)",
-        "format-ethernet": " {ipaddr}",
-        "format-disconnected": "睊 Disconnected",
+        "format-ethernet": "󰈀 {ipaddr}",
+        "format-disconnected": "󰖪 Disconnected",
         "tooltip-format": "{ifname} via {gwaddr}",
         "on-click": "~/.config/waybar/scripts/toggle-wifi.sh",
         "on-click-right": "~/.config/waybar/scripts/rofi-wifi-menu.sh"
@@ -147,8 +147,8 @@
     },
     "bluetooth": {
         "format": " {status}",
-        "format-on": " On",
-        "format-disabled": " Off",
+        "format-on": " On",
+        "format-disabled": "󰂲 Off",
         "format-connected": " {num_connections}",
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
@@ -222,8 +222,9 @@
     "pulseaudio": {
         "format": "{icon} {volume}%",
         "tooltip": false,
-        "format-muted": " Muted",
+        "format-muted": "󰝟 Muted",
         "format-icons": {
+            "muted": "󰝟",
             "headphone": "",
             "hands-free": "",
             "headset": "",
