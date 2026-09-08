@@ -114,6 +114,13 @@ if [ -d "$(brew --prefix 2>/dev/null)/opt/fzf" ]; then
     "$(brew --prefix)/opt/fzf/install" --all --no-update-rc >/dev/null 2>&1 || true
 fi
 
+# Symlink core CLI tools to ~/.local/bin
+for bin in node npm npx htop; do
+    if [ -x "/home/linuxbrew/.linuxbrew/bin/$bin" ]; then
+        ln -sf "/home/linuxbrew/.linuxbrew/bin/$bin" "$HOME/.local/bin/$bin"
+    fi
+done
+
 # 5. Install standalone terminal emulators and launchers if missing
 mkdir -p "$HOME/.local/bin"
 
