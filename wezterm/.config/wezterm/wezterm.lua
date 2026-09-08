@@ -42,8 +42,8 @@ config.font_size = 18
 config.line_height = 1.1
 
 config.font = wezterm.font_with_fallback({
-	"MesloLGS NF",
 	"JetBrainsMono Nerd Font",
+	"MesloLGS NF",
 	"Symbols Nerd Font",
 	"Noto Color Emoji",
 	{ family = "Symbols Nerd Font Mono" },

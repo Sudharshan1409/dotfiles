@@ -4,7 +4,7 @@
 # When wf-recorder is active: shows elapsed time + pulses red.
 # When idle: empty text with class "idle" so CSS collapses it.
 
-pid=$(pgrep -x wf-recorder | head -n1)
+pid=$(pidof -s wf-recorder 2>/dev/null)
 
 if [ -z "$pid" ]; then
     echo '{"text":"","tooltip":"","class":"idle"}'
@@ -12,7 +12,8 @@ if [ -z "$pid" ]; then
 fi
 
 # Elapsed time of the wf-recorder process (e.g. 00:42 or 01:23:05)
-elapsed=$(ps -o etime= -p "$pid" 2>/dev/null | tr -d ' ')
+elapsed=$(ps -o etime= -p "$pid" 2>/dev/null)
+elapsed="${elapsed// /}"
 
 # Latest recording file for the tooltip
 latest=$(ls -t "$HOME/Videos/Recordings"/*.mp4 2>/dev/null | head -1)

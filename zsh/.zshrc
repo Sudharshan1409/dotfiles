@@ -1,7 +1,5 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+# Enable Powerlevel10k instant prompt only when p10k theme is active
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]] && [[ "$ZSH_THEME" == *"powerlevel10k"* ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
@@ -76,8 +74,11 @@ export ZSH="$HOME/.oh-my-zsh"
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo web-search dirhistory history jsontools zsh-interactive-cd fzf-tab you-should-use zsh-autopair zsh-256color git-open)
+# Skip compaudit security check for faster shell startup
+ZSH_DISABLE_COMPFIX="true"
+
+# Syntax highlighting MUST be loaded last in plugins list
+plugins=(git sudo web-search dirhistory history jsontools zsh-interactive-cd fzf-tab you-should-use zsh-autopair zsh-256color git-open zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -111,27 +112,46 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ "$ZSH_THEME" == *"powerlevel10k"* ]] && [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
+# NVM (lazy-loaded on first command execution to prevent slow startup)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -d "$NVM_DIR" ]; then
+    nvm() {
+        unset -f nvm node npm yarn npx pnpm 2>/dev/null
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+        nvm "$@"
+    }
+    node() {
+        unset -f nvm node npm yarn npx pnpm 2>/dev/null
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        node "$@"
+    }
+    npm() {
+        unset -f nvm node npm yarn npx pnpm 2>/dev/null
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        npm "$@"
+    }
+    npx() {
+        unset -f nvm node npm yarn npx pnpm 2>/dev/null
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        npx "$@"
+    }
+fi
 
-# Created by `pipx` on 2025-06-07 07:32:28
+# Created by `pipx`
 export PATH="$PATH:$HOME/.local/bin"
 
 source ~/.config/zsh/init.sh
 
 # opencode
-export PATH=/home/enigma/.opencode/bin:$PATH
-
-# opencode
-export PATH=/home/sudharshan/.opencode/bin:$PATH
+[ -d "$HOME/.opencode/bin" ] && export PATH="$HOME/.opencode/bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/home/sudharshan/.local/share/pnpm"
+export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
 case ":$PATH:" in
   *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+  *) [ -d "$PNPM_HOME/bin" ] && export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end

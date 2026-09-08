@@ -18,7 +18,7 @@
             "os": "any",
             "priority": 10,
             "type": "path",
-            "value": "~/.npm-global/bin",
+            "value": "$HOME/.npm-global/bin",
             "var_name": "PATH"
         },
         "starship_config": {
@@ -48,7 +48,7 @@
             "os": "Linux",
             "priority": 10,
             "type": "run",
-            "value": "ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1",
+            "value": "[ -f ~/.ssh/id_ed25519 ] && ! ssh-add -l 2>/dev/null | grep -q 'id_ed25519' && ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1 || true",
             "var_name": ""
         },
         "tmux_path_linux": {
@@ -63,8 +63,8 @@
         "ssh_agent": {
             "os": "any",
             "priority": 2,
-            "type": "eval",
-            "value": "ssh-agent -s | grep '^SSH_'",
+            "type": "run",
+            "value": "[ -z \"$SSH_AUTH_SOCK\" ] && eval \"$(ssh-agent -s 2>/dev/null)\" >/dev/null || true",
             "var_name": ""
         },
         "starship": {

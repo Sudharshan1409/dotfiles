@@ -174,7 +174,7 @@
     "custom/gpu": {
         "format": "{}",
         "return-type": "json",
-        "interval": 3,
+        "interval": 6,
         "exec": "~/.config/waybar/scripts/gpu.sh",
         "on-click": "ghostty -e nvtop",
         "tooltip": true
@@ -265,7 +265,7 @@
         "format": "{}",
         "return-type": "json",
         "exec": "~/.config/waybar/scripts/caffeine.sh status",
-        "interval": 2,
+        "interval": 15,
         "signal": 9,
         "on-click": "~/.config/waybar/scripts/caffeine.sh toggle",
         "tooltip": true
