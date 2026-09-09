@@ -171,6 +171,7 @@ PACMAN_PACKAGES=(
     fd
     ripgrep
     shellcheck
+    tealdeer
     ttf-jetbrains-mono-nerd
     ttf-cascadia-mono-nerd
     ttf-nerd-fonts-symbols-mono
@@ -178,6 +179,9 @@ PACMAN_PACKAGES=(
 
 MISSING_PACMAN=()
 for pkg in "${PACMAN_PACKAGES[@]}"; do
+    if [ "$pkg" = "tealdeer" ] && (pacman -Qi tealdeer >/dev/null 2>&1 || pacman -Qi tldr >/dev/null 2>&1 || command -v tldr >/dev/null 2>&1); then
+        continue
+    fi
     if ! pacman -Qi "$pkg" >/dev/null 2>&1; then
         MISSING_PACMAN+=("$pkg")
     fi
@@ -368,9 +372,9 @@ else
     log_ok "Deployed Yazi Catppuccin theme"
 fi
 
-# 12. Set up WezTerm wallpapers directory
-step_header "Verifying WezTerm wallpapers"
-mkdir -p "$HOME/wezterm-wallpapers"
+# 12. Set up WezTerm wallpapers directory and user picture directories
+step_header "Verifying WezTerm wallpapers and user picture directories"
+mkdir -p "$HOME/wezterm-wallpapers" "$HOME/Pictures/Pics" "$HOME/Pictures/Screenshots"
 WP_COUNT=$(ls -A "$HOME/wezterm-wallpapers" 2>/dev/null | wc -l)
 if [ "$WP_COUNT" -gt 0 ]; then
     log_skip "WezTerm wallpapers directory is already populated ($WP_COUNT file(s))"

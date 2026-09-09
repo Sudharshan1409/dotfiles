@@ -46,9 +46,22 @@ case "$1" in
         echo " Shell: $($SHELL --version | head -n 1)"
         ;;
     cpu)
-        echo " CPU: $(lscpu | grep "Model name" | sed 's/Model name:[ \t]*//')"
+        cpu_model=$(lscpu 2>/dev/null | grep "Model name" | head -n 1 | sed 's/Model name:[ \t]*//')
+        echo " CPU: ${cpu_model:-$(uname -p)}"
         ;;
     gpu)
-        echo " GPU: $(lspci | grep -E "VGA|3D" | sed 's/.*: //')"
+        gpu_info=$(lspci 2>/dev/null | grep -E "VGA|3D" | while IFS= read -r line; do
+            vendor=""
+            [[ "$line" =~ Intel ]] && vendor="Intel "
+            [[ "$line" =~ NVIDIA ]] && vendor="NVIDIA "
+            [[ "$line" =~ AMD|ATI ]] && vendor="AMD "
+            if [[ "$line" =~ \[([^]]+)\] ]]; then
+                echo "${vendor}${BASH_REMATCH[1]}"
+            else
+                cleaned=$(echo "$line" | sed 's/.*: //' | sed 's/ (rev .*)//')
+                echo "${cleaned}"
+            fi
+        done | paste -sd ',' - | sed 's/,/, /g')
+        echo " GPU: ${gpu_info:-Unknown}"
         ;;
 esac

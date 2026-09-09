@@ -214,6 +214,7 @@ BREW_PACKAGES=(
     htop
     nvtop
     shellcheck
+    tldr
 )
 
 MISSING_BREW=()
@@ -245,7 +246,7 @@ fi
 # 5. Symlink core CLI tools to ~/.local/bin
 step_header "Verifying CLI tool symlinks in ~/.local/bin"
 mkdir -p "$HOME/.local/bin"
-SYMLINK_TOOLS=(node npm npx htop nvtop shellcheck)
+SYMLINK_TOOLS=(node npm npx htop nvtop shellcheck tldr)
 SYMLINKS_MADE=0
 for bin in "${SYMLINK_TOOLS[@]}"; do
     TARGET="/home/linuxbrew/.linuxbrew/bin/$bin"
@@ -491,9 +492,9 @@ else
     log_ok "Deployed Yazi Catppuccin theme"
 fi
 
-# 15. Set up WezTerm wallpapers directory
-step_header "Verifying WezTerm wallpapers"
-mkdir -p "$HOME/wezterm-wallpapers"
+# 15. Set up WezTerm wallpapers directory and user picture directories
+step_header "Verifying WezTerm wallpapers and user picture directories"
+mkdir -p "$HOME/wezterm-wallpapers" "$HOME/Pictures/Pics" "$HOME/Pictures/Screenshots"
 WP_COUNT=$(ls -A "$HOME/wezterm-wallpapers" 2>/dev/null | wc -l)
 if [ "$WP_COUNT" -gt 0 ]; then
     log_skip "WezTerm wallpapers directory is already populated ($WP_COUNT file(s))"
