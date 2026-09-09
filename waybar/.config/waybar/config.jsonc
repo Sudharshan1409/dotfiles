@@ -110,11 +110,11 @@
         "player-icons": {
             "default": "▶",
             "mpv": "🎵",
-            "spotify": " ",
-            "firefox": " ",
-            "chromium": " ",
+            "spotify": " ",
+            "firefox": "󰈹 ",
+            "chromium": " ",
             "vlc": "󰕼 ",
-            "kdeconnect": " "
+            "kdeconnect": "📱 "
         },
         "status-icons": {
             "playing": "▶",
@@ -124,12 +124,13 @@
         "dynamic-len": 35,
         "dynamic-order": ["title", "artist"],
         "interval": 1,
-        "tooltip-format": "{player} • {status}\n{title}\n{artist} — {album}",
-        "tooltip-format-paused": "{player} • paused\n{title}\n{artist} — {album}",
+        "tooltip-format": "{player_icon} {player} ({status})\n󰎈 {title}\n👤 {artist}\n💿 {album}\n⏱ [{position} / {length}]\n\nLeft-click: Play/Pause\nRight-click: Seek +30s\nMiddle-click: Copy track info\nScroll: Next/Prev track",
+        "tooltip-format-paused": "{status_icon} {player} (Paused)\n󰎈 {title}\n👤 {artist}\n💿 {album}\n⏱ [{position} / {length}]\n\nLeft-click: Play/Pause\nRight-click: Seek +30s\nMiddle-click: Copy track info\nScroll: Next/Prev track",
         "on-click": "playerctl play-pause",
-        "on-click-right": "playerctl stop",
-        "on-scroll-up": "playerctl next",
-        "on-scroll-down": "playerctl previous"
+        "on-click-right": "playerctl position 30+",
+        "on-click-middle": "~/.config/waybar/scripts/copy-media-info.sh",
+        "on-scroll-up": "playerctl previous",
+        "on-scroll-down": "playerctl next"
     },
     // #######################################################################################
     // #  Right Modules Configuration                                                        #
@@ -229,7 +230,8 @@
     },
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "tooltip": false,
+        "tooltip": true,
+        "tooltip-format": "{desc} • {volume}%\n\nRight-click: Quick Audio Switcher\nMiddle-click: Volume Control (pavucontrol)",
         "format-muted": "󰝟 Muted",
         "format-icons": {
             "muted": "󰝟",
@@ -246,7 +248,8 @@
             ]
         },
         "on-click": "pamixer -t",
-        "on-click-right": "pavucontrol",
+        "on-click-right": "~/.config/hypr/scripts/audio_switcher.sh --sink-menu",
+        "on-click-middle": "pavucontrol",
         "on-scroll-up": "~/.config/waybar/scripts/volume-control.sh down",
         "on-scroll-down": "~/.config/waybar/scripts/volume-control.sh up",
         "scroll-step": 5
@@ -255,8 +258,11 @@
         "format": "{format_source}",
         "format-source": " {volume}%",
         "format-source-muted": " Muted",
+        "tooltip": true,
+        "tooltip-format": "{desc} • {volume}%\n\nRight-click: Quick Input Switcher\nMiddle-click: Volume Control (pavucontrol)",
         "on-click": "pamixer --default-source -t",
-        "on-click-right": "pavucontrol -t 4",
+        "on-click-right": "~/.config/hypr/scripts/audio_switcher.sh --source-menu",
+        "on-click-middle": "pavucontrol -t 4",
         "on-scroll-up": "~/.config/waybar/scripts/mic-control.sh down",
         "on-scroll-down": "~/.config/waybar/scripts/mic-control.sh up",
         "scroll-step": 5
@@ -279,13 +285,13 @@
         "tooltip": true,
         "format": "{icon} {}",
         "format-icons": {
-            "notification": "<span foreground='#f38ba8'><sup></sup></span>󰂚",
+            "notification": "󰂚<span foreground='#f38ba8'><sup></sup></span>",
             "none": "󰂚",
-            "dnd-notification": "<span foreground='#f38ba8'><sup></sup></span>󰂛",
+            "dnd-notification": "󰂛<span foreground='#f38ba8'><sup></sup></span>",
             "dnd-none": "󰂛",
-            "inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>󰂚",
+            "inhibited-notification": "󰂚<span foreground='#f38ba8'><sup></sup></span>",
             "inhibited-none": "󰂚",
-            "dnd-inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>󰂛",
+            "dnd-inhibited-notification": "󰂛<span foreground='#f38ba8'><sup></sup></span>",
             "dnd-inhibited-none": "󰂛"
         },
         "return-type": "json",

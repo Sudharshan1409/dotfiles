@@ -15,6 +15,12 @@ if command -v satty >/dev/null 2>&1; then
         --actions-on-enter save-to-clipboard \
         --save-after-copy \
         --copy-command 'wl-copy'
+elif command -v swappy >/dev/null 2>&1; then
+    grim ${MONITOR:+-o "$MONITOR"} - | swappy -f - -o "$FILENAME"
+    if [ -f "$FILENAME" ]; then
+        wl-copy < "$FILENAME"
+        notify-send "Screenshot Captured" "Saved to $FILENAME and copied to clipboard" -i camera-photo
+    fi
 else
     grim ${MONITOR:+-o "$MONITOR"} "$FILENAME"
     wl-copy < "$FILENAME"

@@ -46,6 +46,7 @@ cat > "$TEMP_FILE" << 'EOF'
 🪟 WINDOWS | Super + V | Toggle floating mode
 🪟 WINDOWS | Super + F | Toggle fullscreen mode
 🪟 WINDOWS | Super + P | Toggle pseudotiling mode
+🪟 WINDOWS | Super + Shift + P | Toggle Picture-in-Picture (PiP) mode
 🪟 WINDOWS | Super + T | Toggle split direction (vertical/horizontal)
 🪟 WINDOWS | Super + W | Toggle window group
 🪟 WINDOWS | Super + Shift + H | Move window left
@@ -108,9 +109,10 @@ cat > "$TEMP_FILE" << 'EOF'
 🎵 MEDIA | Previous Track | Go to previous track
 🎵 MEDIA | Brightness Up | Increase screen brightness
 🎵 MEDIA | Brightness Down | Decrease screen brightness
-📸 SCREENSHOTS | Print | Screenshot active monitor
-📸 SCREENSHOTS | Super + Print | Screenshot active window
-📸 SCREENSHOTS | Super + Shift + Print | Screenshot selected region
+📸 SCREENSHOTS | Super + Shift + S | Screenshot region & annotate (Satty/Swappy)
+📸 SCREENSHOTS | Print | Screenshot active monitor & annotate
+📸 SCREENSHOTS | Super + Print | Screenshot active window & annotate
+📸 SCREENSHOTS | Super + Shift + Print | Screenshot selected region & annotate
 ⌨️ INPUT | Super + C | Universal copy
 ⌨️ INPUT | Super + V | Universal paste
 ⌨️ INPUT | Super + X | Universal cut
@@ -209,6 +211,8 @@ case "$DESCRIPTION" in
         hyprctl dispatch fullscreen ;;
     "Toggle pseudotiling mode")
         hyprctl dispatch pseudo ;;
+    "Toggle Picture-in-Picture (PiP) mode")
+        hyprctl dispatch exec ~/.config/hypr/scripts/toggle_pip.sh ;;
     "Toggle split direction (vertical/horizontal)")
         hyprctl dispatch togglesplit ;;
     "Toggle window group")
@@ -333,11 +337,11 @@ case "$DESCRIPTION" in
         hyprctl dispatch exec "brightnessctl set +5%" ;;
     "Decrease screen brightness")
         hyprctl dispatch exec "brightnessctl set 5%-" ;;
-    "Screenshot active monitor")
+    "Screenshot active monitor"|"Screenshot active monitor & annotate")
         hyprctl dispatch exec ~/.config/hypr/scripts/screenshot_screen_edit.sh ;;
-    "Screenshot active window")
+    "Screenshot active window"|"Screenshot active window & annotate")
         hyprctl dispatch exec ~/.config/hypr/scripts/screenshot_window_edit.sh ;;
-    "Screenshot selected region")
+    "Screenshot selected region"|"Screenshot selected region & annotate"|"Screenshot region & annotate (Satty/Swappy)")
         hyprctl dispatch exec ~/.config/hypr/scripts/screenshot_edit.sh ;;
     "Universal copy")
         hyprctl dispatch sendshortcut CTRL Insert ;;

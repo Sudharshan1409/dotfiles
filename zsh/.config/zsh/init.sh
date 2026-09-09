@@ -41,6 +41,7 @@ source "$HOME/.config/zsh/cli/functions.sh"
 source "$HOME/.config/zsh/cli/projects.sh"
 source "$HOME/.config/zsh/cli/gh.sh"
 source "$HOME/.config/zsh/cli/ai.sh"
+source "$HOME/.config/zsh/cli/productivity.zsh"
 
 # Source non-CLI configuration files
 source "$HOME/.config/zsh/tmux.sh"

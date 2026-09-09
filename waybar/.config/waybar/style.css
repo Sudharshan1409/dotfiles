@@ -285,4 +285,12 @@ tooltip {
   border-radius: 10px;
   margin-right: 10px;
   font-size: 20px;
+  transition: color 0.2s ease;
+}
+
+#custom-swaync.dnd-none,
+#custom-swaync.dnd-notification,
+#custom-swaync.dnd-inhibited-none,
+#custom-swaync.dnd-inhibited-notification {
+  color: #fab387;
 }

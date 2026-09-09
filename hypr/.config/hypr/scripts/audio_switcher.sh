@@ -62,24 +62,65 @@ show_source_menu() {
     echo -e "$menu_items" | head -20
 }
 
-# Function to set default sink
+# Function to set default sink and migrate active audio streams
 set_sink_by_desc() {
     local target_desc="$1"
-    # Remove emoji and leading spaces
     target_desc=$(echo "$target_desc" | sed 's/^[🔊 ]*//')
     
-    # Find and set the sink
     while IFS='|' read -r name desc; do
         if [ "$desc" = "$target_desc" ]; then
             pactl set-default-sink "$name"
             if [ $? -eq 0 ]; then
-                notify-send "Audio Switcher" "Output: $desc" -i audio-speakers -t 2000
+                # Move active audio streams immediately to the new default sink
+                pactl list short sink-inputs 2>/dev/null | awk '{print $1}' | while read -r input; do
+                    [ -n "$input" ] && pactl move-sink-input "$input" "$name" 2>/dev/null || true
+                done
+                which hyprctl >/dev/null 2>&1 && hyprctl notify 1 2500 "rgb(89b4fa)" "Audio Output: $desc" || true
+                notify-send "Audio Switcher" "Output: $desc" -i audio-speakers -t 2000 &
                 return 0
             fi
         fi
     done <<< "$(list_sinks_raw)"
     
     return 1
+}
+
+# Function to cycle to the next output device
+cycle_sink() {
+    local current_sink=$(get_current_sink)
+    local sinks=()
+    local descs=()
+    
+    while IFS='|' read -r name desc; do
+        if [ -n "$name" ] && [ -n "$desc" ]; then
+            sinks+=("$name")
+            descs+=("$desc")
+        fi
+    done <<< "$(list_sinks_raw)"
+    
+    local total=${#sinks[@]}
+    if [ $total -le 1 ]; then
+        return 0
+    fi
+    
+    local next_idx=0
+    for ((i=0; i<total; i++)); do
+        if [ "${sinks[$i]}" = "$current_sink" ]; then
+            next_idx=$(( (i + 1) % total ))
+            break
+        fi
+    done
+    
+    local target_sink="${sinks[$next_idx]}"
+    local target_desc="${descs[$next_idx]}"
+    
+    pactl set-default-sink "$target_sink"
+    pactl list short sink-inputs 2>/dev/null | awk '{print $1}' | while read -r input; do
+        [ -n "$input" ] && pactl move-sink-input "$input" "$target_sink" 2>/dev/null || true
+    done
+    
+    which hyprctl >/dev/null 2>&1 && hyprctl notify 1 2500 "rgb(89b4fa)" "Audio Output: $target_desc" || true
+    notify-send "Audio Switcher" "Switched to: $target_desc" -i audio-speakers -t 2000 &
 }
 
 # Function to set default source
@@ -93,7 +134,8 @@ set_source_by_desc() {
         if [ "$desc" = "$target_desc" ]; then
             pactl set-default-source "$name"
             if [ $? -eq 0 ]; then
-                notify-send "Audio Switcher" "Input: $desc" -i audio-input-microphone -t 2000
+                which hyprctl >/dev/null 2>&1 && hyprctl notify 1 2500 "rgb(a6e3a1)" "Audio Input: $desc" || true
+                notify-send "Audio Switcher" "Input: $desc" -i audio-input-microphone -t 2000 &
                 return 0
             fi
         fi
@@ -107,12 +149,42 @@ toggle_mute() {
     local type="$1"
     if [ "$type" = "sink" ]; then
         pactl set-sink-mute @DEFAULT_SINK@ toggle
-        notify-send "Audio Switcher" "Output mute toggled" -i audio-volume-muted -t 1500
+        notify-send "Audio Switcher" "Output mute toggled" -i audio-volume-muted -t 1500 &
     else
         pactl set-source-mute @DEFAULT_SOURCE@ toggle
-        notify-send "Audio Switcher" "Input mute toggled" -i microphone-sensitivity-muted -t 1500
+        notify-send "Audio Switcher" "Input mute toggled" -i microphone-sensitivity-muted -t 1500 &
     fi
 }
+
+# Direct CLI dispatch for Waybar shortcuts
+case "${1:-}" in
+    --sink-menu|--output)
+        DEVICE=$(show_sink_menu | rofi -dmenu \
+            -p "Output" \
+            -theme "$ROFI_THEME" \
+            -mesg "Select audio output device" \
+            -i)
+        if [ -n "$DEVICE" ]; then
+            set_sink_by_desc "$DEVICE"
+        fi
+        exit 0
+        ;;
+    --source-menu|--input)
+        DEVICE=$(show_source_menu | rofi -dmenu \
+            -p "Input" \
+            -theme "$ROFI_THEME" \
+            -mesg "Select microphone input device" \
+            -i)
+        if [ -n "$DEVICE" ]; then
+            set_source_by_desc "$DEVICE"
+        fi
+        exit 0
+        ;;
+    --cycle-sink)
+        cycle_sink
+        exit 0
+        ;;
+esac
 
 # Main menu
 while true; do

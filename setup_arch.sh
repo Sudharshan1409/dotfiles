@@ -11,6 +11,10 @@ set -e
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PATH="$HOME/.local/bin:$PATH"
 
+if [ "$1" = "--check" ] || [ "$1" = "-c" ] || [ "$1" = "doctor" ]; then
+    exec "$DOTFILES_DIR/scripts/dotfiles-doctor.sh"
+fi
+
 # ANSI Color Codes for Real-Time Logging
 BOLD="\033[1m"
 GREEN="\033[1;32m"
@@ -126,6 +130,7 @@ PACMAN_PACKAGES=(
     waybar
     sway-notification-center
     hyprpaper
+    swww
     hypridle
     hyprlock
     rofi-wayland
@@ -140,6 +145,7 @@ PACMAN_PACKAGES=(
     grim
     slurp
     satty
+    swappy
     wf-recorder
     wl-clipboard
     cliphist

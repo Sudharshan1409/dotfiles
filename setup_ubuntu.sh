@@ -11,6 +11,10 @@ set -e
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PATH="$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
 
+if [ "$1" = "--check" ] || [ "$1" = "-c" ] || [ "$1" = "doctor" ]; then
+    exec "$DOTFILES_DIR/scripts/dotfiles-doctor.sh"
+fi
+
 # ANSI Color Codes for Real-Time Logging
 BOLD="\033[1m"
 GREEN="\033[1;32m"
@@ -137,6 +141,7 @@ APT_PACKAGES=(
     wf-recorder
     wl-clipboard
     cliphist
+    swappy
     tesseract-ocr
     tesseract-ocr-eng
     network-manager-gnome
