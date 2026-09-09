@@ -14,6 +14,7 @@ cat > "$TEMP_FILE" << 'EOF'
 📱 APPS | Super + Enter | Open terminal (Ghostty)
 📱 APPS | Super + S | Toggle scratchpad terminal
 📱 APPS | Super + Space | Open application launcher (Rofi)
+📱 APPS | Super + Shift + F | Quick FZF Finder (Folders in Yazi / Files in Neovim)
 📱 APPS | Super + Alt + S | Open Spotify
 📱 APPS | Super + Alt + D | Open Downloads folder
 📱 APPS | Super + Alt + B | Open Backgrounds folder
@@ -147,6 +148,8 @@ case "$DESCRIPTION" in
         hyprctl dispatch exec ~/.config/hypr/scripts/scratchpad_terminal.sh ;;
     "Open application launcher (Rofi)")
         hyprctl dispatch exec "rofi -show drun -show-icons -display-drune 'Apps' -theme ~/.config/rofi/launcher-elegant.rasi" ;;
+    "Quick FZF Finder (Folders in Yazi / Files in Neovim)")
+        hyprctl dispatch exec ~/.config/hypr/scripts/quick_fzf_finder.sh ;;
     "Open Spotify")
         hyprctl dispatch exec spotify ;;
     "Open Downloads folder")
