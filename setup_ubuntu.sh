@@ -168,7 +168,7 @@ if [ ${#MISSING_APT[@]} -eq 0 ]; then
     log_skip "All ${#APT_PACKAGES[@]} required APT packages are already installed"
 else
     log_info "Updating APT index and installing ${#MISSING_APT[@]} missing package(s): ${MISSING_APT[*]}"
-    sudo apt-get update -y
+    sudo apt-get update -y || log_warn "APT update finished with warnings/errors (often due to 3rd-party repos); proceeding with installation..."
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${MISSING_APT[@]}"
     log_ok "Installed missing APT package(s): ${MISSING_APT[*]}"
 fi
@@ -618,7 +618,7 @@ else
     done
     if [ ${#MISSING_DL_DEPS[@]} -gt 0 ]; then
         log_info "Installing DisplayLink dependencies: ${MISSING_DL_DEPS[*]}"
-        sudo apt-get update -qq
+        sudo apt-get update -qq || true
         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${MISSING_DL_DEPS[@]}"
     fi
 
@@ -629,7 +629,7 @@ else
         if curl -fsSL -o "$KEYRING_DEB" "https://www.synaptics.com/sites/default/files/Ubuntu/pool/stable/main/all/synaptics-repository-keyring.deb"; then
             sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$KEYRING_DEB"
             rm -f "$KEYRING_DEB"
-            sudo apt-get update -qq
+            sudo apt-get update -qq || true
             log_ok "Configured Synaptics repository"
         else
             log_err "Failed to download Synaptics repository keyring"
@@ -640,7 +640,7 @@ else
     # 3. Install displaylink-driver
     if ! dpkg-query -W -f='${Status}' displaylink-driver 2>/dev/null | grep -q "ok installed"; then
         log_info "Installing displaylink-driver package..."
-        sudo apt-get update -qq
+        sudo apt-get update -qq || true
         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y displaylink-driver
         log_ok "Installed displaylink-driver package"
     fi
