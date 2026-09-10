@@ -94,5 +94,12 @@ vim.keymap.set(
 	{ desc = "Create file in CWD directory" }
 )
 
+-- Command to convert DOS/Windows (CRLF) line endings to Unix (LF)
+vim.api.nvim_create_user_command("Dos2Unix", function()
+	vim.cmd("%s/\\r$//e")
+	vim.bo.fileformat = "unix"
+	print("Converted file to Unix (LF) format")
+end, { desc = "Remove carriage returns and set fileformat to unix" })
+
 -- Return the module table
 return M
