@@ -638,27 +638,32 @@ else
         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${MISSING_DL_DEPS[@]}"
     fi
 
-    # 2. Configure Synaptics official APT repository keyring
-    if ! dpkg-query -W -f='${Status}' synaptics-repository-keyring 2>/dev/null | grep -q "ok installed"; then
-        log_info "Installing Synaptics official repository keyring..."
+    # 2. Configure Synaptics official APT repository keyring & source list
+    if [ ! -f "/etc/apt/sources.list.d/synaptics.list" ] || [ ! -f "/usr/share/keyrings/synaptics-repository-keyring.gpg" ] || ! dpkg-query -W -f='${Status}' synaptics-repository-keyring 2>/dev/null | grep -q "ok installed"; then
+        log_info "Configuring Synaptics official repository & keyring..."
         KEYRING_DEB="$(mktemp --suffix=.deb)"
         if curl -fsSL -o "$KEYRING_DEB" "https://www.synaptics.com/sites/default/files/Ubuntu/pool/stable/main/all/synaptics-repository-keyring.deb"; then
-            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$KEYRING_DEB"
-            rm -f "$KEYRING_DEB"
-            sudo apt-get update -qq || true
-            log_ok "Configured Synaptics repository"
-        else
-            log_err "Failed to download Synaptics repository keyring"
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --reinstall "$KEYRING_DEB" 2>/dev/null || sudo dpkg -i "$KEYRING_DEB" 2>/dev/null || true
             rm -f "$KEYRING_DEB"
         fi
+
+        # Ensure the sources list file exists and specifies arch=amd64
+        if [ -f "/usr/share/keyrings/synaptics-repository-keyring.gpg" ]; then
+            printf "deb [arch=amd64 signed-by=/usr/share/keyrings/synaptics-repository-keyring.gpg] https://www.synaptics.com/sites/default/files/Ubuntu stable main\ndeb [arch=amd64 signed-by=/usr/share/keyrings/synaptics-repository-keyring.gpg] https://www.synaptics.com/sites/default/files/Ubuntu stable non-free\n" | sudo tee /etc/apt/sources.list.d/synaptics.list >/dev/null
+        fi
+        sudo apt-get update -qq || true
+        log_ok "Configured Synaptics repository"
     fi
 
     # 3. Install displaylink-driver
     if ! dpkg-query -W -f='${Status}' displaylink-driver 2>/dev/null | grep -q "ok installed"; then
-        log_info "Installing displaylink-driver package..."
-        sudo apt-get update -qq || true
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y displaylink-driver
-        log_ok "Installed displaylink-driver package"
+        if apt-cache show displaylink-driver >/dev/null 2>&1; then
+            log_info "Installing displaylink-driver package..."
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y displaylink-driver
+            log_ok "Installed displaylink-driver package"
+        else
+            log_warn "displaylink-driver package not found in APT cache; skipping driver installation"
+        fi
     fi
 
     # 4. Load EVDI kernel module & enable/start displaylink-driver service
