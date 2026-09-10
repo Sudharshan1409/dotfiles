@@ -10,33 +10,21 @@ export PATH="$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:$PAT
 export EDITOR="nvim"
 export VISUAL="nvim"
 
-# If invoked without --run, launch the large floating Ghostty window
+# If invoked without --run, calculate exact dimensions for the focused monitor and launch floating Ghostty
 if [ "$1" != "--run" ]; then
-    hyprctl dispatch exec "[float; size 88% 85%; center] ghostty --gtk-single-instance=false -e $HOME/.config/hypr/scripts/quick_fzf_finder.sh --run"
+    read -r TARGET_W TARGET_H < <(hyprctl monitors -j 2>/dev/null | jq -r '
+        (map(select(.focused == true))[0] // .[0]) |
+        ((.width / .scale * 0.88 | floor | tostring) + " " + (.height / .scale * 0.85 | floor | tostring))
+    ' 2>/dev/null)
+    TARGET_W="${TARGET_W:-1600}"
+    TARGET_H="${TARGET_H:-900}"
+
+    hyprctl dispatch exec "[float; size ${TARGET_W} ${TARGET_H}; center] ghostty --title=Quick-FZF-Finder --gtk-single-instance=false -e $HOME/.config/hypr/scripts/quick_fzf_finder.sh --run"
     exit 0
 fi
 
-# Set window title for Hyprland windowrule matching
+# Set window title
 printf "\033]0;Quick-FZF-Finder\007"
-
-# Enforce window size and position directly via hyprctl
-ADDR=$(hyprctl activewindow -j 2>/dev/null | jq -r '.address // empty')
-if [ -n "$ADDR" ]; then
-    MON_INFO=$(hyprctl monitors -j 2>/dev/null | jq '.[] | select(.focused == true) // .[0]')
-    MON_W=$(echo "$MON_INFO" | jq -r '.width // 1920')
-    MON_H=$(echo "$MON_INFO" | jq -r '.height // 1080')
-    SCALE=$(echo "$MON_INFO" | jq -r '.scale // 1')
-
-    LOGICAL_W=$(python3 -c "import sys; print(int(float(sys.argv[1]) / float(sys.argv[2])))" "$MON_W" "$SCALE" 2>/dev/null || echo 1920)
-    LOGICAL_H=$(python3 -c "import sys; print(int(float(sys.argv[1]) / float(sys.argv[2])))" "$MON_H" "$SCALE" 2>/dev/null || echo 1080)
-
-    TARGET_W=$(( LOGICAL_W * 88 / 100 ))
-    TARGET_H=$(( LOGICAL_H * 85 / 100 ))
-
-    hyprctl dispatch setfloating address:$ADDR >/dev/null 2>&1
-    hyprctl dispatch resizewindowpixel exact ${TARGET_W} ${TARGET_H},address:$ADDR >/dev/null 2>&1
-    hyprctl dispatch centerwindow address:$ADDR >/dev/null 2>&1
-fi
 
 cd "$HOME" || exit 1
 
