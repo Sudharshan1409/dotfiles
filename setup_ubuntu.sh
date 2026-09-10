@@ -9,7 +9,7 @@ set -e
 # ==============================================================================
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export PATH="$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
+export PATH="$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:/snap/bin:$PATH"
 
 if [ "$1" = "--check" ] || [ "$1" = "-c" ] || [ "$1" = "doctor" ]; then
     exec "$DOTFILES_DIR/scripts/dotfiles-doctor.sh"
@@ -133,7 +133,6 @@ APT_PACKAGES=(
     hyprlock
     rofi
     wofi
-    ghostty
     htop
     nautilus
     grim
@@ -141,7 +140,6 @@ APT_PACKAGES=(
     wf-recorder
     wl-clipboard
     cliphist
-    swappy
     tesseract-ocr
     tesseract-ocr-eng
     network-manager-gnome
@@ -154,23 +152,41 @@ APT_PACKAGES=(
     power-profiles-daemon
     libnotify-bin
     policykit-1-gnome
-    libgtk4-layer-shell0
 )
 
 MISSING_APT=()
 for pkg in "${APT_PACKAGES[@]}"; do
     if ! dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "ok installed"; then
-        MISSING_APT+=("$pkg")
+        if apt-cache show "$pkg" >/dev/null 2>&1; then
+            MISSING_APT+=("$pkg")
+        else
+            log_warn "APT package '$pkg' not found in repositories for this release, skipping APT install"
+        fi
     fi
 done
 
 if [ ${#MISSING_APT[@]} -eq 0 ]; then
-    log_skip "All ${#APT_PACKAGES[@]} required APT packages are already installed"
+    log_skip "All required APT packages are already installed"
 else
     log_info "Updating APT index and installing ${#MISSING_APT[@]} missing package(s): ${MISSING_APT[*]}"
     sudo apt-get update -y || log_warn "APT update finished with warnings/errors (often due to 3rd-party repos); proceeding with installation..."
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${MISSING_APT[@]}"
     log_ok "Installed missing APT package(s): ${MISSING_APT[*]}"
+fi
+
+# Ensure Ghostty terminal emulator is installed (APT on Ubuntu 25+, Snap on Ubuntu 24.04)
+if command -v ghostty >/dev/null 2>&1; then
+    log_skip "Ghostty terminal is already installed"
+elif apt-cache show ghostty >/dev/null 2>&1; then
+    log_info "Installing Ghostty via APT..."
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ghostty
+    log_ok "Installed Ghostty via APT"
+elif command -v snap >/dev/null 2>&1; then
+    log_info "Installing Ghostty via Snap..."
+    sudo snap install ghostty --classic
+    log_ok "Installed Ghostty via Snap"
+else
+    log_warn "Ghostty terminal could not be installed automatically"
 fi
 
 # 3. Ensure Homebrew is installed for modern CLI tools
