@@ -123,6 +123,7 @@ PACMAN_PACKAGES=(
     zsh
     python
     python-pip
+    uv
     nodejs
     npm
     hyprland
@@ -322,9 +323,14 @@ if [ -x "$VENV_DIR/bin/python3" ] && "$VENV_DIR/bin/python3" -c "import Inquirer
     log_skip "Enigma CLI Python virtualenv is already installed with all dependencies"
 else
     log_info "Bootstrapping Enigma CLI virtualenv at $VENV_DIR..."
-    python3 -m venv "$VENV_DIR"
-    "$VENV_DIR/bin/pip" install --quiet --upgrade pip
-    "$VENV_DIR/bin/pip" install --quiet -r "$REQ_FILE"
+    if command -v uv >/dev/null 2>&1; then
+        uv venv --allow-existing "$VENV_DIR" >/dev/null 2>&1
+        uv pip install --python "$VENV_DIR/bin/python3" -r "$REQ_FILE" >/dev/null 2>&1
+    else
+        python3 -m venv "$VENV_DIR"
+        "$VENV_DIR/bin/pip" install --quiet --upgrade pip
+        "$VENV_DIR/bin/pip" install --quiet -r "$REQ_FILE"
+    fi
     log_ok "Configured Enigma CLI virtualenv"
 fi
 

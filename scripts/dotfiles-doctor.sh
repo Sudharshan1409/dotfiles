@@ -138,7 +138,7 @@ fi
 # 4. Core CLI & Development Utilities
 # ------------------------------------------------------------------------------
 section_header "4. CLI & Development Utilities"
-CLI_TOOLS=(git nvim tmux zellij fzf zoxide lsd bat delta lazygit fd rg jq tldr shellcheck starship fnm)
+CLI_TOOLS=(git nvim tmux zellij fzf zoxide lsd bat delta lazygit fd rg jq tldr shellcheck starship fnm uv)
 for tool in "${CLI_TOOLS[@]}"; do
     RESOLVED_TOOL="$tool"
     [ "$tool" = "delta" ] && command -v git-delta >/dev/null 2>&1 && RESOLVED_TOOL="git-delta"

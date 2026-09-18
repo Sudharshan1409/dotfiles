@@ -77,12 +77,12 @@ Tasks can be marked as:
   - **Solution**: Install and configure `fnm` for instant sub-millisecond environment loading; sync across setup scripts and dotfiles doctor.
   - **Target Files**: `zsh/.zshrc`, `setup_arch.sh`, `setup_ubuntu.sh`, `scripts/dotfiles-doctor.sh`
 
-- [ ] **TASK-10: Modernize Python Script Execution in Zsh using `uv`**
+- [x] **TASK-10: Modernize Python Script Execution in Zsh using `uv`**
   - **Category**: Shell (Tooling / Stability)
   - **Impact**: Medium | **Effort**: Medium
   - **Problem**: Maintaining a manual Python virtual environment at `~/.config/zsh/venv` for `mai.py`, `mgithub.py`, etc. is brittle and requires manual pip maintenance.
-  - **Solution**: Use `uv tool` or standalone ephemeral environments for custom Python CLI utilities.
-  - **Target Files**: `zsh/.config/zsh/init.sh`, `zsh/.config/zsh/python/`
+  - **Solution**: Auto-install and bootstrap Enigma CLI virtualenv via `uv` across shell runtime, `setup_arch.sh`, `setup_ubuntu.sh`, and `dotfiles-doctor.sh`.
+  - **Target Files**: `zsh/.config/zsh/init.sh`, `setup_arch.sh`, `setup_ubuntu.sh`, `scripts/dotfiles-doctor.sh`
 
 ---
 
