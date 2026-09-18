@@ -287,37 +287,8 @@ else
     log_ok "Created/updated $SYMLINKS_MADE CLI tool symlink(s) in ~/.local/bin"
 fi
 
-# 6. Install standalone terminal emulators and launchers if missing
-step_header "Verifying standalone apps (Kitty, WezTerm, Walker, Satty, Fonts)"
-
-# Kitty
-if command -v kitty >/dev/null 2>&1 || [ -x "$HOME/.local/kitty.app/bin/kitty" ]; then
-    log_skip "Kitty terminal emulator is already installed"
-else
-    log_info "Installing Kitty terminal emulator..."
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
-    ln -sf "$HOME/.local/kitty.app/bin/kitty" "$HOME/.local/bin/kitty"
-    ln -sf "$HOME/.local/kitty.app/bin/kitten" "$HOME/.local/bin/kitten"
-    log_ok "Installed Kitty terminal"
-fi
-
-# WezTerm
-if command -v wezterm >/dev/null 2>&1 || [ -x "$HOME/.local/wezterm-app/usr/bin/wezterm" ]; then
-    log_skip "WezTerm terminal emulator is already installed"
-else
-    log_info "Installing WezTerm AppImage..."
-    WEZ_TMP="$(mktemp -d)"
-    curl -fsSL -o "$WEZ_TMP/wezterm.AppImage" "https://github.com/wez/wezterm/releases/download/20240203-110809-5046fc22/WezTerm-20240203-110809-5046fc22-Ubuntu20.04.AppImage"
-    chmod +x "$WEZ_TMP/wezterm.AppImage"
-    (cd "$WEZ_TMP" && "$WEZ_TMP/wezterm.AppImage" --appimage-extract >/dev/null 2>&1)
-    rm -rf "$HOME/.local/wezterm-app"
-    mv "$WEZ_TMP/squashfs-root" "$HOME/.local/wezterm-app"
-    ln -sf "$HOME/.local/wezterm-app/usr/bin/wezterm" "$HOME/.local/bin/wezterm"
-    ln -sf "$HOME/.local/wezterm-app/usr/bin/wezterm-gui" "$HOME/.local/bin/wezterm-gui"
-    ln -sf "$HOME/.local/wezterm-app/usr/bin/wezterm-mux-server" "$HOME/.local/bin/wezterm-mux-server"
-    rm -rf "$WEZ_TMP"
-    log_ok "Installed WezTerm"
-fi
+# 6. Install standalone tools and fonts if missing
+step_header "Verifying standalone tools (Satty, Fonts)"
 
 # Satty
 if command -v satty >/dev/null 2>&1 || [ -x "$HOME/.local/bin/satty" ]; then
@@ -350,7 +321,6 @@ STOW_PACKAGES=(
     ghostty
     git
     hypr
-    kitty
     lazygit
     nvim
     rofi
@@ -358,7 +328,6 @@ STOW_PACKAGES=(
     swaync
     tmux
     waybar
-    wezterm
     yazi
     zellij
     zsh
@@ -495,16 +464,10 @@ else
     log_ok "Deployed Yazi Catppuccin theme"
 fi
 
-# 15. Set up WezTerm wallpapers directory and user picture directories
-step_header "Verifying WezTerm wallpapers and user picture directories"
-mkdir -p "$HOME/wezterm-wallpapers" "$HOME/Pictures/Pics" "$HOME/Pictures/Screenshots"
-WP_COUNT=$(ls -A "$HOME/wezterm-wallpapers" 2>/dev/null | wc -l)
-if [ "$WP_COUNT" -gt 0 ]; then
-    log_skip "WezTerm wallpapers directory is already populated ($WP_COUNT file(s))"
-else
-    cp -u "$DOTFILES_DIR"/backgrounds/.config/backgrounds/* "$HOME/wezterm-wallpapers/" 2>/dev/null || true
-    log_ok "Initialized WezTerm wallpapers"
-fi
+# 15. Set up user picture directories
+step_header "Verifying user picture directories"
+mkdir -p "$HOME/Pictures/Pics" "$HOME/Pictures/Screenshots"
+log_ok "User picture directories configured"
 
 # 16. Set executable permissions for all dotfiles scripts
 step_header "Verifying script executable permissions"

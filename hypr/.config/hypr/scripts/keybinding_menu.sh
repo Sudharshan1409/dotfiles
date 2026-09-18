@@ -18,7 +18,6 @@ cat > "$TEMP_FILE" << 'EOF'
 📱 APPS | Super + Alt + S | Open Spotify
 📱 APPS | Super + Alt + D | Open Downloads folder
 📱 APPS | Super + Alt + B | Open Backgrounds folder
-📱 APPS | Super + Alt + W | Open Wezterm wallpapers folder
 📱 APPS | Super + Alt + H | Open Home folder
 📱 APPS | Super + Ctrl + V | Open clipboard history
 📱 APPS | Super + Ctrl + B | Open Bluetooth menu
@@ -156,8 +155,6 @@ case "$DESCRIPTION" in
         hyprctl dispatch exec "nautilus ~/Downloads" ;;
     "Open Backgrounds folder")
         hyprctl dispatch exec "nautilus ~/.config/backgrounds" ;;
-    "Open Wezterm wallpapers folder")
-        hyprctl dispatch exec "nautilus ~/wezterm-wallpapers" ;;
     "Open Home folder")
         hyprctl dispatch exec "nautilus ~" ;;
     "Open clipboard history")

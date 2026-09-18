@@ -324,10 +324,6 @@ open_profile_in_editor() {
             # Terminal editors - launch with available terminal emulator
             if command -v ghostty >/dev/null 2>&1; then
                 ghostty -e "$editor" "$profile_path" &
-            elif command -v kitty >/dev/null 2>&1; then
-                kitty -e "$editor" "$profile_path" &
-            elif command -v alacritty >/dev/null 2>&1; then
-                alacritty -e "$editor" "$profile_path" &
             else
                 x-terminal-emulator -e "$editor" "$profile_path" &
             fi

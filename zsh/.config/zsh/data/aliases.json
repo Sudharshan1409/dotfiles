@@ -53,7 +53,6 @@
         "gitconf": "z ~/.config/git",
         "home": "z ~",
         "hyprconf": "z ~/.config/hypr",
-        "kittyconf": "z ~/.config/kitty",
         "ohmyzsh": "z ~/.oh-my-zsh",
         "proj": "z ~/projects",
         "shellconf": "z ~/.config/zsh",
@@ -63,7 +62,6 @@
         "tmuxconf": "z ~/.config/tmux",
         "vimconf": "z ~/.config/nvim",
         "wayconf": "z ~/.config/waybar",
-        "wezconf": "z ~/.config/wezterm",
         "yaziconf": "z ~/.config/yazi"
     }
 }

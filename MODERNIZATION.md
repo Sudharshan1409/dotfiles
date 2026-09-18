@@ -95,12 +95,12 @@ Tasks can be marked as:
   - **Solution**: Removed unused `wofi` and `walker` configs and setup steps; standardized on `rofi-wayland`.
   - **Target Files**: `setup_arch.sh`, `setup_ubuntu.sh`, `walker/`, `wofi/`
 
-- [ ] **TASK-12: Standardize Terminal Configurations (`ghostty` vs `wezterm` vs `kitty`)**
-  - **Category**: Desktop (Cleanup)
-  - **Impact**: Low | **Effort**: Low
-  - **Problem**: Three terminal configs exist. Ghostty is now primary on Hyprland.
-  - **Solution**: Retain Ghostty as primary; document or clean up WezTerm/Kitty if no longer used.
-  - **Target Files**: `kitty/`, `wezterm/`, `ghostty/`
+- [x] **TASK-12: Standardize Terminal Configurations on Ghostty**
+  - **Category**: Desktop (Cleanup / Standardization)
+  - **Impact**: Medium | **Effort**: Low
+  - **Problem**: Three terminal configurations existed (`kitty`, `wezterm`, `ghostty`) while Ghostty is the primary Wayland terminal.
+  - **Solution**: Standardized 100% on Ghostty; removed `kitty/` and `wezterm/`, cleaned up aliases, shortcuts, setup scripts, and added Ghostty to doctor check.
+  - **Target Files**: `ghostty/`, `hypr/.config/hypr/`, `zsh/.config/zsh/data/aliases.json`, `setup_arch.sh`, `setup_ubuntu.sh`, `scripts/dotfiles-doctor.sh`
 
 - [ ] **TASK-13: Add Smart Terminal Session Manager (`sesh` + `zoxide`)**
   - **Category**: CLI / Multiplexer (Workflow)

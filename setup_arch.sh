@@ -135,8 +135,6 @@ PACMAN_PACKAGES=(
     hypridle
     hyprlock
     rofi-wayland
-    kitty
-    wezterm
     htop
     nvtop
     nautilus
@@ -215,7 +213,6 @@ STOW_PACKAGES=(
     ghostty
     git
     hypr
-    kitty
     lazygit
     nvim
     rofi
@@ -223,7 +220,6 @@ STOW_PACKAGES=(
     swaync
     tmux
     waybar
-    wezterm
     yazi
     zellij
     zsh
@@ -358,16 +354,10 @@ else
     log_ok "Deployed Yazi Catppuccin theme"
 fi
 
-# 12. Set up WezTerm wallpapers directory and user picture directories
-step_header "Verifying WezTerm wallpapers and user picture directories"
-mkdir -p "$HOME/wezterm-wallpapers" "$HOME/Pictures/Pics" "$HOME/Pictures/Screenshots"
-WP_COUNT=$(ls -A "$HOME/wezterm-wallpapers" 2>/dev/null | wc -l)
-if [ "$WP_COUNT" -gt 0 ]; then
-    log_skip "WezTerm wallpapers directory is already populated ($WP_COUNT file(s))"
-else
-    cp -u "$DOTFILES_DIR"/backgrounds/.config/backgrounds/* "$HOME/wezterm-wallpapers/" 2>/dev/null || true
-    log_ok "Initialized WezTerm wallpapers"
-fi
+# 12. Set up user picture directories
+step_header "Verifying user picture directories"
+mkdir -p "$HOME/Pictures/Pics" "$HOME/Pictures/Screenshots"
+log_ok "User picture directories configured"
 
 # 13. Set executable permissions for all dotfiles scripts
 step_header "Verifying script executable permissions"
