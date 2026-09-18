@@ -53,7 +53,6 @@ return {
 	{
 		"HiPhish/rainbow-delimiters.nvim",
 	},
-	"alvan/vim-closetag",
 	{
 		"anuvyklack/pretty-fold.nvim",
 		config = function()

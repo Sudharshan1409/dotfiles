@@ -17,7 +17,7 @@ Tasks can be marked as:
   - **Solution**: Replace with Neovim 0.10+ native `[d` and `]d` for diagnostics or use `vim.keymap.set` without hijacking root motions.
   - **Target Files**: `nvim/.config/nvim/lua/plugins/lsp/lsp-config.lua`
 
-- [ ] **TASK-02: Remove Obsolete `vim-closetag` Plugin**
+- [x] **TASK-02: Remove Obsolete `vim-closetag` Plugin**
   - **Category**: Neovim (Cleanup)
   - **Impact**: Medium | **Effort**: Low
   - **Problem**: `alvan/vim-closetag` is an old Vimscript plugin from 2017. You already have `nvim-ts-autotag` installed which handles JSX/HTML auto-closing and auto-renaming natively via Treesitter.
