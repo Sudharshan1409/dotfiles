@@ -63,12 +63,12 @@ Tasks can be marked as:
 
 ## 2. Shell & Runtime Environment (Zsh, CLI)
 
-- [ ] **TASK-08: Migrate Prompt Fully to `starship` (Retire `powerlevel10k`)**
+- [x] **TASK-08: Migrate Prompt Fully to `starship` (Retire `powerlevel10k`)**
   - **Category**: Shell (Performance / Modernization)
   - **Impact**: High | **Effort**: Low
   - **Problem**: `powerlevel10k` is in maintenance mode. You already maintain a `starship/.config/starship.toml` in your dotfiles, creating split configuration.
-  - **Solution**: Switch `.zshrc` to load Starship prompt across both Linux and macOS.
-  - **Target Files**: `zsh/.zshrc`
+  - **Solution**: Remove obsolete `p10k-instant-prompt` checks and source lines from `.zshrc` and remove `zsh/.p10k.zsh` (Starship config and evaluation handled by your environment scripts).
+  - **Target Files**: `zsh/.zshrc`, `zsh/.p10k.zsh`
 
 - [ ] **TASK-09: Replace Slow `nvm` Shell Function with `mise` or `fnm`**
   - **Category**: Shell (Performance)
