@@ -155,3 +155,5 @@ case ":$PATH:" in
   *) [ -d "$PNPM_HOME/bin" ] && export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
+
+. "$HOME/.local/share/../bin/env"
