@@ -108,31 +108,11 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 
-# NVM (lazy-loaded on first command execution to prevent slow startup)
-export NVM_DIR="$HOME/.nvm"
-if [ -d "$NVM_DIR" ]; then
-    nvm() {
-        unset -f nvm node npm yarn npx pnpm 2>/dev/null
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-        nvm "$@"
-    }
-    node() {
-        unset -f nvm node npm yarn npx pnpm 2>/dev/null
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        node "$@"
-    }
-    npm() {
-        unset -f nvm node npm yarn npx pnpm 2>/dev/null
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        npm "$@"
-    }
-    npx() {
-        unset -f nvm node npm yarn npx pnpm 2>/dev/null
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        npx "$@"
-    }
+# Fast Node Manager (fnm)
+if command -v fnm &>/dev/null; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
 fi
+
 
 # Created by `pipx`
 export PATH="$PATH:$HOME/.local/bin"

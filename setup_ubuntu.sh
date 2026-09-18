@@ -227,6 +227,7 @@ BREW_PACKAGES=(
     yazi
     zellij
     starship
+    fnm
     lazygit
     fd
     ripgrep
@@ -443,13 +444,6 @@ if [ "$PLUGINS_ADDED" -eq 0 ]; then
     log_skip "All Oh-My-Zsh custom plugins are already present"
 else
     log_ok "Installed $PLUGINS_ADDED missing Oh-My-Zsh plugin(s)"
-fi
-
-if [ -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
-    log_skip "Powerlevel10k theme already present in custom themes"
-else
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k" >/dev/null 2>&1
-    log_ok "Installed Powerlevel10k theme"
 fi
 
 # 10. Set up Python virtual environment for Enigma CLI

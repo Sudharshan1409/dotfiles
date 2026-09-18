@@ -70,12 +70,12 @@ Tasks can be marked as:
   - **Solution**: Remove obsolete `p10k-instant-prompt` checks and source lines from `.zshrc` and remove `zsh/.p10k.zsh` (Starship config and evaluation handled by your environment scripts).
   - **Target Files**: `zsh/.zshrc`, `zsh/.p10k.zsh`
 
-- [ ] **TASK-09: Replace Slow `nvm` Shell Function with `mise` or `fnm`**
+- [x] **TASK-09: Replace Slow `nvm` Shell Function with `mise` or `fnm`**
   - **Category**: Shell (Performance)
   - **Impact**: High | **Effort**: Low
   - **Problem**: `nvm` script execution slows down shell startup and interactive subshells.
-  - **Solution**: Install and configure `mise` (or `fnm`) for instant sub-millisecond environment loading.
-  - **Target Files**: `zsh/.zshrc`
+  - **Solution**: Install and configure `fnm` for instant sub-millisecond environment loading; sync across setup scripts and dotfiles doctor.
+  - **Target Files**: `zsh/.zshrc`, `setup_arch.sh`, `setup_ubuntu.sh`, `scripts/dotfiles-doctor.sh`
 
 - [ ] **TASK-10: Modernize Python Script Execution in Zsh using `uv`**
   - **Category**: Shell (Tooling / Stability)
