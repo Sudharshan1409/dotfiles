@@ -132,7 +132,6 @@ APT_PACKAGES=(
     hypridle
     hyprlock
     rofi
-    wofi
     htop
     nautilus
     grim
@@ -320,21 +319,6 @@ else
     log_ok "Installed WezTerm"
 fi
 
-# Walker
-if command -v walker >/dev/null 2>&1 || [ -x "$HOME/.local/bin/walker" ]; then
-    log_skip "Walker Wayland launcher is already installed"
-else
-    log_info "Installing Walker Wayland launcher..."
-    WALKER_URL=$(curl -s https://api.github.com/repos/abenz1267/walker/releases/latest | grep -o 'https://[^"]*x86_64-unknown-linux-gnu.tar.gz' | head -n 1)
-    if [ -n "$WALKER_URL" ]; then
-        curl -fsSL "$WALKER_URL" | tar -xz -C "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/walker"
-        log_ok "Installed Walker launcher"
-    else
-        log_warn "Failed to resolve Walker release URL"
-    fi
-fi
-
 # Satty
 if command -v satty >/dev/null 2>&1 || [ -x "$HOME/.local/bin/satty" ]; then
     log_skip "Satty screenshot editor is already installed"
@@ -373,10 +357,8 @@ STOW_PACKAGES=(
     starship
     swaync
     tmux
-    walker
     waybar
     wezterm
-    wofi
     yazi
     zellij
     zsh

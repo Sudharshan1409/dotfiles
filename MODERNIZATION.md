@@ -88,12 +88,12 @@ Tasks can be marked as:
 
 ## 3. Desktop Environment & Window Management (Hyprland, Launchers)
 
-- [ ] **TASK-11: Consolidate App Launchers (`rofi` vs `wofi` vs `walker`)**
+- [x] **TASK-11: Consolidate App Launchers (`rofi` vs `wofi` vs `walker`)**
   - **Category**: Desktop (Cleanup / Modernization)
   - **Impact**: Medium | **Effort**: Low
   - **Problem**: You maintain configuration for 3 different launchers (`rofi`, `wofi`, `walker`), while only `rofi` is actively mapped.
-  - **Solution**: Either remove unused `wofi`/`walker` or migrate to `walker` if you want an ultrafast Wayland-native runner.
-  - **Target Files**: `wofi/`, `walker/`, `hypr/.config/hypr/bindings/apps.conf`
+  - **Solution**: Removed unused `wofi` and `walker` configs and setup steps; standardized on `rofi-wayland`.
+  - **Target Files**: `setup_arch.sh`, `setup_ubuntu.sh`, `walker/`, `wofi/`
 
 - [ ] **TASK-12: Standardize Terminal Configurations (`ghostty` vs `wezterm` vs `kitty`)**
   - **Category**: Desktop (Cleanup)

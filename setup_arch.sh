@@ -25,7 +25,7 @@ BLUE="\033[1;34m"
 DIM="\033[2m"
 RESET="\033[0m"
 
-TOTAL_STEPS=19
+TOTAL_STEPS=18
 CURRENT_STEP=0
 
 ACTIONS_DONE=0
@@ -135,7 +135,6 @@ PACMAN_PACKAGES=(
     hypridle
     hyprlock
     rofi-wayland
-    wofi
     kitty
     wezterm
     htop
@@ -208,24 +207,7 @@ if ! pacman -Qi ghostty >/dev/null 2>&1 && ! command -v ghostty >/dev/null 2>&1;
     sudo pacman -S --needed --noconfirm ghostty 2>/dev/null || true
 fi
 
-# 3. Install Walker launcher if not present
-step_header "Verifying Walker Wayland launcher"
-mkdir -p "$HOME/.local/bin"
-if command -v walker >/dev/null 2>&1 || [ -x "$HOME/.local/bin/walker" ]; then
-    log_skip "Walker Wayland launcher is already installed"
-else
-    log_info "Installing Walker Wayland launcher..."
-    WALKER_URL=$(curl -s https://api.github.com/repos/abenz1267/walker/releases/latest | grep -o 'https://[^"]*x86_64-unknown-linux-gnu.tar.gz' | head -n 1)
-    if [ -n "$WALKER_URL" ]; then
-        curl -fsSL "$WALKER_URL" | tar -xz -C "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/walker"
-        log_ok "Installed Walker launcher"
-    else
-        log_warn "Failed to resolve Walker release URL"
-    fi
-fi
-
-# 4. Apply Stow configuration for all Linux packages
+# 3. Apply Stow configuration for all Linux packages
 step_header "Verifying GNU Stow dotfiles linking"
 STOW_PACKAGES=(
     backgrounds
@@ -240,10 +222,8 @@ STOW_PACKAGES=(
     starship
     swaync
     tmux
-    walker
     waybar
     wezterm
-    wofi
     yazi
     zellij
     zsh
