@@ -31,12 +31,12 @@ Tasks can be marked as:
   - **Solution**: Enable `pyright` (or `basedpyright`) for type checking and `ruff` for sub-millisecond linting and code actions.
   - **Target Files**: `nvim/.config/nvim/lua/plugins/lsp/mason.lua`, `nvim/.config/nvim/lua/utils/lsp.lua`
 
-- [ ] **TASK-04: Resolve `snacks.nvim` vs Legacy Plugin Overlaps**
+- [x] **TASK-04: Resolve `snacks.nvim` vs Legacy Plugin Overlaps**
   - **Category**: Neovim (Performance / Consolidation)
   - **Impact**: High | **Effort**: Medium
-  - **Problem**: Running both `snacks.nvim` and the 6 legacy plugins it replaces (`telescope`, `toggleterm`, `nvim-notify`, `indent-blankline`, `vim-illuminate`, `undotree`) causes duplicate rendering, conflicting UI handlers, and bloated startup.
-  - **Solution**: Decide whether to fully adopt Snacks modules and prune legacy plugins, or disable redundant Snacks modules.
-  - **Target Files**: `nvim/.config/nvim/lua/plugins/snacks.lua`, `nvim/.config/nvim/lua/plugins/init.lua`, etc.
+  - **Problem**: Running both `snacks.nvim` and legacy plugins causes duplicate rendering and conflicting keymaps.
+  - **Solution**: Keep Telescope and Toggleterm for their essential plugins/extensions, keep `indent-blankline` for rainbow scopes, and retain `vim-illuminate` for buffer-local `]]`/`[[` navigation, while disabling redundant Snacks modules (`indent`, `scope`, `words`).
+  - **Target Files**: `nvim/.config/nvim/lua/utils/snacks-utils.lua`
 
 - [ ] **TASK-05: Retire `lsp-zero` in Favor of Native Neovim 0.10+ LSP**
   - **Category**: Neovim (Architecture)

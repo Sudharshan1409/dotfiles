@@ -347,22 +347,6 @@ M.keys = {
 		desc = "Toggle Terminal",
 	},
 	{
-		"]]",
-		function()
-			require("snacks").words.jump(vim.v.count1)
-		end,
-		desc = "Next Reference",
-		mode = { "n", "t" },
-	},
-	{
-		"[[",
-		function()
-			require("snacks").words.jump(-vim.v.count1)
-		end,
-		desc = "Prev Reference",
-		mode = { "n", "t" },
-	},
-	{
 		"<leader>N",
 		desc = "Neovim News",
 		function()
@@ -412,7 +396,7 @@ M.opts = {
 		enabled = true,
 		focus = "input",
 	},
-	indent = { enabled = true },
+	indent = { enabled = false },
 	input = { enabled = true },
 	notifier = {
 		enabled = true,
@@ -554,13 +538,13 @@ M.opts = {
 		},
 	},
 	quickfile = { enabled = true },
-	scope = { enabled = true },
+	scope = { enabled = false },
 	scroll = { enabled = true },
 	statuscolumn = { enabled = true },
 	toggle = {
 		enabled = true,
 	},
-	words = { enabled = true },
+	words = { enabled = false },
 	scratch = {
 		enabled = true,
 		name = "Scratch",
