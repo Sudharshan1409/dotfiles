@@ -10,7 +10,7 @@ Tasks can be marked as:
 
 ## 1. Neovim Improvements
 
-- [ ] **TASK-01: Fix Diagnostic `[` and `]` Keymap Bug in LSP Config**
+- [x] **TASK-01: Fix Diagnostic `[` and `]` Keymap Bug in LSP Config**
   - **Category**: Neovim (Bugfix / Performance)
   - **Impact**: High | **Effort**: Low
   - **Problem**: Mapping single `[` and `]` in `lua/plugins/lsp/lsp-config.lua` intercepts and causes a noticeable delay (`timeoutlen`) on all standard Vim bracket motions (`[[`, `]]`, `[m`, `]c`, etc.).
