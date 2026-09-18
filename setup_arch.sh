@@ -205,6 +205,17 @@ if ! pacman -Qi ghostty >/dev/null 2>&1 && ! command -v ghostty >/dev/null 2>&1;
     sudo pacman -S --needed --noconfirm ghostty 2>/dev/null || true
 fi
 
+# Sesh Smart Terminal Session Manager
+if ! command -v sesh >/dev/null 2>&1; then
+    if command -v yay >/dev/null 2>&1; then
+        yay -S --needed --noconfirm sesh-bin 2>/dev/null || true
+    elif command -v paru >/dev/null 2>&1; then
+        paru -S --needed --noconfirm sesh-bin 2>/dev/null || true
+    elif command -v brew >/dev/null 2>&1; then
+        brew install sesh 2>/dev/null || true
+    fi
+fi
+
 # 3. Apply Stow configuration for all Linux packages
 step_header "Verifying GNU Stow dotfiles linking"
 STOW_PACKAGES=(

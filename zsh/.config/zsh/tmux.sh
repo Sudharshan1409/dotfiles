@@ -90,3 +90,31 @@ function tmux() {
     esac
 }
 
+# ------------------------------------------------------------------------------
+# Sesh Smart Terminal Session Manager Integration
+# ------------------------------------------------------------------------------
+function sesh-sessions() {
+    local picker="$HOME/.config/tmux/scripts/sesh_picker.sh"
+    if [ -x "$picker" ]; then
+        "$picker"
+    elif command -v sesh >/dev/null 2>&1; then
+        local selected session
+        selected=$(sesh list --icons 2>/dev/null | fzf --height 40% --reverse --border-label ' sesh ' --prompt '⚡  ')
+        [ -z "$selected" ] && return 0
+        session=$(echo "$selected" | sed -E 's/^[^~/a-zA-Z0-9._-]+//; s/^[[:space:]]*//')
+        [ -z "$session" ] && return 0
+        session="${session/#\~/$HOME}"
+        sesh connect "$session"
+    else
+        echo "sesh is not installed. Install with 'brew install sesh' or update setup scripts." >&2
+        return 1
+    fi
+    zle reset-prompt >/dev/null 2>&1 || true
+}
+
+# Zsh line editor widget & keybinding (Alt+s / Meta+s)
+zle -N sesh-sessions 2>/dev/null || true
+bindkey '\es' sesh-sessions 2>/dev/null || true
+
+# Convenience alias
+alias s="sesh-sessions"

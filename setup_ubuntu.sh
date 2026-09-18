@@ -237,6 +237,7 @@ BREW_PACKAGES=(
     nvtop
     shellcheck
     tldr
+    sesh
 )
 
 MISSING_BREW=()
@@ -268,7 +269,7 @@ fi
 # 5. Symlink core CLI tools to ~/.local/bin
 step_header "Verifying CLI tool symlinks in ~/.local/bin"
 mkdir -p "$HOME/.local/bin"
-SYMLINK_TOOLS=(node npm npx htop nvtop shellcheck tldr)
+SYMLINK_TOOLS=(node npm npx htop nvtop shellcheck tldr sesh)
 SYMLINKS_MADE=0
 for bin in "${SYMLINK_TOOLS[@]}"; do
     TARGET="/home/linuxbrew/.linuxbrew/bin/$bin"

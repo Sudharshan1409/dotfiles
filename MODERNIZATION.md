@@ -102,12 +102,12 @@ Tasks can be marked as:
   - **Solution**: Standardized 100% on Ghostty; removed `kitty/` and `wezterm/`, cleaned up aliases, shortcuts, setup scripts, and added Ghostty to doctor check.
   - **Target Files**: `ghostty/`, `hypr/.config/hypr/`, `zsh/.config/zsh/data/aliases.json`, `setup_arch.sh`, `setup_ubuntu.sh`, `scripts/dotfiles-doctor.sh`
 
-- [ ] **TASK-13: Add Smart Terminal Session Manager (`sesh` + `zoxide`)**
+- [x] **TASK-13: Add Smart Terminal Session Manager (`sesh` + `zoxide`)**
   - **Category**: CLI / Multiplexer (Workflow)
   - **Impact**: Medium | **Effort**: Low
   - **Problem**: Switching between git repositories and tmux sessions requires manual commands.
-  - **Solution**: Configure `sesh` with `fzf` / `zoxide` for one-key session switching.
-  - **Target Files**: `tmux/`, `zsh/`
+  - **Solution**: Configured `sesh` with `fzf`, `zoxide`, and clean popup picker in tmux and zsh.
+  - **Target Files**: `tmux/`, `zsh/`, `setup_arch.sh`, `setup_ubuntu.sh`, `scripts/dotfiles-doctor.sh`
 
 - [x] **TASK-14: Automatic Virtualenv Detection for Python LSP (`.venv` / `venv`)**
   - **Category**: Neovim (Python / DX)
