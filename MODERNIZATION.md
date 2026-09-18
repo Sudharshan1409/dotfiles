@@ -24,7 +24,7 @@ Tasks can be marked as:
   - **Solution**: Remove `alvan/vim-closetag` from `lua/plugins/init.lua`.
   - **Target Files**: `nvim/.config/nvim/lua/plugins/init.lua`
 
-- [ ] **TASK-03: Modernize Python LSP (`pyright`/`basedpyright` + `ruff` instead of `pylsp`)**
+- [x] **TASK-03: Modernize Python LSP (`pyright`/`basedpyright` + `ruff` instead of `pylsp`)**
   - **Category**: Neovim (LSP / Tooling)
   - **Impact**: High | **Effort**: Low
   - **Problem**: `mason.lua` enables `pylsp` and disables `pyright` and `ruff`. `pylsp` is slow, heavy, and outdated compared to the modern standard.
@@ -101,3 +101,17 @@ Tasks can be marked as:
   - **Problem**: Three terminal configs exist. Ghostty is now primary on Hyprland.
   - **Solution**: Retain Ghostty as primary; document or clean up WezTerm/Kitty if no longer used.
   - **Target Files**: `kitty/`, `wezterm/`, `ghostty/`
+
+- [ ] **TASK-13: Add Smart Terminal Session Manager (`sesh` + `zoxide`)**
+  - **Category**: CLI / Multiplexer (Workflow)
+  - **Impact**: Medium | **Effort**: Low
+  - **Problem**: Switching between git repositories and tmux sessions requires manual commands.
+  - **Solution**: Configure `sesh` with `fzf` / `zoxide` for one-key session switching.
+  - **Target Files**: `tmux/`, `zsh/`
+
+- [x] **TASK-14: Automatic Virtualenv Detection for Python LSP (`.venv` / `venv`)**
+  - **Category**: Neovim (Python / DX)
+  - **Impact**: High | **Effort**: Low
+  - **Problem**: Pyright defaults to system python and cannot resolve third-party project packages installed in local `.venv` or `venv` environments.
+  - **Solution**: Add dynamic `before_init` hook or `venv-selector` in Neovim to automatically find `.venv` in root workspace and set `pythonPath`.
+  - **Target Files**: `nvim/.config/nvim/lua/plugins/lsp/mason.lua`

@@ -13,7 +13,8 @@ M.mason_tools_ensure_installed = {
 M.lspconfig_ensure_installed = {
 	"ts_ls",
 	"eslint",
-	"pylsp",
+	"pyright",
+	"ruff",
 	"lua_ls",
 	"marksman",
 	"vimls",
@@ -41,28 +42,6 @@ M.lua_opts = {
 	},
 }
 
-M.pylsp_setup = {
-	settings = {
-		pylsp = {
-			plugins = {
-				pyflakes = { enabled = true },
-				pycodestyle = {
-					enabled = true,
-					ignore = { "W391" },
-					maxLineLength = 120,
-				},
-				autopep8 = { enabled = false },
-				yapf = { enabled = false },
-				mccabe = { enabled = true },
-				black = { enabled = false },
-				pylsp_mypy = { enabled = false },
-				pylsp_black = { enabled = false },
-				jedi_completion = { fuzzy = true },
-				pyls_isort = { enabled = false },
-			},
-		},
-	},
-}
 
 M.yamlls_setup = {
 	cmd = { "yaml-language-server", "--stdio" },

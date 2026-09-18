@@ -31,6 +31,22 @@ return {
 		local lspconfig = require("lspconfig")
 		local lsp_zero = require("lsp-zero")
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+		if vim.lsp.config then
+			vim.lsp.config("pyright", {
+				before_init = function(_, config)
+					local root = config.root_dir or vim.fn.getcwd()
+					local venv = vim.env.VIRTUAL_ENV
+						or vim.fs.find({ ".venv", "venv" }, { path = root, upward = true, type = "directory" })[1]
+					if venv and vim.fn.executable(venv .. "/bin/python") == 1 then
+						config.settings = config.settings or {}
+						config.settings.python = config.settings.python or {}
+						config.settings.python.pythonPath = venv .. "/bin/python"
+					end
+				end,
+			})
+		end
+
 		mason_lspconfig.setup({
 			ensure_installed = lspUtils.lspconfig_ensure_installed,
 			automatic_installation = true,
@@ -44,13 +60,39 @@ return {
 					lspconfig.yamlls.setup(lspUtils.yamlls_setup)
 				end,
 				pylsp = function()
-					lspconfig.pylsp.setup(lspUtils.pylsp_setup)
+					-- Explicitly disable pylsp to prevent it from attaching
 				end,
 				pyright = function()
-					-- Explicitly disable pyright to prevent it from attaching
+					lspconfig.pyright.setup({
+						capabilities = capabilities,
+						on_attach = lsp_zero.on_attach,
+						before_init = function(_, config)
+							local root = config.root_dir or vim.fn.getcwd()
+							local venv = vim.env.VIRTUAL_ENV
+								or vim.fs.find({ ".venv", "venv" }, { path = root, upward = true, type = "directory" })[1]
+							if venv and vim.fn.executable(venv .. "/bin/python") == 1 then
+								config.settings.python.pythonPath = venv .. "/bin/python"
+							end
+						end,
+						settings = {
+							python = {
+								analysis = {
+									autoSearchPaths = true,
+									useLibraryCodeForTypes = true,
+									diagnosticMode = "workspace",
+								},
+							},
+						},
+					})
 				end,
 				ruff = function()
-					-- Explicitly disable ruff LSP to prevent it from attaching
+					lspconfig.ruff.setup({
+						capabilities = capabilities,
+						on_attach = function(client, bufnr)
+							client.server_capabilities.hoverProvider = false
+							lsp_zero.on_attach(client, bufnr)
+						end,
+					})
 				end,
 				ts_ls = function()
 					lspconfig.ts_ls.setup({ capabilities = capabilities, on_attach = lsp_zero.on_attach })
