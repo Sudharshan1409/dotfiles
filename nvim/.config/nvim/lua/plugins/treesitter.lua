@@ -151,7 +151,6 @@ return {
 		build = ":TSUpdate",
 		config = setup_treesitter,
 	},
-	{ "nvim-treesitter/playground" },
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		branch = "master",

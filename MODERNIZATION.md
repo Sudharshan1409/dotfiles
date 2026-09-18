@@ -52,12 +52,12 @@ Tasks can be marked as:
   - **Solution**: Migrate to `saghen/blink.cmp` for instant completions, built-in signature help, and snippet support.
   - **Target Files**: `nvim/.config/nvim/lua/plugins/cmp.lua`, `nvim/.config/nvim/lua/plugins/lsp/mason.lua`, `nvim/.config/nvim/lua/utils/lsp.lua`
 
-- [ ] **TASK-07: Clean Up Neovim 0.10+ Commenting & Treesitter Shims**
+- [x] **TASK-07: Clean Up Deprecated Treesitter Plugins (Keep `Comment.nvim`)**
   - **Category**: Neovim (Cleanup)
   - **Impact**: Low | **Effort**: Low
-  - **Problem**: Neovim 0.10+ has built-in `gc`/`gcc` commenting (making `Comment.nvim` redundant) and handles query directives natively without custom shims.
-  - **Solution**: Remove `numToStr/Comment.nvim` and clean up `treesitter.lua` shims.
-  - **Target Files**: `nvim/.config/nvim/lua/plugins/init.lua`, `nvim/.config/nvim/lua/plugins/treesitter.lua`
+  - **Problem**: `nvim-treesitter/playground` is officially archived and superseded by native `:Inspect` and `:InspectTree`.
+  - **Solution**: Retain `numToStr/Comment.nvim` for rich commenting motions (`gbc`, `gco`, `gcO`, `gcA`), and retire deprecated `nvim-treesitter/playground`.
+  - **Target Files**: `nvim/.config/nvim/lua/plugins/treesitter.lua`
 
 ---
 
