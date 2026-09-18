@@ -10,7 +10,6 @@ return {
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		"williamboman/mason-lspconfig.nvim",
 		"hrsh7th/cmp-nvim-lsp",
-		"VonHeikemen/lsp-zero.nvim",
 	},
 	lazy = false,
 	config = function()
@@ -29,7 +28,6 @@ return {
 
 		local mason_lspconfig = require("mason-lspconfig")
 		local lspconfig = require("lspconfig")
-		local lsp_zero = require("lsp-zero")
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 		if vim.lsp.config then
@@ -51,7 +49,11 @@ return {
 			ensure_installed = lspUtils.lspconfig_ensure_installed,
 			automatic_installation = true,
 			handlers = {
-				lsp_zero.default_setup,
+				function(server_name)
+					lspconfig[server_name].setup({
+						capabilities = capabilities,
+					})
+				end,
 				lua_ls = function()
 					-- (Optional) Configure lua language server for neovim
 					lspconfig.lua_ls.setup(lspUtils.lua_opts)
@@ -65,7 +67,6 @@ return {
 				pyright = function()
 					lspconfig.pyright.setup({
 						capabilities = capabilities,
-						on_attach = lsp_zero.on_attach,
 						before_init = function(_, config)
 							local root = config.root_dir or vim.fn.getcwd()
 							local venv = vim.env.VIRTUAL_ENV
@@ -88,14 +89,13 @@ return {
 				ruff = function()
 					lspconfig.ruff.setup({
 						capabilities = capabilities,
-						on_attach = function(client, bufnr)
+						on_attach = function(client)
 							client.server_capabilities.hoverProvider = false
-							lsp_zero.on_attach(client, bufnr)
 						end,
 					})
 				end,
 				ts_ls = function()
-					lspconfig.ts_ls.setup({ capabilities = capabilities, on_attach = lsp_zero.on_attach })
+					lspconfig.ts_ls.setup({ capabilities = capabilities })
 				end,
 			},
 		})

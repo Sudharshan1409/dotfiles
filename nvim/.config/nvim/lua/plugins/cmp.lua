@@ -16,13 +16,7 @@ return {
 		"hrsh7th/cmp-cmdline",
 	},
 	config = function()
-		-- Here is where you configure the autocompletion settings.
-		local lsp_zero = require("lsp-zero")
-		lsp_zero.extend_cmp()
-
-		-- And you can configure cmp even more, if you want to.
 		local cmp = require("cmp")
-		local cmp_action = lsp_zero.cmp_action()
 		require("luasnip.loaders.from_vscode").lazy_load()
 
 		cmp.setup({

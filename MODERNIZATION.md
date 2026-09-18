@@ -38,12 +38,12 @@ Tasks can be marked as:
   - **Solution**: Keep Telescope and Toggleterm for their essential plugins/extensions, keep `indent-blankline` for rainbow scopes, and retain `vim-illuminate` for buffer-local `]]`/`[[` navigation, while disabling redundant Snacks modules (`indent`, `scope`, `words`).
   - **Target Files**: `nvim/.config/nvim/lua/utils/snacks-utils.lua`
 
-- [ ] **TASK-05: Retire `lsp-zero` in Favor of Native Neovim 0.10+ LSP**
+- [x] **TASK-05: Retire `lsp-zero` in Favor of Native Neovim 0.10+ LSP**
   - **Category**: Neovim (Architecture)
   - **Impact**: High | **Effort**: Medium
   - **Problem**: `lsp-zero.nvim` is officially deprecated/sunsetted. Neovim 0.10+ native APIs make server setup clean without an extra wrapper.
   - **Solution**: Configure `mason-lspconfig` and `nvim-lspconfig` directly using native Neovim APIs.
-  - **Target Files**: `nvim/.config/nvim/lua/plugins/lsp/lsp-config.lua`, `nvim/.config/nvim/lua/plugins/lsp/mason.lua`
+  - **Target Files**: `nvim/.config/nvim/lua/plugins/lsp/lsp-config.lua`, `nvim/.config/nvim/lua/plugins/lsp/mason.lua`, `nvim/.config/nvim/lua/plugins/cmp.lua`
 
 - [ ] **TASK-06: Upgrade Completion Engine from `nvim-cmp` to `blink.cmp`**
   - **Category**: Neovim (Performance / Modernization)
