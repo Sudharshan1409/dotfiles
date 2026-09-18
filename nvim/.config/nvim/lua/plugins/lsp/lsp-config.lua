@@ -16,9 +16,6 @@ return {
 				lua_ls = {},
 			},
 		},
-		dependencies = {
-			{ "hrsh7th/cmp-nvim-lsp" },
-		},
 		config = function(_, _)
 			local basicUtils = require("utils.basic")
 

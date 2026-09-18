@@ -3,7 +3,6 @@
 return {
 	"windwp/nvim-autopairs",
 	event = "InsertEnter",
-	dependencies = { "hrsh7th/nvim-cmp" },
 	config = function()
 		local npairs = require("nvim-autopairs")
 		local Rule = require("nvim-autopairs.rule")
@@ -39,9 +38,11 @@ return {
 				end),
 		})
 
-		-- Integrate with nvim-cmp
-		local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-		local cmp = require("cmp")
-		cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+		-- Integrate with completion engine if cmp is present
+		local ok_cmp, cmp = pcall(require, "cmp")
+		if ok_cmp then
+			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+		end
 	end,
 }

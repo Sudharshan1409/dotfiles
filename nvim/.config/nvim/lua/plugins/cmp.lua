@@ -1,75 +1,55 @@
--- nvim-cmp is the core autocompletion engine for this setup. It provides a 
--- flexible and extensible platform for showing completion suggestions from 
--- multiple sources like LSP, snippets, and buffers. It is essential for 
--- efficient coding and provides a modern completion UI.
--- Autocompletion
+-- Modern, high-performance autocompletion powered by saghen/blink.cmp (Rust-based fuzzy search).
 return {
-	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	"saghen/blink.cmp",
 	dependencies = {
-		"hrsh7th/cmp-buffer", -- source for text in buffer
-		"hrsh7th/cmp-path", -- source for file system path
-		"L3MON4D3/LuaSnip", -- snippet engine
-		"hrsh7th/cmp-nvim-lsp",
-		"saadparwaiz1/cmp_luasnip", -- for autocompletion
-		"rafamadriz/friendly-snippets", -- useful snippets
-		"hrsh7th/cmp-cmdline",
+		"rafamadriz/friendly-snippets",
+		"L3MON4D3/LuaSnip",
 	},
-	config = function()
-		local cmp = require("cmp")
-		require("luasnip.loaders.from_vscode").lazy_load()
-
-		cmp.setup({
-			completion = {
-				completeopt = "menu,menuone,preview,noselect",
+	version = "v1.*",
+	---@module 'blink.cmp'
+	---@type blink.cmp.Config
+	opts = {
+		keymap = {
+			preset = "default",
+			["<CR>"] = { "accept", "fallback" },
+			["<C-y>"] = { "accept", "fallback" },
+			["<C-e>"] = { "hide", "fallback" },
+			["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+			["<Up>"] = { "select_prev", "fallback" },
+			["<Down>"] = { "select_next", "fallback" },
+			["<C-p>"] = { "select_prev", "fallback_to_mappings" },
+			["<C-n>"] = { "select_next", "fallback_to_mappings" },
+			["<C-j>"] = { "snippet_forward", "fallback" },
+			["<C-k>"] = { "snippet_backward", "fallback" },
+		},
+		appearance = {
+			use_nvim_cmp_as_default = true,
+			nerd_font_variant = "mono",
+		},
+		snippets = {
+			preset = "luasnip",
+		},
+		sources = {
+			default = { "lsp", "path", "snippets", "buffer" },
+		},
+		completion = {
+			accept = {
+				auto_brackets = {
+					enabled = true,
+				},
 			},
-			sources = {
-				{ name = "nvim_lsp" },
-				{ name = "luasnip" },
-				{ name = "buffer" },
-				{ name = "path" },
+			menu = {
+				draw = {
+					treesitter = { "lsp" },
+				},
 			},
-			mapping = {
-				["<C-y>"] = cmp.mapping.confirm({ select = false }),
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
-				["<C-e>"] = cmp.mapping.abort(),
-				["<Up>"] = cmp.mapping.select_prev_item({ behavior = "select" }),
-				["<Down>"] = cmp.mapping.select_next_item({ behavior = "select" }),
-				["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
-				["<C-p>"] = cmp.mapping(function()
-					if cmp.visible() then
-						cmp.select_prev_item({ behavior = "insert" })
-					else
-						cmp.complete()
-					end
-				end),
-				["<C-n>"] = cmp.mapping(function()
-					if cmp.visible() then
-						cmp.select_next_item({ behavior = "insert" })
-					else
-						cmp.complete()
-					end
-				end),
+			documentation = {
+				auto_show = true,
+				auto_show_delay_ms = 200,
 			},
-			snippet = {
-				expand = function(args)
-					require("luasnip").lsp_expand(args.body)
-				end,
-			},
-		})
-		cmp.setup.cmdline("/", {
-			mappings = cmp.mapping.preset.cmdline(),
-			sources = {
-				{ name = "buffer" },
-			},
-		})
-		cmp.setup.cmdline(":", {
-			mappings = cmp.mapping.preset.cmdline(),
-			sources = cmp.config.sources({
-				{ name = "path" },
-			}, {
-				{ name = "cmdline" },
-			}),
-		})
-	end,
+		},
+		signature = {
+			enabled = true,
+		},
+	},
 }

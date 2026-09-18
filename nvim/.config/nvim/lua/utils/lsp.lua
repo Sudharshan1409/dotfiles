@@ -1,6 +1,7 @@
 -- luacheck: globals vim
 local M = {}
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local ok_blink, blink = pcall(require, "blink.cmp")
+local capabilities = ok_blink and blink.get_lsp_capabilities() or vim.lsp.protocol.make_client_capabilities()
 
 M.mason_tools_ensure_installed = {
 	"prettier",

@@ -9,7 +9,6 @@ return {
 	dependencies = {
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		"williamboman/mason-lspconfig.nvim",
-		"hrsh7th/cmp-nvim-lsp",
 	},
 	lazy = false,
 	config = function()
@@ -28,7 +27,11 @@ return {
 
 		local mason_lspconfig = require("mason-lspconfig")
 		local lspconfig = require("lspconfig")
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		local ok_blink, blink = pcall(require, "blink.cmp")
+		if ok_blink then
+			capabilities = blink.get_lsp_capabilities(capabilities)
+		end
 
 		if vim.lsp.config then
 			vim.lsp.config("pyright", {

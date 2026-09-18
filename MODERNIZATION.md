@@ -45,12 +45,12 @@ Tasks can be marked as:
   - **Solution**: Configure `mason-lspconfig` and `nvim-lspconfig` directly using native Neovim APIs.
   - **Target Files**: `nvim/.config/nvim/lua/plugins/lsp/lsp-config.lua`, `nvim/.config/nvim/lua/plugins/lsp/mason.lua`, `nvim/.config/nvim/lua/plugins/cmp.lua`
 
-- [ ] **TASK-06: Upgrade Completion Engine from `nvim-cmp` to `blink.cmp`**
+- [x] **TASK-06: Upgrade Completion Engine from `nvim-cmp` to `blink.cmp`**
   - **Category**: Neovim (Performance / Modernization)
   - **Impact**: High | **Effort**: Medium
   - **Problem**: `nvim-cmp` requires 7+ plugin dependencies and is noticeably slower than modern Rust-based fuzzy matching.
   - **Solution**: Migrate to `saghen/blink.cmp` for instant completions, built-in signature help, and snippet support.
-  - **Target Files**: `nvim/.config/nvim/lua/plugins/cmp.lua`
+  - **Target Files**: `nvim/.config/nvim/lua/plugins/cmp.lua`, `nvim/.config/nvim/lua/plugins/lsp/mason.lua`, `nvim/.config/nvim/lua/utils/lsp.lua`
 
 - [ ] **TASK-07: Clean Up Neovim 0.10+ Commenting & Treesitter Shims**
   - **Category**: Neovim (Cleanup)
