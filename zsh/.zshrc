@@ -130,4 +130,4 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-. "$HOME/.local/share/../bin/env"
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
