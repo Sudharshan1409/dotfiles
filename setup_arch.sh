@@ -128,6 +128,7 @@ PACMAN_PACKAGES=(
     npm
     hyprland
     hyprland-qtutils
+    flatpak
     waybar
     sway-notification-center
     hyprpaper
@@ -213,6 +214,18 @@ if ! command -v sesh >/dev/null 2>&1; then
         paru -S --needed --noconfirm sesh-bin 2>/dev/null || true
     elif command -v brew >/dev/null 2>&1; then
         brew install sesh 2>/dev/null || true
+    fi
+fi
+
+# Verify Flatpak & Flathub repository
+if command -v flatpak >/dev/null 2>&1; then
+    if flatpak remotes 2>/dev/null | grep -q "flathub"; then
+        log_skip "Flathub remote is already configured for Flatpak"
+    else
+        log_info "Configuring Flathub remote repository..."
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || \
+        flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+        log_ok "Configured Flathub remote repository"
     fi
 fi
 

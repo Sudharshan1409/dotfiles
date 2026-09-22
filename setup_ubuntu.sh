@@ -124,6 +124,7 @@ APT_PACKAGES=(
     python3-venv
     python3-pip
     libfuse2t64
+    flatpak
     hyprland
     hyprland-qtutils
     waybar
@@ -186,6 +187,18 @@ elif command -v snap >/dev/null 2>&1; then
     log_ok "Installed Ghostty via Snap"
 else
     log_warn "Ghostty terminal could not be installed automatically"
+fi
+
+# Ensure Flatpak & Flathub remote repository
+if command -v flatpak >/dev/null 2>&1; then
+    if flatpak remotes 2>/dev/null | grep -q "flathub"; then
+        log_skip "Flathub remote is already configured for Flatpak"
+    else
+        log_info "Configuring Flathub remote repository..."
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || \
+        flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+        log_ok "Configured Flathub remote repository"
+    fi
 fi
 
 # 3. Ensure Homebrew is installed for modern CLI tools
