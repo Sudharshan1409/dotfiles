@@ -25,7 +25,7 @@ BLUE="\033[1;34m"
 DIM="\033[2m"
 RESET="\033[0m"
 
-TOTAL_STEPS=18
+TOTAL_STEPS=19
 CURRENT_STEP=0
 
 ACTIONS_DONE=0
@@ -548,6 +548,63 @@ else
         sudo systemctl daemon-reload 2>/dev/null || true
         sudo systemctl enable --now displaylink 2>/dev/null || true
         log_ok "Enabled and started displaylink service"
+    fi
+fi
+
+# 19. Verify GRUB bootloader theme, timeout & boot sound
+step_header "Verifying GRUB bootloader theme, timeout & startup sound"
+if [ ! -d "/boot/grub" ] && [ ! -d "/boot/grub2" ]; then
+    log_skip "GRUB directory (/boot/grub) not found; skipping GRUB configuration"
+elif [ ! -f "/etc/default/grub" ]; then
+    log_skip "/etc/default/grub not found; skipping GRUB configuration"
+elif [ -f "/boot/grub/themes/prana/theme-tech.txt" ] && \
+     grep -q 'GRUB_THEME="/boot/grub/themes/prana/theme-tech.txt"' /etc/default/grub 2>/dev/null && \
+     grep -q 'GRUB_TIMEOUT=60' /etc/default/grub 2>/dev/null && \
+     grep -q 'GRUB_INIT_TUNE="480 523 1 659 1 784 2"' /etc/default/grub 2>/dev/null; then
+    log_skip "P.R.A.N.A. GRUB theme, 60s timeout, and startup chime are already configured"
+else
+    log_info "Installing P.R.A.N.A. GRUB2 theme, 60s timeout, and startup chime..."
+    THEME_DIR="/boot/grub/themes/prana"
+    sudo mkdir -p "$THEME_DIR"
+    if curl -fsSL "https://github.com/xinghuan22/prana-grub-theme/archive/refs/heads/main.tar.gz" | sudo tar -xz --strip-components=1 -C "$THEME_DIR" 2>/dev/null; then
+        sudo chmod +x "$THEME_DIR/switch-variant.sh" 2>/dev/null || true
+
+        # Build high-resolution font if grub-mkfont is available
+        MKFONT="$(command -v grub-mkfont || command -v grub2-mkfont || true)"
+        for f in /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
+                 /usr/share/fonts/TTF/DejaVuSans.ttf \
+                 /usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf; do
+            if [ -f "$f" ] && [ -n "$MKFONT" ]; then
+                sudo "$MKFONT" --size=26 --output="$THEME_DIR/prana-26.pf2" "$f" 2>/dev/null || true
+                break
+            fi
+        done
+
+        set_grub_key() {
+            local key="$1"
+            local val="$2"
+            if grep -qE "^[[:space:]]*#?[[:space:]]*${key}=" /etc/default/grub; then
+                sudo sed -i -E "s|^[[:space:]]*#?[[:space:]]*${key}=.*|${key}=${val}|" /etc/default/grub
+            else
+                echo "${key}=${val}" | sudo tee -a /etc/default/grub >/dev/null
+            fi
+        }
+
+        set_grub_key "GRUB_THEME" '"/boot/grub/themes/prana/theme-tech.txt"'
+        set_grub_key "GRUB_GFXMODE" '"3840x2160,2560x1440,1920x1080,auto"'
+        [ -f "$THEME_DIR/prana-26.pf2" ] && set_grub_key "GRUB_FONT" '"/boot/grub/themes/prana/prana-26.pf2"'
+        set_grub_key "GRUB_TIMEOUT" '60'
+        set_grub_key "GRUB_TIMEOUT_STYLE" '"menu"'
+        set_grub_key "GRUB_INIT_TUNE" '"480 523 1 659 1 784 2"'
+
+        if command -v update-grub >/dev/null 2>&1; then
+            sudo update-grub >/dev/null 2>&1 || true
+        elif command -v grub-mkconfig >/dev/null 2>&1; then
+            sudo grub-mkconfig -o /boot/grub/grub.cfg >/dev/null 2>&1 || true
+        fi
+        log_ok "Configured P.R.A.N.A. theme, 60s timeout, and startup chime in GRUB"
+    else
+        log_warn "Failed to download and extract P.R.A.N.A. GRUB theme archive"
     fi
 fi
 
