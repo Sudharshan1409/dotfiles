@@ -581,11 +581,38 @@ elif [ -f "/boot/grub/themes/prana/theme-tech.txt" ] && \
      grep -q 'GRUB_INIT_TUNE="480 523 1 659 1 784 2"' /etc/default/grub 2>/dev/null; then
     log_skip "P.R.A.N.A. GRUB theme, 60s timeout, and startup chime are already configured"
 else
-    log_info "Installing P.R.A.N.A. GRUB2 theme, 60s timeout, and startup chime..."
     THEME_DIR="/boot/grub/themes/prana"
-    sudo mkdir -p "$THEME_DIR"
-    if curl -fsSL "https://github.com/xinghuan22/prana-grub-theme/archive/refs/heads/main.tar.gz" | sudo tar -xz --strip-components=1 -C "$THEME_DIR" 2>/dev/null; then
+    NEED_INSTALL=0
+    if [ ! -f "$THEME_DIR/theme-tech.txt" ] || \
+       ! grep -q 'GRUB_THEME="/boot/grub/themes/prana/theme-tech.txt"' /etc/default/grub 2>/dev/null || \
+       ! grep -q 'GRUB_TIMEOUT=60' /etc/default/grub 2>/dev/null || \
+       grep -qE '[0-9]+\.[0-9]+%' "$THEME_DIR/theme-tech.txt" 2>/dev/null; then
+        NEED_INSTALL=1
+    fi
+
+    if [ "$NEED_INSTALL" -eq 0 ]; then
+        log_skip "P.R.A.N.A. GRUB theme, 60s timeout, and startup chime are already configured"
+    else
+        log_info "Installing and configuring P.R.A.N.A. GRUB2 theme, 60s timeout, and startup chime..."
+        sudo mkdir -p "$THEME_DIR"
+        if [ ! -f "$THEME_DIR/theme-tech.txt" ]; then
+            curl -fsSL "https://github.com/xinghuan22/prana-grub-theme/archive/refs/heads/main.tar.gz" | sudo tar -xz --strip-components=1 -C "$THEME_DIR" 2>/dev/null || true
+        fi
         sudo chmod +x "$THEME_DIR/switch-variant.sh" 2>/dev/null || true
+
+        # Fix upstream float percentage bug: GNU GRUB2 parse_proportional_spec only supports integer percentages
+        sudo python3 -c '
+import re, glob
+for path in glob.glob("'"$THEME_DIR"'/*.txt"):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            c = f.read()
+        c = re.sub(r"([0-9]+(?:\.[0-9]+)?)(%)", lambda m: f"{round(float(m.group(1)))}%", c)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(c)
+    except Exception:
+        pass
+' 2>/dev/null || sudo sed -i -E 's/([0-9]+)\.[0-9]+%/\1%/g' "$THEME_DIR"/*.txt 2>/dev/null || true
 
         # Build high-resolution font if grub-mkfont is available
         MKFONT="$(command -v grub-mkfont || command -v grub2-mkfont || true)"
@@ -621,8 +648,6 @@ else
             sudo grub-mkconfig -o /boot/grub/grub.cfg >/dev/null 2>&1 || true
         fi
         log_ok "Configured P.R.A.N.A. theme, 60s timeout, and startup chime in GRUB"
-    else
-        log_warn "Failed to download and extract P.R.A.N.A. GRUB theme archive"
     fi
 fi
 
