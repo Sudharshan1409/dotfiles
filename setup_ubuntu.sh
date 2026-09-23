@@ -201,6 +201,21 @@ if command -v flatpak >/dev/null 2>&1; then
     fi
 fi
 
+# Ensure LocalSend (LAN file sharing)
+if command -v localsend >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list 2>/dev/null | grep -q "org.localsend.localsend_app"); then
+    log_skip "LocalSend is already installed"
+elif command -v flatpak >/dev/null 2>&1; then
+    log_info "Installing LocalSend via Flatpak..."
+    flatpak install -y flathub org.localsend.localsend_app 2>/dev/null || \
+    sudo flatpak install -y flathub org.localsend.localsend_app 2>/dev/null || true
+    log_ok "Installed LocalSend via Flatpak"
+elif command -v snap >/dev/null 2>&1; then
+    log_info "Installing LocalSend via Snap..."
+    sudo snap install localsend 2>/dev/null && log_ok "Installed LocalSend via Snap"
+else
+    log_warn "Neither Flatpak nor Snap found to install LocalSend"
+fi
+
 # 3. Ensure Homebrew is installed for modern CLI tools
 step_header "Verifying Homebrew (Linuxbrew) & CLI tools"
 if [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ] || command -v brew >/dev/null 2>&1; then

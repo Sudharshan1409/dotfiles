@@ -229,6 +229,24 @@ if command -v flatpak >/dev/null 2>&1; then
     fi
 fi
 
+# Ensure LocalSend (LAN file sharing)
+if command -v localsend >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list 2>/dev/null | grep -q "org.localsend.localsend_app"); then
+    log_skip "LocalSend is already installed"
+elif command -v yay >/dev/null 2>&1; then
+    log_info "Installing LocalSend via yay..."
+    yay -S --needed --noconfirm localsend-bin 2>/dev/null && log_ok "Installed LocalSend via AUR"
+elif command -v paru >/dev/null 2>&1; then
+    log_info "Installing LocalSend via paru..."
+    paru -S --needed --noconfirm localsend-bin 2>/dev/null && log_ok "Installed LocalSend via AUR"
+elif command -v flatpak >/dev/null 2>&1; then
+    log_info "Installing LocalSend via Flatpak..."
+    flatpak install -y flathub org.localsend.localsend_app 2>/dev/null || \
+    sudo flatpak install -y flathub org.localsend.localsend_app 2>/dev/null || true
+    log_ok "Installed LocalSend via Flatpak"
+else
+    log_warn "Could not install LocalSend (neither AUR helper nor Flatpak found)"
+fi
+
 # 3. Apply Stow configuration for all Linux packages
 step_header "Verifying GNU Stow dotfiles linking"
 STOW_PACKAGES=(
