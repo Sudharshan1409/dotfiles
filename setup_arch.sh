@@ -576,32 +576,22 @@ if [ ! -d "/boot/grub" ] && [ ! -d "/boot/grub2" ]; then
 elif [ ! -f "/etc/default/grub" ]; then
     log_skip "/etc/default/grub not found; skipping GRUB configuration"
 elif [ -f "/boot/grub/themes/prana/theme-tech.txt" ] && \
+     ! grep -qE '[0-9]+\.[0-9]+%' "/boot/grub/themes/prana/theme-tech.txt" 2>/dev/null && \
      grep -q 'GRUB_THEME="/boot/grub/themes/prana/theme-tech.txt"' /etc/default/grub 2>/dev/null && \
      grep -q 'GRUB_TIMEOUT=60' /etc/default/grub 2>/dev/null && \
      grep -q 'GRUB_INIT_TUNE="480 523 1 659 1 784 2"' /etc/default/grub 2>/dev/null; then
     log_skip "P.R.A.N.A. GRUB theme, 60s timeout, and startup chime are already configured"
 else
     THEME_DIR="/boot/grub/themes/prana"
-    NEED_INSTALL=0
-    if [ ! -f "$THEME_DIR/theme-tech.txt" ] || \
-       ! grep -q 'GRUB_THEME="/boot/grub/themes/prana/theme-tech.txt"' /etc/default/grub 2>/dev/null || \
-       ! grep -q 'GRUB_TIMEOUT=60' /etc/default/grub 2>/dev/null || \
-       grep -qE '[0-9]+\.[0-9]+%' "$THEME_DIR/theme-tech.txt" 2>/dev/null; then
-        NEED_INSTALL=1
+    log_info "Installing and configuring P.R.A.N.A. GRUB2 theme, 60s timeout, and startup chime..."
+    sudo mkdir -p "$THEME_DIR"
+    if [ ! -f "$THEME_DIR/theme-tech.txt" ]; then
+        curl -fsSL "https://github.com/xinghuan22/prana-grub-theme/archive/refs/heads/main.tar.gz" | sudo tar -xz --strip-components=1 -C "$THEME_DIR" 2>/dev/null || true
     fi
+    sudo chmod +x "$THEME_DIR/switch-variant.sh" 2>/dev/null || true
 
-    if [ "$NEED_INSTALL" -eq 0 ]; then
-        log_skip "P.R.A.N.A. GRUB theme, 60s timeout, and startup chime are already configured"
-    else
-        log_info "Installing and configuring P.R.A.N.A. GRUB2 theme, 60s timeout, and startup chime..."
-        sudo mkdir -p "$THEME_DIR"
-        if [ ! -f "$THEME_DIR/theme-tech.txt" ]; then
-            curl -fsSL "https://github.com/xinghuan22/prana-grub-theme/archive/refs/heads/main.tar.gz" | sudo tar -xz --strip-components=1 -C "$THEME_DIR" 2>/dev/null || true
-        fi
-        sudo chmod +x "$THEME_DIR/switch-variant.sh" 2>/dev/null || true
-
-        # Fix upstream float percentage bug: GNU GRUB2 parse_proportional_spec only supports integer percentages
-        sudo python3 -c '
+    # Fix upstream float percentage bug: GNU GRUB2 parse_proportional_spec only supports integer percentages
+    sudo python3 -c '
 import re, glob
 for path in glob.glob("'"$THEME_DIR"'/*.txt"):
     try:
@@ -614,41 +604,40 @@ for path in glob.glob("'"$THEME_DIR"'/*.txt"):
         pass
 ' 2>/dev/null || sudo sed -i -E 's/([0-9]+)\.[0-9]+%/\1%/g' "$THEME_DIR"/*.txt 2>/dev/null || true
 
-        # Build high-resolution font if grub-mkfont is available
-        MKFONT="$(command -v grub-mkfont || command -v grub2-mkfont || true)"
-        for f in /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
-                 /usr/share/fonts/TTF/DejaVuSans.ttf \
-                 /usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf; do
-            if [ -f "$f" ] && [ -n "$MKFONT" ]; then
-                sudo "$MKFONT" --size=26 --output="$THEME_DIR/prana-26.pf2" "$f" 2>/dev/null || true
-                break
-            fi
-        done
-
-        set_grub_key() {
-            local key="$1"
-            local val="$2"
-            if grep -qE "^[[:space:]]*#?[[:space:]]*${key}=" /etc/default/grub; then
-                sudo sed -i -E "s|^[[:space:]]*#?[[:space:]]*${key}=.*|${key}=${val}|" /etc/default/grub
-            else
-                echo "${key}=${val}" | sudo tee -a /etc/default/grub >/dev/null
-            fi
-        }
-
-        set_grub_key "GRUB_THEME" '"/boot/grub/themes/prana/theme-tech.txt"'
-        set_grub_key "GRUB_GFXMODE" '"3840x2160,2560x1440,1920x1080,auto"'
-        [ -f "$THEME_DIR/prana-26.pf2" ] && set_grub_key "GRUB_FONT" '"/boot/grub/themes/prana/prana-26.pf2"'
-        set_grub_key "GRUB_TIMEOUT" '60'
-        set_grub_key "GRUB_TIMEOUT_STYLE" '"menu"'
-        set_grub_key "GRUB_INIT_TUNE" '"480 523 1 659 1 784 2"'
-
-        if command -v update-grub >/dev/null 2>&1; then
-            sudo update-grub >/dev/null 2>&1 || true
-        elif command -v grub-mkconfig >/dev/null 2>&1; then
-            sudo grub-mkconfig -o /boot/grub/grub.cfg >/dev/null 2>&1 || true
+    # Build high-resolution font if grub-mkfont is available
+    MKFONT="$(command -v grub-mkfont || command -v grub2-mkfont || true)"
+    for f in /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
+             /usr/share/fonts/TTF/DejaVuSans.ttf \
+             /usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf; do
+        if [ -f "$f" ] && [ -n "$MKFONT" ]; then
+            sudo "$MKFONT" --size=26 --output="$THEME_DIR/prana-26.pf2" "$f" 2>/dev/null || true
+            break
         fi
-        log_ok "Configured P.R.A.N.A. theme, 60s timeout, and startup chime in GRUB"
+    done
+
+    set_grub_key() {
+        local key="$1"
+        local val="$2"
+        if grep -qE "^[[:space:]]*#?[[:space:]]*${key}=" /etc/default/grub; then
+            sudo sed -i -E "s|^[[:space:]]*#?[[:space:]]*${key}=.*|${key}=${val}|" /etc/default/grub
+        else
+            echo "${key}=${val}" | sudo tee -a /etc/default/grub >/dev/null
+        fi
+    }
+
+    set_grub_key "GRUB_THEME" '"/boot/grub/themes/prana/theme-tech.txt"'
+    set_grub_key "GRUB_GFXMODE" '"3840x2160,2560x1440,1920x1080,auto"'
+    [ -f "$THEME_DIR/prana-26.pf2" ] && set_grub_key "GRUB_FONT" '"/boot/grub/themes/prana/prana-26.pf2"'
+    set_grub_key "GRUB_TIMEOUT" '60'
+    set_grub_key "GRUB_TIMEOUT_STYLE" '"menu"'
+    set_grub_key "GRUB_INIT_TUNE" '"480 523 1 659 1 784 2"'
+
+    if command -v update-grub >/dev/null 2>&1; then
+        sudo update-grub >/dev/null 2>&1 || true
+    elif command -v grub-mkconfig >/dev/null 2>&1; then
+        sudo grub-mkconfig -o /boot/grub/grub.cfg >/dev/null 2>&1 || true
     fi
+    log_ok "Configured P.R.A.N.A. theme, 60s timeout, and startup chime in GRUB"
 fi
 
 # Final Summary Report
