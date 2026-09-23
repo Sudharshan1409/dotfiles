@@ -7,7 +7,6 @@
         "pyglobalenv": "source ~/venv/bin/activate",
         "refresh": "source ~/.zshrc",
         "src": "source ~/.zshrc",
-        "sudo": "sudo -E -s",
         "vi": "nvim",
         "vim": "nvim",
         "y": "yazi",
