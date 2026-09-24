@@ -50,6 +50,7 @@ setup_arch_packages() {
         libnotify
         xorg-xwayland
         kitty
+        ghostty
         tmux
         neovim
         fastfetch

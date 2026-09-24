@@ -38,11 +38,11 @@ setup_common_stow() {
 
 setup_common_git() {
     step_header "Verifying Git configuration"
-    if [ -f "$HOME/.gitconfig" ] && grep -q "path = ~/.config/git/config" "$HOME/.gitconfig" 2>/dev/null; then
-        log_skip "Git include.path is already configured"
+    if [ -f "$HOME/.gitconfig" ] && grep -q "\.config/git/\.gitconfig" "$HOME/.gitconfig" 2>/dev/null; then
+        log_skip "Git include for ~/.config/git/.gitconfig is already configured"
     else
-        log_info "Configuring ~/.gitconfig to include ~/.config/git/config..."
-        git config --global include.path "~/.config/git/config"
+        log_info "Configuring ~/.gitconfig to include ~/.config/git/.gitconfig..."
+        git config --global include.path "~/.config/git/.gitconfig"
         log_ok "Configured Git include.path"
     fi
 }
