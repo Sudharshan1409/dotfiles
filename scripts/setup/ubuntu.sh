@@ -46,6 +46,7 @@ setup_ubuntu_packages() {
         libnotify-bin
         xwayland
         kitty
+        ghostty
         tmux
         neovim
         fastfetch
@@ -127,7 +128,6 @@ setup_ubuntu_homebrew() {
         lazygit
         git-delta
         tlrc
-        ghostty
     )
 
     MISSING_BREW=()
