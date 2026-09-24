@@ -89,21 +89,31 @@ To use these configurations, clone the repository and copy the desired configura
 
 To perform an end-to-end automated installation and setup of all system packages, desktop environment, CLI utilities, dotfiles symlinks, shell environment, and plugins:
 
-### Ubuntu Linux
-
 ```bash
 cd ~/dotfiles
-./setup_ubuntu.sh
+./setup.sh
 ```
 
-### Arch Linux
+`setup.sh` **automatically detects your Linux distribution** (Ubuntu/Debian vs Arch Linux), elevates `sudo` once at the beginning, keeps authentication alive in the background, and executes the complete setup unattended.
+
+### Advanced Usage & Options
+
+You can also run distribution-specific wrappers or pass flags:
 
 ```bash
-cd ~/dotfiles
-./setup_arch.sh
-```
+# Explicit OS selection
+./setup.sh --os ubuntu     # or: ./setup_ubuntu.sh
+./setup.sh --os arch       # or: ./setup_arch.sh
 
-These scripts ask for `sudo` password only once at the beginning, keep authentication alive in the background, and execute the complete setup unattended.
+# Run health check & configuration audit (dry-run/doctor)
+./setup.sh --check         # or: ./setup.sh -c
+
+# Specify custom GRUB theme resolution (default: 1080p)
+./setup.sh --screen 2k     # 1080p, 2k, 4k, ultrawide
+
+# Display help
+./setup.sh --help
+```
 
 ## Manual Installation
 
