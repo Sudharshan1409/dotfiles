@@ -39,6 +39,7 @@ LOCK_FILE="/tmp/wallpaper.lock"
     # Prefer swww for GPU-accelerated smooth transitions (wipe, wave, outer, grow, etc.)
     if command -v swww >/dev/null 2>&1; then
         if ! pgrep -x swww-daemon >/dev/null 2>&1; then
+            rm -f "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/*swww*.sock 2>/dev/null || true
             swww-daemon &
             sleep 0.5
         fi
@@ -54,14 +55,14 @@ LOCK_FILE="/tmp/wallpaper.lock"
     elif command -v hyprctl >/dev/null 2>&1 && pgrep -x hyprpaper >/dev/null 2>&1; then
         # Fallback to hyprpaper: apply actual image path to all active monitors
         if command -v jq >/dev/null 2>&1; then
-            MONITORS=$(hyprctl monitors -j 2>/dev/null | jq -r '.[].name' 2>/dev/null)
+            MONITORS=$(timeout 2 hyprctl monitors -j 2>/dev/null | jq -r '.[].name' 2>/dev/null)
         else
-            MONITORS=$(hyprctl monitors 2>/dev/null | awk '/Monitor/{print $2}')
+            MONITORS=$(timeout 2 hyprctl monitors 2>/dev/null | awk '/Monitor/{print $2}')
         fi
         for mon in $MONITORS; do
-            hyprctl hyprpaper wallpaper "$mon,$RANDOM_WALLPAPER" 2>/dev/null || true
+            timeout 2 hyprctl hyprpaper wallpaper "$mon,$RANDOM_WALLPAPER" 2>/dev/null || true
         done
-        hyprctl hyprpaper wallpaper ",$RANDOM_WALLPAPER" 2>/dev/null || true
+        timeout 2 hyprctl hyprpaper wallpaper ",$RANDOM_WALLPAPER" 2>/dev/null || true
     fi
 
     # Save the history
