@@ -58,7 +58,7 @@ hl.bind(mainMod .. " + ALT + F", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
-hl.bind(mainMod .. " + W", function() hl.dispatch("togglegroup") end)
+hl.bind(mainMod .. " + W", hl.dsp.exec_raw("togglegroup"))
 hl.bind(mainMod .. " + T", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/toggle_pip.sh"))
@@ -79,18 +79,18 @@ hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
 hl.bind("ALT + Tab", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/window_switcher.sh"))
 
 -- Resize tiled windows (repeating)
-hl.bind(mainMod .. " + ALT + H", function() hl.dispatch("resizeactive", "-20 0") end, { repeating = true })
-hl.bind(mainMod .. " + ALT + L", function() hl.dispatch("resizeactive", "20 0") end,  { repeating = true })
-hl.bind(mainMod .. " + ALT + K", function() hl.dispatch("resizeactive", "0 -20") end, { repeating = true })
-hl.bind(mainMod .. " + ALT + J", function() hl.dispatch("resizeactive", "0 20") end,  { repeating = true })
+hl.bind(mainMod .. " + ALT + H", hl.dsp.exec_raw("resizeactive -20 0"), { repeating = true })
+hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_raw("resizeactive 20 0"),  { repeating = true })
+hl.bind(mainMod .. " + ALT + K", hl.dsp.exec_raw("resizeactive 0 -20"), { repeating = true })
+hl.bind(mainMod .. " + ALT + J", hl.dsp.exec_raw("resizeactive 0 20"),  { repeating = true })
 
 -- ----------------------------------------------------------------------------
 -- Workspace Navigation & Window Movement
 -- ----------------------------------------------------------------------------
 for i = 1, 10 do
     local key = i % 10
-    hl.bind(mainMod .. " + " .. key, function() hl.dispatch("workspace", tostring(i)) end)
-    hl.bind(mainMod .. " + SHIFT + " .. key, function() hl.dispatch("movetoworkspace", tostring(i)) end)
+    hl.bind(mainMod .. " + " .. key, hl.dsp.exec_raw("workspace " .. i))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.exec_raw("movetoworkspace " .. i))
 end
 
 -- Scroll through workspaces
@@ -98,23 +98,23 @@ hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 
 -- Ping-pong previous workspace
-hl.bind(mainMod .. " + BackSpace", function() hl.dispatch("workspace", "previous") end)
+hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_raw("workspace previous"))
 
 -- Move workspace to adjacent monitor
-hl.bind(mainMod .. " + SHIFT + Left",  function() hl.dispatch("movecurrentworkspacetomonitor", "l") end)
-hl.bind(mainMod .. " + SHIFT + Right", function() hl.dispatch("movecurrentworkspacetomonitor", "r") end)
-hl.bind(mainMod .. " + SHIFT + Up",    function() hl.dispatch("movecurrentworkspacetomonitor", "u") end)
-hl.bind(mainMod .. " + SHIFT + Down",  function() hl.dispatch("movecurrentworkspacetomonitor", "d") end)
+hl.bind(mainMod .. " + SHIFT + Left",  hl.dsp.exec_raw("movecurrentworkspacetomonitor l"))
+hl.bind(mainMod .. " + SHIFT + Right", hl.dsp.exec_raw("movecurrentworkspacetomonitor r"))
+hl.bind(mainMod .. " + SHIFT + Up",    hl.dsp.exec_raw("movecurrentworkspacetomonitor u"))
+hl.bind(mainMod .. " + SHIFT + Down",  hl.dsp.exec_raw("movecurrentworkspacetomonitor d"))
 
 -- Special Workspaces
 hl.bind(mainMod .. " + M",         hl.dsp.workspace.toggle_special("Magic"))
-hl.bind(mainMod .. " + SHIFT + M", function() hl.dispatch("movetoworkspacesilent", "special:Magic") end)
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_raw("movetoworkspacesilent special:Magic"))
 
 hl.bind(mainMod .. " + A",         hl.dsp.workspace.toggle_special("Ad-Hoc"))
-hl.bind(mainMod .. " + SHIFT + A", function() hl.dispatch("movetoworkspacesilent", "special:Ad-Hoc") end)
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_raw("movetoworkspacesilent special:Ad-Hoc"))
 
 hl.bind(mainMod .. " + E",         hl.dsp.workspace.toggle_special("Entertainment"))
-hl.bind(mainMod .. " + SHIFT + E", function() hl.dispatch("movetoworkspacesilent", "special:Entertainment") end)
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_raw("movetoworkspacesilent special:Entertainment"))
 
 -- ----------------------------------------------------------------------------
 -- Media, Brightness & Screenshot Controls
@@ -148,7 +148,7 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 -- ----------------------------------------------------------------------------
 -- Group Management
 -- ----------------------------------------------------------------------------
-hl.bind(mainMod .. " + G", function() hl.dispatch("togglegroup") end)
-hl.bind(mainMod .. " + Tab", function() hl.dispatch("changegroupactive", "f") end)
-hl.bind(mainMod .. " + SHIFT + Tab", function() hl.dispatch("changegroupactive", "b") end)
-hl.bind(mainMod .. " + SHIFT + G", function() hl.dispatch("lockgroups", "toggle") end)
+hl.bind(mainMod .. " + G", hl.dsp.exec_raw("togglegroup"))
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_raw("changegroupactive f"))
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_raw("changegroupactive b"))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_raw("lockgroups toggle"))
