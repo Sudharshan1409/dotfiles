@@ -102,12 +102,19 @@ setup_ubuntu_packages() {
         fi
     done
 
+    # Check and repair any broken dependencies or half-installed packages from previous interruptions
+    if ! dpkg --audit >/dev/null 2>&1 || ! apt-get check >/dev/null 2>&1; then
+        log_info "Repairing broken APT dependencies..."
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install --fix-broken -y
+        log_ok "Repaired APT dependencies"
+    fi
+
     if [ ${#MISSING_APT[@]} -eq 0 ]; then
         log_skip "All ${#APT_PACKAGES[@]} base APT packages are already installed"
     else
         log_info "Installing ${#MISSING_APT[@]} missing APT package(s)..."
         sudo apt-get update -qq
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${MISSING_APT[@]}"
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install --fix-broken -y "${MISSING_APT[@]}"
         log_ok "Installed missing APT package(s)"
     fi
 
