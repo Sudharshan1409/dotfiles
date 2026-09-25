@@ -58,6 +58,7 @@ setup_ubuntu_packages() {
         flatpak
         hyprland
         "$HYPR_GUI_HELPER"
+        xdg-desktop-portal-hyprland
         waybar
         sway-notification-center
         hyprpaper
@@ -105,7 +106,9 @@ setup_ubuntu_packages() {
     # Check and repair any broken dependencies or half-installed packages from previous interruptions
     if ! dpkg --audit >/dev/null 2>&1 || ! apt-get check >/dev/null 2>&1; then
         log_info "Repairing broken APT dependencies..."
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install --fix-broken -y
+        # If older distribution libraries conflict with PPA renamed packages (e.g. libhyprcursor0 vs libhyprcursor1)
+        sudo dpkg --configure -a 2>/dev/null || true
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install --fix-broken -y -o Dpkg::Options::="--force-overwrite"
         log_ok "Repaired APT dependencies"
     fi
 
@@ -114,7 +117,7 @@ setup_ubuntu_packages() {
     else
         log_info "Installing ${#MISSING_APT[@]} missing APT package(s)..."
         sudo apt-get update -qq
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install --fix-broken -y "${MISSING_APT[@]}"
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install --fix-broken -y -o Dpkg::Options::="--force-overwrite" "${MISSING_APT[@]}"
         log_ok "Installed missing APT package(s)"
     fi
 
@@ -239,7 +242,11 @@ setup_ubuntu_homebrew() {
     mkdir -p "$HOME/.local/bin"
     SYMLINK_COUNT=0
     for tool in eza fzf zoxide bat yazi fd rg starship fastfetch btop lazygit delta tldr ghostty; do
-        TOOL_PATH="$(command -v "$tool" 2>/dev/null || true)"
+        if [ "$tool" = "ghostty" ] && [ -x "/usr/bin/ghostty" ]; then
+            TOOL_PATH="/usr/bin/ghostty"
+        else
+            TOOL_PATH="$(command -v "$tool" 2>/dev/null || true)"
+        fi
         if [ -n "$TOOL_PATH" ] && [ ! -e "$HOME/.local/bin/$tool" ]; then
             ln -sf "$TOOL_PATH" "$HOME/.local/bin/$tool"
             SYMLINK_COUNT=$((SYMLINK_COUNT + 1))
