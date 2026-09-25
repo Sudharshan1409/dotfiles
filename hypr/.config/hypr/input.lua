@@ -3,7 +3,7 @@ hl.config({
     input = {
         kb_layout = "us",
         follow_mouse = 1,
-        natural_scroll = true,
+        natural_scroll = false,
         repeat_rate = 40,
         repeat_delay = 500,
 
