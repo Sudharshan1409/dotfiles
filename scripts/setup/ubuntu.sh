@@ -6,6 +6,42 @@
 setup_ubuntu_packages() {
     # 2. Update APT and install system dependencies
     step_header "Verifying APT system packages & Wayland environment"
+
+    # Ensure cppiber/hyprland PPA is configured and enabled for the latest Hyprland release
+    UBUNTU_CODENAME="${UBUNTU_CODENAME:-$(. /etc/os-release && echo "$VERSION_CODENAME")}"
+    PPA_UPDATED=false
+
+    for src in /etc/apt/sources.list.d/*hyprland*.sources /etc/apt/sources.list.d/*hyprland*.list; do
+        if [ -f "$src" ]; then
+            if grep -q "Enabled: no" "$src" 2>/dev/null; then
+                log_info "Re-enabling Hyprland PPA in $(basename "$src")..."
+                sudo sed -i 's/Enabled: no/Enabled: yes/g' "$src"
+                PPA_UPDATED=true
+            fi
+            if [ -n "$UBUNTU_CODENAME" ] && grep -q "Suites:" "$src" 2>/dev/null && ! grep -q "Suites: $UBUNTU_CODENAME" "$src" 2>/dev/null; then
+                log_info "Updating Hyprland PPA suite to $UBUNTU_CODENAME in $(basename "$src")..."
+                sudo sed -i "s/Suites: .*/Suites: $UBUNTU_CODENAME/g" "$src"
+                PPA_UPDATED=true
+            fi
+        fi
+    done
+
+    if ! grep -rq "ppa.launchpadcontent.net/cppiber/hyprland" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
+        log_info "Adding ppa:cppiber/hyprland for latest Hyprland release..."
+        sudo DEBIAN_FRONTEND=noninteractive add-apt-repository -y ppa:cppiber/hyprland
+        PPA_UPDATED=true
+    fi
+
+    if [ "$PPA_UPDATED" = true ]; then
+        sudo apt-get update -qq
+    fi
+
+    # Determine Hyprland GUI dialog helper (hyprland-guiutils on 0.56+, hyprland-qtutils on legacy)
+    HYPR_GUI_HELPER="hyprland-guiutils"
+    if ! apt-cache show hyprland-guiutils >/dev/null 2>&1; then
+        HYPR_GUI_HELPER="hyprland-qtutils"
+    fi
+
     APT_PACKAGES=(
         build-essential
         cmake
@@ -21,7 +57,7 @@ setup_ubuntu_packages() {
         libfuse2t64
         flatpak
         hyprland
-        hyprland-qtutils
+        "$HYPR_GUI_HELPER"
         waybar
         sway-notification-center
         hyprpaper
@@ -46,7 +82,6 @@ setup_ubuntu_packages() {
         libnotify-bin
         xwayland
         kitty
-        ghostty
         tmux
         neovim
         fastfetch
@@ -54,6 +89,11 @@ setup_ubuntu_packages() {
         fonts-jetbrains-mono
         fonts-font-awesome
     )
+
+    # Conditionally include ghostty if available in APT repositories (e.g. Ubuntu 26.04+)
+    if apt-cache show ghostty >/dev/null 2>&1; then
+        APT_PACKAGES+=(ghostty)
+    fi
 
     MISSING_APT=()
     for pkg in "${APT_PACKAGES[@]}"; do
@@ -71,6 +111,17 @@ setup_ubuntu_packages() {
         log_ok "Installed missing APT package(s)"
     fi
 
+    # Ensure latest Hyprland version (upgrade if a lower distribution release like 0.53 is installed)
+    if dpkg-query -W -f='${Status}' hyprland 2>/dev/null | grep -q "ok installed"; then
+        CURRENT_HYPR_VER="$(dpkg-query -W -f='${Version}' hyprland 2>/dev/null || true)"
+        CANDIDATE_HYPR_VER="$(apt-cache policy hyprland 2>/dev/null | awk '/Candidate:/ {print $2}')"
+        if [ -n "$CANDIDATE_HYPR_VER" ] && [ "$CURRENT_HYPR_VER" != "$CANDIDATE_HYPR_VER" ]; then
+            log_info "Upgrading Hyprland from $CURRENT_HYPR_VER to latest PPA version ($CANDIDATE_HYPR_VER)..."
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y hyprland "$HYPR_GUI_HELPER"
+            log_ok "Upgraded Hyprland to latest ($CANDIDATE_HYPR_VER)"
+        fi
+    fi
+
     # Ensure Flathub repository is configured
     if command -v flatpak >/dev/null 2>&1; then
         if flatpak remotes 2>/dev/null | grep -q "flathub"; then
@@ -80,6 +131,19 @@ setup_ubuntu_packages() {
             flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
             log_ok "Configured Flathub remote repository"
         fi
+    fi
+
+    # Ensure Ghostty terminal emulator (APT on Ubuntu 26+, Snap fallback on Ubuntu 24 and earlier)
+    if command -v ghostty >/dev/null 2>&1; then
+        log_skip "Ghostty terminal is already installed"
+    elif apt-cache show ghostty >/dev/null 2>&1; then
+        log_info "Installing Ghostty via APT..."
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ghostty && log_ok "Installed Ghostty via APT"
+    elif command -v snap >/dev/null 2>&1; then
+        log_info "Installing Ghostty via Snap (not available in this Ubuntu release's APT repositories)..."
+        sudo snap install ghostty --classic && log_ok "Installed Ghostty via Snap" || log_warn "Failed to install Ghostty via Snap"
+    else
+        log_warn "Ghostty terminal could not be installed (not found in APT and Snap is unavailable)"
     fi
 
     # Ensure LocalSend (LAN file sharing)
