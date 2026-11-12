@@ -8,6 +8,7 @@ setup_arch_packages() {
     step_header "Verifying Pacman system packages & Wayland environment"
     PACMAN_PACKAGES=(
         base-devel
+        tree
         dkms
         git
         curl

@@ -44,6 +44,7 @@ setup_ubuntu_packages() {
 
     APT_PACKAGES=(
         build-essential
+        tree
         cmake
         pkg-config
         git
