@@ -34,7 +34,7 @@ toggle() {
     else
         # Start hypridle in background
         if command -v hyprctl >/dev/null 2>&1; then
-            hyprctl dispatch exec hypridle >/dev/null 2>&1
+            hyprctl repl 'hl.exec_cmd("hypridle")' >/dev/null 2>&1
         else
             nohup hypridle >/dev/null 2>&1 &
         fi

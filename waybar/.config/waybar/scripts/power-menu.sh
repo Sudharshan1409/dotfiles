@@ -24,7 +24,7 @@ case "$chosen" in
         hyprlock
         ;;
     " Logout")
-        hyprctl dispatch exit ""
+        hyprctl repl 'hl.dispatch(hl.dsp.exit())'
         ;;
     *)
         exit 1
