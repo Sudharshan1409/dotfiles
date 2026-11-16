@@ -16,6 +16,7 @@ require("lua.autostart")
 require("lua.bindings")
 require("lua.windows")
 require("lua.envs")
+require("monitors_gen")
 require("lua.input")
 require("lua.looknfeel")
 

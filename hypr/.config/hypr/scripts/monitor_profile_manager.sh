@@ -5,7 +5,7 @@
 # Caches profiles by MAC address + monitor port + monitor description
 
 # Source user environment if available
-[ -f "$HOME/.config/environment.d/envvars.conf" ] && source "$HOME/.config/environment.d/envvars.conf" 2>/dev/null
+[ -f "$HOME/.config/environment.d/envvars.lua" ] && source "$HOME/.config/environment.d/envvars.lua" 2>/dev/null
 [ -f "$HOME/.pam_environment" ] && source "$HOME/.pam_environment" 2>/dev/null
 
 # If running under Hyprland, try to get environment from it
@@ -53,7 +53,8 @@ get_mac_fingerprint() {
 # Format: MAC|port1:monitor_desc1|port2:monitor_desc2|...
 get_monitor_fingerprint() {
     local mac=$(get_mac_fingerprint)
-    local monitors=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | "\(.name):\(.description | gsub(" "; "_"))"' | sort | tr '\n' '|')
+    local monitors=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | "\(.name):\(.description | gsub(" "; "_"))"' | sort | tr '
+' '|')
     
     if [ -z "$monitors" ]; then
         echo "${mac}|nomonitor" 
@@ -71,16 +72,16 @@ normalize_fingerprint() {
 
 # Function to get all available profiles
 get_profiles() {
-    find "$CONFIG_DIR" -name "*.conf" -type f ! -name "template.conf" ! -name ".*" | while read -r f; do
-        basename "$f" .conf
+    find "$CONFIG_DIR" -name "*.lua" -type f ! -name "template.lua" ! -name ".*" | while read -r f; do
+        basename "$f" .lua
     done | sort
 }
 
 # Function to get currently active profile name
 get_active_profile() {
-    if [ -f "$HOME/.config/hypr/monitors.gen.conf" ]; then
-        local target=$(grep -E "^source=" "$HOME/.config/hypr/monitors.gen.conf" 2>/dev/null | cut -d= -f2- | tr -d " ")
-        basename "$target" .conf 2>/dev/null || echo ""
+    if [ -f "$HOME/.config/hypr/monitors_gen.lua" ]; then
+        local target=$(grep -E "^require" "$HOME/.config/hypr/monitors_gen.lua" 2>/dev/null | cut -d\" -f2 | awk -F. "{print \$2}")
+        echo "$target"
     fi
 }
 
@@ -147,23 +148,28 @@ show_profile_menu() {
     while IFS= read -r profile; do
         [ -z "$profile" ] && continue
         # Get profile description if exists
-        local desc=$(grep "^# Description:" "$CONFIG_DIR/$profile.conf" 2>/dev/null | sed 's/^# Description: //')
+        local desc=$(grep "^# Description:" "$CONFIG_DIR/$profile.lua" 2>/dev/null | sed 's/^# Description: //')
         local tag="  ${profile}"
         if [ "$profile" = "$active_profile" ]; then
             tag="● ${profile} [Active]"
         fi
 
         if [ -n "$desc" ]; then
-            menu_items="${menu_items}${tag} - ${desc}\n"
+            menu_items="${menu_items}${tag} - ${desc}
+"
         else
-            menu_items="${menu_items}${tag}\n"
+            menu_items="${menu_items}${tag}
+"
         fi
     done <<< "$profiles"
     
     # Add special options
-    menu_items="${menu_items}───\n"
-    menu_items="${menu_items}🪄 Setup Wizard (Create New Profile)\n"
-    menu_items="${menu_items}➕ Quick Save Current Setup\n"
+    menu_items="${menu_items}───
+"
+    menu_items="${menu_items}🪄 Setup Wizard (Create New Profile)
+"
+    menu_items="${menu_items}➕ Quick Save Current Setup
+"
     menu_items="${menu_items}🗑️  Clear Cache"
     
     # Show rofi
@@ -210,13 +216,14 @@ create_new_profile_raw() {
     # Sanitize name
     name=$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9_-')
     
-    if [ -f "$CONFIG_DIR/$name.conf" ]; then
+    if [ -f "$CONFIG_DIR/$name.lua" ]; then
         notify-send \
             --app-name="Monitor Manager" \
             --icon="dialog-error" \
             --urgency=critical \
             "❌ Profile Already Exists" \
-            "A profile named '$name' already exists.\nPlease choose a different name." \
+            "A profile named '$name' already exists.
+Please choose a different name." \
             -t 5000
         return
     fi
@@ -229,7 +236,7 @@ create_new_profile_raw() {
     local workspace_config=$(generate_workspace_assignments)
     
     # Create profile
-    cat > "$CONFIG_DIR/$name.conf" << EOF
+    cat > "$CONFIG_DIR/$name.lua" << EOF
 # Description: Quick-saved profile created on $(date)
 # Fingerprint: $(get_monitor_fingerprint)
 
@@ -290,15 +297,15 @@ find_editor() {
 open_profile_in_editor() {
     local selected="$1"
     local editor=$(find_editor)
-    local profile_path="$CONFIG_DIR/$selected.conf"
+    local profile_path="$CONFIG_DIR/$selected.lua"
     
     if [ ! -f "$profile_path" ]; then
-        if [[ "$selected" =~ s$ ]] && [ -f "$CONFIG_DIR/${selected%s}.conf" ]; then
+        if [[ "$selected" =~ s$ ]] && [ -f "$CONFIG_DIR/${selected%s}.lua" ]; then
             selected="${selected%s}"
-            profile_path="$CONFIG_DIR/$selected.conf"
-        elif [ -f "$CONFIG_DIR/${selected}s.conf" ]; then
+            profile_path="$CONFIG_DIR/$selected.lua"
+        elif [ -f "$CONFIG_DIR/${selected}s.lua" ]; then
             selected="${selected}s"
-            profile_path="$CONFIG_DIR/$selected.conf"
+            profile_path="$CONFIG_DIR/$selected.lua"
         fi
     fi
     
@@ -309,7 +316,8 @@ open_profile_in_editor() {
             --icon="dialog-error" \
             --urgency=critical \
             "❌ No Editor Found" \
-            "Please install a text editor (nvim, vim, nano, etc.)\nor set \$EDITOR environment variable." \
+            "Please install a text editor (nvim, vim, nano, etc.)
+or set \$EDITOR environment variable." \
             -t 6000 2>/dev/null &
         return
     fi
@@ -336,7 +344,7 @@ open_profile_in_editor() {
         --icon="accessories-text-editor" \
         --urgency=low \
         "✏️ Editor Opened" \
-        "Now editing profile: $selected.conf" \
+        "Now editing profile: $selected.lua" \
         -t 3000 2>/dev/null &
 }
 
@@ -346,10 +354,10 @@ rename_profile() {
     [ -z "$old_name" ] && return
     
     # Resolve smart 's' fallback if needed
-    if [ ! -f "$CONFIG_DIR/$old_name.conf" ]; then
-        if [[ "$old_name" =~ s$ ]] && [ -f "$CONFIG_DIR/${old_name%s}.conf" ]; then
+    if [ ! -f "$CONFIG_DIR/$old_name.lua" ]; then
+        if [[ "$old_name" =~ s$ ]] && [ -f "$CONFIG_DIR/${old_name%s}.lua" ]; then
             old_name="${old_name%s}"
-        elif [ -f "$CONFIG_DIR/${old_name}s.conf" ]; then
+        elif [ -f "$CONFIG_DIR/${old_name}s.lua" ]; then
             old_name="${old_name}s"
         fi
     fi
@@ -371,26 +379,27 @@ rename_profile() {
         return
     fi
     
-    if [ -f "$CONFIG_DIR/$new_name.conf" ]; then
+    if [ -f "$CONFIG_DIR/$new_name.lua" ]; then
         hyprctl notify 3 4000 "rgb(f38ba8)" "fontsize:14 ❌ Profile '$new_name' already exists" 2>/dev/null || true
         notify-send \
             --app-name="Monitor Manager" \
             --icon="dialog-error" \
             --urgency=critical \
             "❌ Name Already Exists" \
-            "A profile named '$new_name' already exists.\nPlease choose a different name." \
+            "A profile named '$new_name' already exists.
+Please choose a different name." \
             -t 4000 2>/dev/null &
         handle_profile_action "$old_name"
         return
     fi
     
     # Rename the file
-    mv "$CONFIG_DIR/$old_name.conf" "$CONFIG_DIR/$new_name.conf"
+    mv "$CONFIG_DIR/$old_name.lua" "$CONFIG_DIR/$new_name.lua"
     
-    # If active profile was renamed, update monitors.gen.conf
+    # If active profile was renamed, update monitors_gen.lua
     local active_profile=$(get_active_profile)
     if [ "$active_profile" = "$old_name" ]; then
-        echo "source=$CONFIG_DIR/$new_name.conf" > "$HOME/.config/hypr/monitors.gen.conf"
+        echo "require(\"monitors.$new_name\")" > "$HOME/.config/hypr/monitors_gen.lua"
     fi
     
     # Update cache entries mapping old name to new name
@@ -420,10 +429,10 @@ delete_profile() {
     [ -z "$profile" ] && return
     
     # Resolve smart 's' fallback if needed
-    if [ ! -f "$CONFIG_DIR/$profile.conf" ]; then
-        if [[ "$profile" =~ s$ ]] && [ -f "$CONFIG_DIR/${profile%s}.conf" ]; then
+    if [ ! -f "$CONFIG_DIR/$profile.lua" ]; then
+        if [[ "$profile" =~ s$ ]] && [ -f "$CONFIG_DIR/${profile%s}.lua" ]; then
             profile="${profile%s}"
-        elif [ -f "$CONFIG_DIR/${profile}s.conf" ]; then
+        elif [ -f "$CONFIG_DIR/${profile}s.lua" ]; then
             profile="${profile}s"
         fi
     fi
@@ -436,20 +445,22 @@ delete_profile() {
             --icon="dialog-warning" \
             --urgency=critical \
             "⚠️ Cannot Delete Active Profile" \
-            "Profile '$profile' is currently active.\nPlease switch to another profile first." \
+            "Profile '$profile' is currently active.
+Please switch to another profile first." \
             -t 5000 2>/dev/null &
         handle_profile_action "$profile"
         return
     fi
     
-    local confirm=$(echo -e "❌ No, Keep Profile\n🗑️ Yes, Delete Profile" | rofi -dmenu \
+    local confirm=$(echo -e "❌ No, Keep Profile
+🗑️ Yes, Delete Profile" | rofi -dmenu \
         -p "Confirm Delete" \
         -theme "$ROFI_THEME" \
         -mesg "Are you sure you want to permanently delete profile '$profile'?" \
         -i)
     
     if [[ "$confirm" =~ ^(🗑️|Yes) ]]; then
-        rm -f "$CONFIG_DIR/$profile.conf"
+        rm -f "$CONFIG_DIR/$profile.lua"
         
         # Remove deleted profile from cache
         if [ -f "$CACHE_FILE" ]; then
@@ -466,7 +477,7 @@ delete_profile() {
             --icon="edit-delete" \
             --urgency=normal \
             "🗑️ Profile Deleted" \
-            "Deleted profile: $profile.conf" \
+            "Deleted profile: $profile.lua" \
             -t 4000 2>/dev/null &
             
         show_profile_switcher
@@ -480,17 +491,17 @@ resolve_profile_name() {
     local name="$1"
     [ -z "$name" ] && echo "" && return
     
-    if [ -f "$CONFIG_DIR/$name.conf" ]; then
+    if [ -f "$CONFIG_DIR/$name.lua" ]; then
         echo "$name"
         return
     fi
     
     # Check singular/plural 's'
-    if [[ "$name" =~ s$ ]] && [ -f "$CONFIG_DIR/${name%s}.conf" ]; then
+    if [[ "$name" =~ s$ ]] && [ -f "$CONFIG_DIR/${name%s}.lua" ]; then
         echo "${name%s}"
         return
     fi
-    if [ -f "$CONFIG_DIR/${name}s.conf" ]; then
+    if [ -f "$CONFIG_DIR/${name}s.lua" ]; then
         echo "${name}s"
         return
     fi
@@ -498,10 +509,10 @@ resolve_profile_name() {
     # Check benq vs bnq
     if [[ "$name" == *"benq"* ]]; then
         local alt="${name/benq/bnq}"
-        [ -f "$CONFIG_DIR/$alt.conf" ] && echo "$alt" && return
+        [ -f "$CONFIG_DIR/$alt.lua" ] && echo "$alt" && return
     elif [[ "$name" == *"bnq"* ]]; then
         local alt="${name/bnq/benq}"
-        [ -f "$CONFIG_DIR/$alt.conf" ] && echo "$alt" && return
+        [ -f "$CONFIG_DIR/$alt.lua" ] && echo "$alt" && return
     fi
     
     echo "$name"
@@ -511,7 +522,7 @@ resolve_profile_name() {
 check_profile_compatibility() {
     local profile="$1"
     local resolved=$(resolve_profile_name "$profile")
-    local conf_file="$CONFIG_DIR/$resolved.conf"
+    local conf_file="$CONFIG_DIR/$resolved.lua"
     
     if [ ! -f "$conf_file" ]; then
         echo "not_found"
@@ -519,8 +530,7 @@ check_profile_compatibility() {
     fi
     
     local connected=$(hyprctl monitors -j 2>/dev/null | jq -r '.[].name' | sort -u)
-    local prof_mons=$(grep -E '^[ \t]*monitor[ \t]*=' "$conf_file" | \
-        sed -E 's/^[ \t]*monitor[ \t]*=[ \t]*//' | cut -d, -f1 | tr -d ' ' | sort -u)
+    local prof_mons=$(grep -E 'output = ".*?"' "$conf_file" | cut -d\" -f2 | sort -u)
     
     if [ -z "$prof_mons" ]; then
         echo "empty"
@@ -544,10 +554,9 @@ show_incompatible_profile_error() {
     local unconfigured="$3"
     
     local resolved=$(resolve_profile_name "$profile")
-    local conf_file="$CONFIG_DIR/$resolved.conf"
+    local conf_file="$CONFIG_DIR/$resolved.lua"
     local connected=$(hyprctl monitors -j 2>/dev/null | jq -r '.[].name' | tr '\n' ' ' | xargs)
-    local prof_mons=$(grep -E '^[ \t]*monitor[ \t]*=' "$conf_file" 2>/dev/null | \
-        sed -E 's/^[ \t]*monitor[ \t]*=[ \t]*//' | cut -d, -f1 | tr -d ' ' | tr '\n' ' ' | xargs)
+    local prof_mons=$(grep -E 'output = ".*?"' "$conf_file" 2>/dev/null | cut -d\" -f2 | tr '\n' ' ' | xargs)
     
     # Log error
     echo "$(date): Error: Cannot assign profile '$profile' to current display setup (Missing: ${missing:-None}, Unconfigured: ${unconfigured:-None})" >> "$LOG_FILE"
@@ -565,19 +574,31 @@ show_incompatible_profile_error() {
             --icon="dialog-error" \
             --urgency=critical \
             "❌ Cannot Assign Profile" \
-            "Profile '$profile' cannot be assigned to current displays.\nMissing: ${missing:-None}\nUnconfigured: ${unconfigured:-None}" \
+            "Profile '$profile' cannot be assigned to current displays.
+Missing: ${missing:-None}
+Unconfigured: ${unconfigured:-None}" \
             -t 6000 2>/dev/null || true
     ) &
     
     # Build informative error dialog message
-    local err_msg="❌ Cannot assign profile '$profile' to your current display setup."$'\n'$'\n'
-    err_msg+="Current Connected Displays:  ${connected}"$'\n'
-    err_msg+="Profile '$profile' Requires:  ${prof_mons}"$'\n'$'\n'
-    [ -n "$missing" ] && err_msg+="• Missing from your setup:   ${missing}"$'\n'
-    [ -n "$unconfigured" ] && err_msg+="• Connected but not in profile: ${unconfigured}"$'\n'$'\n'
+    local err_msg="❌ Cannot assign profile '$profile' to your current display setup."$'
+'$'
+'
+    err_msg+="Current Connected Displays:  ${connected}"$'
+'
+    err_msg+="Profile '$profile' Requires:  ${prof_mons}"$'
+'$'
+'
+    [ -n "$missing" ] && err_msg+="• Missing from your setup:   ${missing}"$'
+'
+    [ -n "$unconfigured" ] && err_msg+="• Connected but not in profile: ${unconfigured}"$'
+'$'
+'
     err_msg+="It is not possible to assign this profile without matching displays."
     
-    local options="↩  Back to Profile Menu\n🪄 Open Setup Wizard to configure current displays\n⚠️ Force Apply Anyway (Not Recommended)"
+    local options="↩  Back to Profile Menu
+🪄 Open Setup Wizard to configure current displays
+⚠️ Force Apply Anyway (Not Recommended)"
     
     local choice=$(echo -e "$options" | rofi -dmenu \
         -p "Incompatible Profile" \
@@ -603,11 +624,14 @@ edit_profile_action() {
     local profile="$1"
     local resolved=$(resolve_profile_name "$profile")
     
-    local edit_options="🪄 Reconfigure Layout (Ask Screen Positions & Scales)\n📝 Edit Raw Config File in Text Editor\n↩  Back to Profile Menu"
+    local edit_options="🪄 Reconfigure Layout (Ask Screen Positions & Scales)
+📝 Edit Raw Config File in Text Editor
+↩  Back to Profile Menu"
     local choice=$(echo -e "$edit_options" | rofi -dmenu \
         -p "Edit: $resolved" \
         -theme "$ROFI_THEME" \
-        -mesg "Profile: $resolved"$'\n'"Choose how to edit this profile:" \
+        -mesg "Profile: $resolved"$'
+'"Choose how to edit this profile:" \
         -i)
         
     case "$choice" in
@@ -630,14 +654,14 @@ handle_profile_action() {
     
     profile=$(resolve_profile_name "$profile")
     
-    if [ ! -f "$CONFIG_DIR/$profile.conf" ]; then
+    if [ ! -f "$CONFIG_DIR/$profile.lua" ]; then
         hyprctl notify 3 4000 "rgb(f38ba8)" "fontsize:14 ❌ Profile '$profile' not found" 2>/dev/null || true
         notify-send \
             --app-name="Monitor Manager" \
             --icon="dialog-error" \
             --urgency=critical \
             "❌ Profile Not Found" \
-            "Profile '$profile.conf' does not exist." \
+            "Profile '$profile.lua' does not exist." \
             -t 4000 2>/dev/null &
         return
     fi
@@ -647,11 +671,16 @@ handle_profile_action() {
     [ "$profile" = "$active_profile" ] && is_active=true
 
     # Exact same uniform options for all profiles, matching user screenshot
-    local actions="▶ Select & Apply Profile\n✏️  Rename Profile\n📝 Edit Profile in Editor\n🗑️  Delete Profile\n↩  Back to Menu"
+    local actions="▶ Select & Apply Profile
+✏️  Rename Profile
+📝 Edit Profile in Editor
+🗑️  Delete Profile
+↩  Back to Menu"
 
     local mesg_text="Profile: $profile"
     [ "$is_active" = "true" ] && mesg_text+=" [Active]"
-    mesg_text+=$'\n'"Choose what to do with this profile:"
+    mesg_text+=$'
+'"Choose what to do with this profile:"
 
     local action=$(echo -e "$actions" | rofi -dmenu \
         -p "Profile: $profile" \
@@ -688,7 +717,8 @@ manage_profiles() {
 # Function to clear cache
 clear_cache() {
     local confirm=$(rofi -dmenu -p "Confirm" -theme "$ROFI_THEME" \
-        -mesg "Are you sure you want to clear the monitor profile cache?" <<< $'Yes\nNo')
+        -mesg "Are you sure you want to clear the monitor profile cache?" <<< $'Yes
+No')
     
     if [ "$confirm" = "Yes" ]; then
         rm -f "$CACHE_FILE"
@@ -698,7 +728,8 @@ clear_cache() {
             --icon="edit-clear" \
             --urgency=normal \
             "🗑️ Cache Cleared" \
-            "All monitor profile cache data\nhas been successfully cleared." \
+            "All monitor profile cache data
+has been successfully cleared." \
             -t 4000 2>/dev/null &
     fi
 }
@@ -710,7 +741,7 @@ apply_profile() {
     local force="${3:-false}"
     
     profile_name=$(resolve_profile_name "$profile_name")
-    local conf_file="$CONFIG_DIR/$profile_name.conf"
+    local conf_file="$CONFIG_DIR/$profile_name.lua"
     
     if [ ! -f "$conf_file" ]; then
         hyprctl notify 3 4000 "rgb(f38ba8)" "fontsize:14 ❌ Profile '${profile_name:-unspecified}' not found" 2>/dev/null || true
@@ -719,7 +750,8 @@ apply_profile() {
             --icon="dialog-error" \
             --urgency=critical \
             "❌ Profile Not Found" \
-            "Profile file '${profile_name:-unspecified}.conf' does not exist.\nThe profile may have been deleted or renamed." \
+            "Profile file '${profile_name:-unspecified}.lua' does not exist.
+The profile may have been deleted or renamed." \
             -t 5000 2>/dev/null &
         return 1
     fi
@@ -736,15 +768,11 @@ apply_profile() {
     fi
     
     # 1. Update the sourced configuration file atomically
-    echo "source=$conf_file" > "$HOME/.config/hypr/monitors.gen.conf"
+    echo "require(\"monitors.$profile_name\")" > "$HOME/.config/hypr/monitors_gen.lua"
     
-    # 2. Directly apply each monitor definition line via hyprctl keyword
-    # This guarantees immediate compositor re-layout without waiting for full config parse
-    while IFS= read -r line; do
-        local monitor_rule=$(echo "$line" | sed 's/^[ \t]*monitor[ \t]*=[ \t]*//')
-        [ -n "$monitor_rule" ] && hyprctl keyword monitor "$monitor_rule" >/dev/null 2>&1
-    done < <(grep -E '^[ \t]*monitor[ \t]*=' "$conf_file")
-    
+    # 2. Directly applying monitors via hyprctl is disabled for lua, using hyprctl reload
+    hyprctl reload >/dev/null 2>&1
+
     # 3. Directly apply workspace assignments
     while IFS= read -r line; do
         local ws_rule=$(echo "$line" | sed 's/^[ \t]*workspace[ \t]*=[ \t]*//')
@@ -767,7 +795,8 @@ apply_profile() {
             --icon="video-display" \
             --urgency=normal \
             "🖥️ Profile Applied Successfully" \
-            "Loaded profile: '$profile_name'\nMonitor configuration updated" \
+            "Loaded profile: '$profile_name'
+Monitor configuration updated" \
             -t 4000 2>>"$LOG_FILE" || true
     ) &
     
@@ -814,14 +843,15 @@ main() {
             
             if [ -n "$cached" ]; then
                 # Check if the profile file actually exists
-                if [ ! -f "$CONFIG_DIR/$cached.conf" ]; then
+                if [ ! -f "$CONFIG_DIR/$cached.lua" ]; then
                     echo "$(date): Cached profile '$cached' not found on disk, showing menu..." >> "$LOG_FILE"
                     notify-send \
                         --app-name="Monitor Manager" \
                         --icon="dialog-warning" \
                         --urgency=normal \
                         "⚠️  Cached Profile Missing" \
-                        "Cached profile '$cached' was not found on disk.\nPlease select a new profile from the menu." \
+                        "Cached profile '$cached' was not found on disk.
+Please select a new profile from the menu." \
                         -t 5000 2>/dev/null &
                     show_profile_switcher
                 else
@@ -836,7 +866,8 @@ main() {
                             --icon="dialog-warning" \
                             --urgency=normal \
                             "⚠️  Display Configuration Changed" \
-                            "Cached profile '$cached' does not match current displays.\nPlease select or create a profile." \
+                            "Cached profile '$cached' does not match current displays.
+Please select or create a profile." \
                             -t 5000 2>/dev/null &
                         show_profile_switcher
                     fi
@@ -886,10 +917,10 @@ main() {
             if [ -n "$2" ] && [ -n "$3" ]; then
                 local old_name="$2"
                 local new_name="$3"
-                if [ -f "$CONFIG_DIR/$old_name.conf" ]; then
-                    mv "$CONFIG_DIR/$old_name.conf" "$CONFIG_DIR/$new_name.conf"
+                if [ -f "$CONFIG_DIR/$old_name.lua" ]; then
+                    mv "$CONFIG_DIR/$old_name.lua" "$CONFIG_DIR/$new_name.lua"
                     if [ "$(get_active_profile)" = "$old_name" ]; then
-                        echo "source=$CONFIG_DIR/$new_name.conf" > "$HOME/.config/hypr/monitors.gen.conf"
+                        echo "require(\"monitors.$new_name\")" > "$HOME/.config/hypr/monitors_gen.lua"
                     fi
                     if [ -f "$CACHE_FILE" ]; then
                         jq --arg old "$old_name" --arg new "$new_name" \
@@ -898,7 +929,7 @@ main() {
                     fi
                     echo "Renamed '$old_name' to '$new_name'"
                 else
-                    echo "Error: Profile '$old_name.conf' not found."
+                    echo "Error: Profile '$old_name.lua' not found."
                     exit 1
                 fi
             else
@@ -914,8 +945,8 @@ main() {
                     echo "Error: Cannot delete currently active profile '$profile'."
                     exit 1
                 fi
-                if [ -f "$CONFIG_DIR/$profile.conf" ]; then
-                    rm -f "$CONFIG_DIR/$profile.conf"
+                if [ -f "$CONFIG_DIR/$profile.lua" ]; then
+                    rm -f "$CONFIG_DIR/$profile.lua"
                     if [ -f "$CACHE_FILE" ]; then
                         jq --arg del "$profile" \
                             'with_entries(select(.value != $del))' "$CACHE_FILE" > "$CACHE_FILE.tmp" 2>/dev/null && \
@@ -923,7 +954,7 @@ main() {
                     fi
                     echo "Deleted profile '$profile'"
                 else
-                    echo "Error: Profile '$profile.conf' not found."
+                    echo "Error: Profile '$profile.lua' not found."
                     exit 1
                 fi
             else

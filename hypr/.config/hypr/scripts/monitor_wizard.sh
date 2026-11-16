@@ -8,12 +8,12 @@
 # - Enforces anti-blur: native panel resolution + crisp fractional scaling
 # - Automatically computes logical coordinates: X_n = X_(n-1) + (W / Scale)
 # - Provides a 15-second auto-reverting live preview safety net
-# - Allocates round-robin workspaces (1-9) and generates a clean profile .conf
+# - Allocates round-robin workspaces (1-9) and generates a clean profile .lua
 # - Caches hardware fingerprint for automatic profile switching
 # ==============================================================================
 
 # Source user environment if available
-[ -f "$HOME/.config/environment.d/envvars.conf" ] && source "$HOME/.config/environment.d/envvars.conf" 2>/dev/null
+[ -f "$HOME/.config/environment.d/envvars.lua" ] && source "$HOME/.config/environment.d/envvars.lua" 2>/dev/null
 [ -f "$HOME/.pam_environment" ] && source "$HOME/.pam_environment" 2>/dev/null
 
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
@@ -420,11 +420,11 @@ done
 # ------------------------------------------------------------------------------
 # Step 5: Live Preview with 15-Second Auto-Revert Safety Net
 # ------------------------------------------------------------------------------
-BACKUP_GEN="/tmp/hypr_monitors_backup_$$.conf"
-PREVIEW_FILE="$CONFIG_DIR/.preview.conf"
+BACKUP_GEN="/tmp/hypr_monitors_backup_$$.lua"
+PREVIEW_FILE="$CONFIG_DIR/.preview.lua"
 
-if [ -f "$HOME/.config/hypr/monitors.gen.conf" ]; then
-    cp "$HOME/.config/hypr/monitors.gen.conf" "$BACKUP_GEN"
+if [ -f "$HOME/.config/hypr/monitors_gen.lua" ]; then
+    cp "$HOME/.config/hypr/monitors_gen.lua" "$BACKUP_GEN"
 fi
 
 restore_previous_state() {
@@ -432,13 +432,13 @@ restore_previous_state() {
     if [ -f "$BACKUP_GEN" ]; then
         local target_src=$(grep -E "^source=" "$BACKUP_GEN" 2>/dev/null | cut -d= -f2- | sed "s|~|$HOME|" | xargs)
         if [ -n "$target_src" ] && [ -f "$target_src" ]; then
-            cp "$BACKUP_GEN" "$HOME/.config/hypr/monitors.gen.conf"
+            cp "$BACKUP_GEN" "$HOME/.config/hypr/monitors_gen.lua"
         else
-            echo "# Reverted to previous runtime state" > "$HOME/.config/hypr/monitors.gen.conf"
+            echo "# Reverted to previous runtime state" > "$HOME/.config/hypr/monitors_gen.lua"
         fi
         rm -f "$BACKUP_GEN"
     else
-        rm -f "$HOME/.config/hypr/monitors.gen.conf"
+        rm -f "$HOME/.config/hypr/monitors_gen.lua"
     fi
 
     rm -f "$PREVIEW_FILE" 2>/dev/null || true
@@ -470,8 +470,8 @@ cat > "$PREVIEW_FILE" << PREVIEW_EOF
 $PREVIEW_CONF_LINES
 PREVIEW_EOF
 
-log "Applying live preview layout atomically via .preview.conf..."
-echo "source=$PREVIEW_FILE" > "$HOME/.config/hypr/monitors.gen.conf"
+log "Applying live preview layout atomically via .preview.lua..."
+echo "require(\"monitors.preview\")" > "$HOME/.config/hypr/monitors_gen.lua"
 hyprctl reload
 hyprctl dismissnotify 10 2>/dev/null || true
 
@@ -561,7 +561,7 @@ fi
 PROFILE_NAME=$(echo "$PROFILE_INPUT" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9_-')
 [ -z "$PROFILE_NAME" ] && PROFILE_NAME="$DEFAULT_NAME"
 
-PROFILE_FILE="$CONFIG_DIR/$PROFILE_NAME.conf"
+PROFILE_FILE="$CONFIG_DIR/$PROFILE_NAME.lua"
 
 # Generate monitor configuration lines
 MONITOR_CONF_LINES=""
@@ -606,7 +606,7 @@ log "Profile saved to $PROFILE_FILE"
 
 # Apply profile permanently and cache fingerprint
 if [ -n "$PROFILE_FILE" ] && [ -f "$PROFILE_FILE" ]; then
-    echo "source=$PROFILE_FILE" > "$HOME/.config/hypr/monitors.gen.conf"
+    echo "require(\"monitors.$PROFILE_NAME\")" > "$HOME/.config/hypr/monitors_gen.lua"
     save_to_cache "$PROFILE_NAME"
     hyprctl reload
     hyprctl dismissnotify 10 2>/dev/null || true
