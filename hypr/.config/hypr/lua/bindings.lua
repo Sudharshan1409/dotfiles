@@ -1,0 +1,7 @@
+require("lua.bindings.apps")
+require("lua.bindings.groups")
+require("lua.bindings.media")
+require("lua.bindings.mouse")
+require("lua.bindings.system")
+require("lua.bindings.tiling")
+require("lua.bindings.workspaces")

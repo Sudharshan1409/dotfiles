@@ -14,6 +14,6 @@ choice=$(printf "  No, stay\n  Yes, exit" | rofi -dmenu \
 
 case "$choice" in
     *"Yes, exit"*)
-        hyprctl dispatch exit
+        hyprctl dispatch 'hl.dsp.exit()'
         ;;
 esac
