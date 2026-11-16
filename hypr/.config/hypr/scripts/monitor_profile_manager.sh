@@ -776,7 +776,7 @@ The profile may have been deleted or renamed." \
     # 3. Directly apply workspace assignments
     while IFS= read -r line; do
         local ws_rule=$(echo "$line" | sed 's/^[ \t]*workspace[ \t]*=[ \t]*//')
-        [ -n "$ws_rule" ] && hyprctl keyword workspace "$ws_rule" >/dev/null 2>&1
+        [ -n "$ws_rule" ] && hyprctl repl 'hl.exec_cmd("keyword workspace '$ws_rule'")' >/dev/null 2>&1
     done < <(grep -E '^[ \t]*workspace[ \t]*=' "$conf_file")
     
     # 4. Trigger Hyprland full reload to ensure rules and state synchronize

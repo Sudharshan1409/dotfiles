@@ -16,7 +16,7 @@ if [ -f "$STATE_FILE" ]; then
     # --- Disable focus mode ---
     swaync-client -df >/dev/null 2>&1
     pkill -SIGUSR1 waybar
-    hyprctl keyword decoration:dim_inactive false >/dev/null
+    hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive false")' >/dev/null
     rm -f "$STATE_FILE"
 
     notify-send "Focus Mode" \
@@ -34,7 +34,7 @@ else
 
     swaync-client -dn >/dev/null 2>&1
     pkill -SIGUSR1 waybar
-    hyprctl keyword decoration:dim_inactive true >/dev/null
+    hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive true")' >/dev/null
 
     touch "$STATE_FILE"
 fi
