@@ -16,7 +16,7 @@ require("lua.autostart")
 require("lua.bindings")
 require("lua.windows")
 require("lua.envs")
-require("monitors_gen")
+dofile(os.getenv("HOME") .. "/.config/hypr/monitors_gen.lua")
 require("lua.input")
 require("lua.looknfeel")
 

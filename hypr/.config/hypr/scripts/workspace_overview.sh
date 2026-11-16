@@ -23,6 +23,6 @@ if [ -n "$selected" ]; then
     # Extract workspace ID from selection (format: [ID] title)
     workspace_id=$(echo "$selected" | grep -oE '^\[[0-9]+\]' | tr -d '[]')
     if [ -n "$workspace_id" ]; then
-        hyprctl dispatch workspace "$workspace_id"
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({ workspace = "'$workspace_id'" }))'
     fi
 fi

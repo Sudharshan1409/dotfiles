@@ -25,7 +25,7 @@ restore_all() {
     # Turn all DPMS back on
     local all_monitors=$(hyprctl monitors -j | jq -r '.[].name')
     for mon in $all_monitors; do
-        hyprctl dispatch dpms on "$mon"
+        hyprctl repl 'hl.dispatch(hl.dsp.dpms("on", ""$mon""))' "$mon"
     done
     
     # Restart hypridle

@@ -142,213 +142,213 @@ DESCRIPTION=$(echo "$SELECTED" | cut -d'|' -f3 | xargs)
 # Execute based on description match
 case "$DESCRIPTION" in
     "Open terminal (Ghostty)")
-        hyprctl dispatch exec ghostty ;;
+        hyprctl repl 'hl.exec_cmd("ghostty")' ;;
     "Toggle scratchpad terminal")
-        hyprctl dispatch exec ~/.config/hypr/scripts/scratchpad_terminal.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/scratchpad_terminal.sh")' ;;
     "Open application launcher (Rofi)")
-        hyprctl dispatch exec "rofi -show drun -show-icons -display-drune 'Apps' -theme ~/.config/rofi/launcher-elegant.rasi" ;;
+        hyprctl repl 'hl.exec_cmd("rofi -show drun -show-icons -display-drune '\''Apps'\'' -theme ~/.config/rofi/launcher-elegant.rasi")' ;;
     "Quick FZF Finder (Folders in Yazi / Files in Neovim)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/quick_fzf_finder.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/quick_fzf_finder.sh")' ;;
     "Open Spotify")
-        hyprctl dispatch exec spotify ;;
+        hyprctl repl 'hl.exec_cmd("spotify")' ;;
     "Open Downloads folder")
-        hyprctl dispatch exec "nautilus ~/Downloads" ;;
+        hyprctl repl 'hl.exec_cmd("nautilus ~/Downloads")' ;;
     "Open Backgrounds folder")
-        hyprctl dispatch exec "nautilus ~/.config/backgrounds" ;;
+        hyprctl repl 'hl.exec_cmd("nautilus ~/.config/backgrounds")' ;;
     "Open Home folder")
-        hyprctl dispatch exec "nautilus ~" ;;
+        hyprctl repl 'hl.exec_cmd("nautilus ~")' ;;
     "Open clipboard history")
-        hyprctl dispatch exec ~/.config/hypr/scripts/clipboard.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/clipboard.sh")' ;;
     "Open Bluetooth menu")
-        hyprctl dispatch exec ~/.config/waybar/scripts/launch_bluetooth.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/launch_bluetooth.sh")' ;;
     "Open notification center")
-        hyprctl dispatch exec ~/.config/waybar/scripts/swaync-client.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/swaync-client.sh")' ;;
     "Show workspace overview")
-        hyprctl dispatch exec ~/.config/hypr/scripts/workspace_overview.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/workspace_overview.sh")' ;;
     "Show workspace overview (alternate)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/workspace_overview.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/workspace_overview.sh")' ;;
     "Exit Hyprland session")
-        hyprctl dispatch exit ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.exit())';;
     "Reload Hyprland configuration")
-        hyprctl dispatch exec "hyprctl reload && notify-send -i 'dialog-information' -a 'Hyprland' 'Hyprland' 'Config reloaded successfully!'" ;;
+        hyprctl repl 'hl.exec_cmd("hyprctl reload && notify-send -i '\''dialog-information'\'' -a '\''Hyprland'\'' '\''Hyprland'\'' '\''Config reloaded successfully!'\''")' ;;
     "Lock the screen")
-        hyprctl dispatch exec hyprlock ;;
+        hyprctl repl 'hl.exec_cmd("hyprlock")' ;;
     "Suspend the system")
-        hyprctl dispatch exec "systemctl suspend" ;;
+        hyprctl repl 'hl.exec_cmd("systemctl suspend")' ;;
     "Toggle screen lock on idle")
-        hyprctl dispatch exec ~/.config/hypr/scripts/toggle_hypridle.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh")' ;;
     "Open power menu")
-        hyprctl dispatch exec ~/.config/waybar/scripts/power-menu.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/power-menu.sh")' ;;
     "Change to random wallpaper")
-        hyprctl dispatch exec ~/.config/hypr/scripts/set_wallpaper.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh")' ;;
     "Open monitor profile manager")
-        hyprctl dispatch exec ~/.config/hypr/scripts/monitor_profile_manager.sh menu ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/monitor_profile_manager.sh menu")' ;;
     "Auto-apply monitor profile")
-        hyprctl dispatch exec ~/.config/hypr/scripts/monitor_profile_manager.sh auto ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/monitor_profile_manager.sh auto")' ;;
     "Extract text from screen (OCR)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/ocr.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/ocr.sh")' ;;
     "Open keybinding help menu")
-        hyprctl dispatch exec ~/.config/hypr/scripts/keybinding_menu.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/keybinding_menu.sh")' ;;
     "App-specific shortcuts help")
-        hyprctl dispatch exec ~/.config/hypr/scripts/app_help.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/app_help.sh")' ;;
     "Open calculator")
-        hyprctl dispatch exec ~/.config/hypr/scripts/calculator.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/calculator.sh")' ;;
     "Kill a process")
-        hyprctl dispatch exec ~/.config/hypr/scripts/process_killer.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/process_killer.sh")' ;;
     "Movie Mode (Solo Display)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/movie_mode.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/movie_mode.sh")' ;;
     "Audio device switcher")
-        hyprctl dispatch exec ~/.config/hypr/scripts/audio_switcher.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/audio_switcher.sh")' ;;
     "Screen recorder (toggle)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/screen_recorder.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screen_recorder.sh")' ;;
     "Focus mode (toggle DND + hide waybar)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/focus_mode.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/focus_mode.sh")' ;;
     "Close active window")
-        hyprctl dispatch killactive ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.kill())';;
     "Toggle floating mode")
-        hyprctl dispatch togglefloating ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.float())';;
     "Toggle fullscreen mode")
-        hyprctl dispatch fullscreen ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.fullscreen())';;
     "Toggle pseudotiling mode")
-        hyprctl dispatch pseudo ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.pseudo())';;
     "Toggle Picture-in-Picture (PiP) mode")
-        hyprctl dispatch exec ~/.config/hypr/scripts/toggle_pip.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_pip.sh")' ;;
     "Toggle split direction (vertical/horizontal)")
-        hyprctl dispatch togglesplit ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.layout("togglesplit"))';;
     "Toggle window group")
-        hyprctl dispatch togglegroup ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.group.toggle())';;
     "Move window left")
-        hyprctl dispatch movewindow l ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({direction="l"}))' ;;
     "Move window down")
-        hyprctl dispatch movewindow d ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({direction="d"}))' ;;
     "Move window up")
-        hyprctl dispatch movewindow u ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({direction="u"}))' ;;
     "Move window right")
-        hyprctl dispatch movewindow r ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({direction="r"}))' ;;
     "Resize window left (make narrower)")
-        hyprctl dispatch resizeactive -20 0 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.resize({x=-20, y=0, relative=true}))' ;;
     "Resize window down (make shorter)")
-        hyprctl dispatch resizeactive 0 20 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.resize({x=0, y=20, relative=true}))' ;;
     "Resize window up (make taller)")
-        hyprctl dispatch resizeactive 0 -20 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.resize({x=0, y=-20, relative=true}))' ;;
     "Resize window right (make wider)")
-        hyprctl dispatch resizeactive 20 0 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.resize({x=20, y=0, relative=true}))' ;;
     "Move focus left")
-        hyprctl dispatch movefocus l ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({direction="l"}))' ;;
     "Move focus down")
-        hyprctl dispatch movefocus d ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({direction="d"}))' ;;
     "Move focus up")
-        hyprctl dispatch movefocus u ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({direction="u"}))' ;;
     "Move focus right")
-        hyprctl dispatch movefocus r ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({direction="r"}))' ;;
     "Move window")
-        hyprctl dispatch movewindow ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.drag())';;
     "Resize window")
-        hyprctl dispatch resizewindow ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.resize())';;
     "MRU window switcher (all workspaces)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/window_switcher.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/window_switcher.sh")' ;;
     "Switch to workspace 1")
-        hyprctl dispatch workspace 1 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="1"}))' ;;
     "Switch to workspace 2")
-        hyprctl dispatch workspace 2 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="2"}))' ;;
     "Switch to workspace 3")
-        hyprctl dispatch workspace 3 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="3"}))' ;;
     "Switch to workspace 4")
-        hyprctl dispatch workspace 4 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="4"}))' ;;
     "Switch to workspace 5")
-        hyprctl dispatch workspace 5 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="5"}))' ;;
     "Switch to workspace 6")
-        hyprctl dispatch workspace 6 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="6"}))' ;;
     "Switch to workspace 7")
-        hyprctl dispatch workspace 7 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="7"}))' ;;
     "Switch to workspace 8")
-        hyprctl dispatch workspace 8 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="8"}))' ;;
     "Switch to workspace 9")
-        hyprctl dispatch workspace 9 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="9"}))' ;;
     "Switch to workspace 10")
-        hyprctl dispatch workspace 10 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="10"}))' ;;
     "Move window to workspace 1")
-        hyprctl dispatch movetoworkspace 1 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="1", follow=true}))' ;;
     "Move window to workspace 2")
-        hyprctl dispatch movetoworkspace 2 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="2", follow=true}))' ;;
     "Move window to workspace 3")
-        hyprctl dispatch movetoworkspace 3 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="3", follow=true}))' ;;
     "Move window to workspace 4")
-        hyprctl dispatch movetoworkspace 4 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="4", follow=true}))' ;;
     "Move window to workspace 5")
-        hyprctl dispatch movetoworkspace 5 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="5", follow=true}))' ;;
     "Move window to workspace 6")
-        hyprctl dispatch movetoworkspace 6 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="6", follow=true}))' ;;
     "Move window to workspace 7")
-        hyprctl dispatch movetoworkspace 7 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="7", follow=true}))' ;;
     "Move window to workspace 8")
-        hyprctl dispatch movetoworkspace 8 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="8", follow=true}))' ;;
     "Move window to workspace 9")
-        hyprctl dispatch movetoworkspace 9 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="9", follow=true}))' ;;
     "Move window to workspace 10")
-        hyprctl dispatch movetoworkspace 10 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="10", follow=true}))' ;;
     "Next workspace")
-        hyprctl dispatch workspace e+1 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="e+1"}))' ;;
     "Previous workspace")
-        hyprctl dispatch workspace e-1 ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="e-1"}))' ;;
     "Jump to previously focused workspace")
-        hyprctl dispatch workspace previous ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.focus({workspace="previous"}))' ;;
     "Move workspace to monitor on the left")
-        hyprctl dispatch movecurrentworkspacetomonitor l ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.move({monitor="l"}))' ;;
     "Move workspace to monitor on the right")
-        hyprctl dispatch movecurrentworkspacetomonitor r ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.move({monitor="r"}))' ;;
     "Move workspace to monitor above")
-        hyprctl dispatch movecurrentworkspacetomonitor u ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.move({monitor="u"}))' ;;
     "Move workspace to monitor below")
-        hyprctl dispatch movecurrentworkspacetomonitor d ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.move({monitor="d"}))' ;;
     "Toggle Magic workspace (special)")
-        hyprctl dispatch togglespecialworkspace Magic ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.toggle_special("Magic"))' ;;
     "Send to Magic workspace")
-        hyprctl dispatch movetoworkspacesilent special:Magic ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="special:Magic", follow=false}))' ;;
     "Toggle Ad-Hoc workspace (special)")
-        hyprctl dispatch togglespecialworkspace Ad-Hoc ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.toggle_special("Ad-Hoc"))' ;;
     "Send to Ad-Hoc workspace")
-        hyprctl dispatch movetoworkspacesilent special:Ad-Hoc ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="special:Ad-Hoc", follow=false}))' ;;
     "Toggle Entertainment workspace (special)")
-        hyprctl dispatch togglespecialworkspace Entertainment ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.workspace.toggle_special("Entertainment"))' ;;
     "Send to Entertainment workspace")
-        hyprctl dispatch movetoworkspacesilent special:Entertainment ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.window.move({workspace="special:Entertainment", follow=false}))' ;;
     "Toggle/create window group")
-        hyprctl dispatch togglegroup ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.group.toggle())';;
     "Switch to next window in group")
-        hyprctl dispatch changegroupactive f ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.group.next())' ;;
     "Switch to previous window in group")
-        hyprctl dispatch changegroupactive b ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.group.prev())' ;;
     "Lock/unlock group (prevent grouping)")
-        hyprctl dispatch lockgroups toggle ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.group.lock())' ;;
     "Increase volume")
-        hyprctl dispatch exec ~/.config/waybar/scripts/volume-control.sh up ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/volume-control.sh up")' ;;
     "Decrease volume")
-        hyprctl dispatch exec ~/.config/waybar/scripts/volume-control.sh down ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/volume-control.sh down")' ;;
     "Toggle mute")
-        hyprctl dispatch exec "pactl set-sink-mute @DEFAULT_SINK@ toggle" ;;
+        hyprctl repl 'hl.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ toggle")' ;;
     "Toggle media playback")
-        hyprctl dispatch exec "playerctl play-pause" ;;
+        hyprctl repl 'hl.exec_cmd("playerctl play-pause")' ;;
     "Skip to next track")
-        hyprctl dispatch exec "playerctl next" ;;
+        hyprctl repl 'hl.exec_cmd("playerctl next")' ;;
     "Go to previous track")
-        hyprctl dispatch exec "playerctl previous" ;;
+        hyprctl repl 'hl.exec_cmd("playerctl previous")' ;;
     "Increase screen brightness")
-        hyprctl dispatch exec "brightnessctl set +5%" ;;
+        hyprctl repl 'hl.exec_cmd("brightnessctl set +5%")' ;;
     "Decrease screen brightness")
-        hyprctl dispatch exec "brightnessctl set 5%-" ;;
+        hyprctl repl 'hl.exec_cmd("brightnessctl set 5%-")' ;;
     "Screenshot active monitor"|"Screenshot active monitor & annotate")
-        hyprctl dispatch exec ~/.config/hypr/scripts/screenshot_screen_edit.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screenshot_screen_edit.sh")' ;;
     "Screenshot active window"|"Screenshot active window & annotate")
-        hyprctl dispatch exec ~/.config/hypr/scripts/screenshot_window_edit.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screenshot_window_edit.sh")' ;;
     "Screenshot selected region"|"Screenshot selected region & annotate"|"Screenshot region & annotate (Satty/Swappy)")
-        hyprctl dispatch exec ~/.config/hypr/scripts/screenshot_edit.sh ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screenshot_edit.sh")' ;;
     "Universal copy")
-        hyprctl dispatch sendshortcut CTRL Insert ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.send_shortcut({mods={"CTRL"}, key="Insert"}))' ;;
     "Universal paste")
-        hyprctl dispatch sendshortcut SHIFT Insert ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.send_shortcut({mods={"SHIFT"}, key="Insert"}))' ;;
     "Universal cut")
-        hyprctl dispatch sendshortcut CTRL X ;;
+        hyprctl repl 'hl.dispatch(hl.dsp.send_shortcut({mods={"CTRL"}, key="X"}))' ;;
     *)
         notify-send "Keybinding Helper" "Unknown command: $DESCRIPTION" -t 3000
         exit 1

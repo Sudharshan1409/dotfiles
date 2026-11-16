@@ -13,18 +13,18 @@ PINNED=$(echo "$WINDOW_INFO" | jq -r '.pinned')
 
 if [ "$PINNED" = "true" ]; then
     # Currently in PiP mode: restore to normal tiling
-    hyprctl dispatch pin address:$ADDRESS >/dev/null 2>&1
-    hyprctl dispatch togglefloating address:$ADDRESS >/dev/null 2>&1
+    hyprctl repl 'hl.dispatch(hl.dsp.window.pin({window="address:'$ADDRESS'"}))' >/dev/null 2>&1
+    hyprctl repl 'hl.dispatch(hl.dsp.window.float({window="address:'$ADDRESS'"}))' >/dev/null 2>&1
     notify-send "PiP Mode" "Window restored to normal tiling" -i window-restore -t 2000
 else
     # Enable PiP mode
     # 1. Float the window if not already floating
     if [ "$FLOATING" != "true" ]; then
-        hyprctl dispatch togglefloating address:$ADDRESS >/dev/null 2>&1
+        hyprctl repl 'hl.dispatch(hl.dsp.window.float({window="address:'$ADDRESS'"}))' >/dev/null 2>&1
     fi
 
     # 2. Pin the window across all workspaces
-    hyprctl dispatch pin address:$ADDRESS >/dev/null 2>&1
+    hyprctl repl 'hl.dispatch(hl.dsp.window.pin({window="address:'$ADDRESS'"}))' >/dev/null 2>&1
 
     # 3. Calculate target position on active monitor
     MONITOR_INFO=$(hyprctl monitors -j 2>/dev/null | jq '.[] | select(.focused == true)')
@@ -52,8 +52,8 @@ else
     TARGET_X=$(( MON_X + LOGICAL_W - PIP_W - 24 ))
     TARGET_Y=$(( MON_Y + LOGICAL_H - PIP_H - 64 ))
 
-    hyprctl dispatch resizewindowpixel exact ${PIP_W} ${PIP_H},address:$ADDRESS >/dev/null 2>&1
-    hyprctl dispatch movewindowpixel exact ${TARGET_X} ${TARGET_Y},address:$ADDRESS >/dev/null 2>&1
+    hyprctl repl 'hl.dispatch(hl.dsp.window.resize({ x = '${PIP_W}', y = '${PIP_H}', relative = false, window = "address:'$ADDRESS'" }))' >/dev/null 2>&1
+    hyprctl repl 'hl.dispatch(hl.dsp.window.move({ x = '${TARGET_X}', y = '${TARGET_Y}', relative = false, window = "address:'$ADDRESS'" }))' >/dev/null 2>&1
 
     TITLE=$(echo "$WINDOW_INFO" | jq -r '.title // "Window"')
     notify-send "PiP Mode" "Pinned '${TITLE:0:30}' to Picture-in-Picture" -i view-paged -t 2000

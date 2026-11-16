@@ -80,7 +80,7 @@ get_profiles() {
 # Function to get currently active profile name
 get_active_profile() {
     if [ -f "$HOME/.config/hypr/monitors_gen.lua" ]; then
-        local target=$(grep -E "^require" "$HOME/.config/hypr/monitors_gen.lua" 2>/dev/null | cut -d\" -f2 | awk -F. "{print \$2}")
+        local target=$(grep -E "^(require|dofile)" "$HOME/.config/hypr/monitors_gen.lua" 2>/dev/null | awk -F"monitors/" "{print \$2}" | awk -F"\\.lua" "{print \$1}")
         echo "$target"
     fi
 }
@@ -399,7 +399,7 @@ Please choose a different name." \
     # If active profile was renamed, update monitors_gen.lua
     local active_profile=$(get_active_profile)
     if [ "$active_profile" = "$old_name" ]; then
-        echo "require(\"monitors.$new_name\")" > "$HOME/.config/hypr/monitors_gen.lua"
+        echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/$new_name.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
     fi
     
     # Update cache entries mapping old name to new name
@@ -768,7 +768,7 @@ The profile may have been deleted or renamed." \
     fi
     
     # 1. Update the sourced configuration file atomically
-    echo "require(\"monitors.$profile_name\")" > "$HOME/.config/hypr/monitors_gen.lua"
+    echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/$profile_name.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
     
     # 2. Directly applying monitors via hyprctl is disabled for lua, using hyprctl reload
     hyprctl reload >/dev/null 2>&1
@@ -920,7 +920,7 @@ Please select or create a profile." \
                 if [ -f "$CONFIG_DIR/$old_name.lua" ]; then
                     mv "$CONFIG_DIR/$old_name.lua" "$CONFIG_DIR/$new_name.lua"
                     if [ "$(get_active_profile)" = "$old_name" ]; then
-                        echo "require(\"monitors.$new_name\")" > "$HOME/.config/hypr/monitors_gen.lua"
+                        echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/$new_name.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
                     fi
                     if [ -f "$CACHE_FILE" ]; then
                         jq --arg old "$old_name" --arg new "$new_name" \

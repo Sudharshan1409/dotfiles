@@ -9,7 +9,7 @@
 # --gtk-single-instance=false forces a fresh process so those rules can apply.
 
 if hyprctl clients -j 2>/dev/null | jq -e '.[] | select(.workspace.name == "special:scratch")' > /dev/null 2>&1; then
-    hyprctl dispatch togglespecialworkspace scratch
+    hyprctl repl 'hl.dispatch(hl.dsp.workspace.toggle_special("scratch"))'
 else
-    hyprctl dispatch exec "[workspace special:scratch; float; size 85% 80%; center] ghostty --gtk-single-instance=false --class=scratchpad-terminal"
+    hyprctl repl 'hl.exec_cmd("[workspace special:scratch; float; size 85% 80%; center] ghostty --gtk-single-instance=false --class=scratchpad-terminal")'
 fi

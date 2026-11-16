@@ -471,7 +471,7 @@ $PREVIEW_CONF_LINES
 PREVIEW_EOF
 
 log "Applying live preview layout atomically via .preview.lua..."
-echo "require(\"monitors.preview\")" > "$HOME/.config/hypr/monitors_gen.lua"
+echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/preview.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
 hyprctl reload
 hyprctl dismissnotify 10 2>/dev/null || true
 
@@ -606,7 +606,7 @@ log "Profile saved to $PROFILE_FILE"
 
 # Apply profile permanently and cache fingerprint
 if [ -n "$PROFILE_FILE" ] && [ -f "$PROFILE_FILE" ]; then
-    echo "require(\"monitors.$PROFILE_NAME\")" > "$HOME/.config/hypr/monitors_gen.lua"
+    echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/$PROFILE_NAME.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
     save_to_cache "$PROFILE_NAME"
     hyprctl reload
     hyprctl dismissnotify 10 2>/dev/null || true

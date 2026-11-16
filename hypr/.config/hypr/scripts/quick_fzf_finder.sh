@@ -19,7 +19,7 @@ if [ "$1" != "--run" ]; then
     TARGET_W="${TARGET_W:-1600}"
     TARGET_H="${TARGET_H:-900}"
 
-    hyprctl dispatch exec "[float; size ${TARGET_W} ${TARGET_H}; center] ghostty --title=Quick-FZF-Finder --gtk-single-instance=false -e $HOME/.config/hypr/scripts/quick_fzf_finder.sh --run"
+    hyprctl repl 'hl.exec_cmd("[float; size '${TARGET_W}' '${TARGET_H}'; center] ghostty --title=Quick-FZF-Finder --gtk-single-instance=false -e $HOME/.config/hypr/scripts/quick_fzf_finder.sh --run")'
     exit 0
 fi
 
@@ -85,7 +85,7 @@ TARGET="$HOME/$SELECTED"
 # Step 2: Dispatch based on selected target
 if [ -d "$TARGET" ]; then
     # User selected a directory -> open in Yazi in new Ghostty terminal
-    hyprctl dispatch exec "ghostty --working-directory='$TARGET' -e yazi '$TARGET'"
+    hyprctl repl "hl.exec_cmd(\"ghostty --working-directory='${TARGET}' -e yazi '${TARGET}'\")"
 elif [ -f "$TARGET" ]; then
     # User selected a file
     MIME=$(file --mime-type -b "$TARGET" 2>/dev/null)
@@ -110,7 +110,7 @@ elif [ -f "$TARGET" ]; then
 
     if [ -n "$IS_CODE" ]; then
         # Open in Neovim in a new Ghostty terminal
-        hyprctl dispatch exec "ghostty --working-directory='$DIRNAME' -e nvim '$TARGET'"
+        hyprctl repl "hl.exec_cmd(\"ghostty --working-directory='${DIRNAME}' -e nvim '${TARGET}'\")"
     else
         # Open in default associated application
         xdg-open "$TARGET" >/dev/null 2>&1 &
