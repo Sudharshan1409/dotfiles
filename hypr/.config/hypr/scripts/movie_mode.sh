@@ -25,7 +25,7 @@ restore_all() {
     # Turn all DPMS back on
     local all_monitors=$(hyprctl monitors -j | jq -r '.[].name')
     for mon in $all_monitors; do
-        hyprctl repl 'hl.dispatch(hl.dsp.dpms("on", ""$mon""))' "$mon"
+        hyprctl repl "hl.dispatch(hl.dsp.dpms({state='on', monitor='$mon'}))"
     done
     
     # Restart hypridle
@@ -49,16 +49,13 @@ solo_monitor() {
     # 1. Focus the target monitor first
     # 2. Ensure target is ON
     # 3. Turn others OFF
-    local batch_cmd="dispatch focusmonitor $target_name; dispatch dpms on $target_name"
-    
+    hyprctl repl "hl.dispatch(hl.dsp.focus({monitor='$target_name'}))" >/dev/null 2>&1
+    hyprctl repl "hl.dispatch(hl.dsp.dpms({state='on', monitor='$target_name'}))" >/dev/null 2>&1
     for mon in $all_monitors; do
         if [ "$mon" != "$target_name" ]; then
-            batch_cmd="$batch_cmd; dispatch dpms off $mon"
+            hyprctl repl "hl.dispatch(hl.dsp.dpms({state='off', monitor='$mon'}))" >/dev/null 2>&1
         fi
     done
-    
-    # Execute everything in one go to prevent flickering/sequential lag
-    hyprctl --batch "$batch_cmd"
     
     notify-send -a "Movie Mode" -i "video-display" "🎬 Movie Mode Active" "Solo display: $target_name\nScreen lock and other displays disabled."
 }
