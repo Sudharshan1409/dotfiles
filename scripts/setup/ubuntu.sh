@@ -470,10 +470,10 @@ setup_caelestia_shell_ubuntu() {
             sed -i 's/^DoubleSpinBox {/SpinBox {/' components/controls/StyledSpinBox.qml
             sed -i 's/decimals:/\/\/ decimals:/' components/controls/StyledSpinBox.qml
             sed -i '3i import QtQuick.Controls' components/controls/StyledSpinBox.qml
-            sed -i 's/topLeftRadius: itemBg.topLeftRadius/// topLeftRadius: itemBg.topLeftRadius/' modules/nexus/common/ListEditor.qml
-            sed -i 's/topRightRadius: itemBg.topRightRadius/// topRightRadius: itemBg.topRightRadius/' modules/nexus/common/ListEditor.qml
-            sed -i 's/bottomLeftRadius: dialogBg.bottomLeftRadius/// bottomLeftRadius: dialogBg.bottomLeftRadius/' modules/nexus/common/DialogRowButton.qml
-            sed -i 's/bottomRightRadius: dialogBg.bottomRightRadius/// bottomRightRadius: dialogBg.bottomRightRadius/' modules/nexus/common/DialogRowButton.qml
+            sed -i 's/topLeftRadius: itemBg.topLeftRadius/\/\/ topLeftRadius: itemBg.topLeftRadius/' modules/nexus/common/ListEditor.qml
+            sed -i 's/topRightRadius: itemBg.topRightRadius/\/\/ topRightRadius: itemBg.topRightRadius/' modules/nexus/common/ListEditor.qml
+            sed -i 's/bottomLeftRadius: dialogBg.bottomLeftRadius/\/\/ bottomLeftRadius: dialogBg.bottomLeftRadius/' modules/nexus/common/DialogRowButton.qml
+            sed -i 's/bottomRightRadius: dialogBg.bottomRightRadius/\/\/ bottomRightRadius: dialogBg.bottomRightRadius/' modules/nexus/common/DialogRowButton.qml
 sed -i 's/id: char/id: charItem/' modules/lock/center/InputField.qml
             sed -i 's/char./charItem./g' modules/lock/center/InputField.qml
             sed -i 's/target: char$/target: charItem/g' modules/lock/center/InputField.qml
