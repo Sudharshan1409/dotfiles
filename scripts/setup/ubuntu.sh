@@ -365,6 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
+        libcli11-dev
         libxkbcommon-dev libx11-xcb-dev
         qt6-shadertools-dev
         pipx
