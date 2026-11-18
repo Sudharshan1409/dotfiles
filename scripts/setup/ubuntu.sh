@@ -365,6 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
+        qt6-shadertools-dev
         pipx
         python3-build python3-installer python3-hatchling python3-hatch-vcs
         cmake ninja-build golang
