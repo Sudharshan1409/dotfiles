@@ -365,6 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
+        libdrm-dev libegl1-mesa-dev libgbm-dev
         libgbm-dev libegl-dev libegl1-mesa-dev
         libcli11-dev
         libxkbcommon-dev libx11-xcb-dev
