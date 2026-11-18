@@ -75,11 +75,6 @@ hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "C"), hl.dsp.exec_cmd("~/.config/
 -- Process killer
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "P"), hl.dsp.exec_cmd("~/.config/hypr/scripts/process_killer.sh"))
 
--- Window & Display Modes
-
--- Movie mode / Solo display
-hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "M"), hl.dsp.exec_cmd("~/.config/hypr/scripts/movie_mode.sh"))
-
 -- Audio device switcher
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "A"), hl.dsp.exec_cmd("~/.config/hypr/scripts/audio_switcher.sh"))
 

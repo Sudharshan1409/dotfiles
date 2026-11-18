@@ -249,18 +249,6 @@ Quickly toggle between audio input/output devices.
 - Open Caelestia Nexus audio settings for detailed control
 - Menu closes automatically after any action
 
-### Movie Mode (Solo Display)
-
-Turn off secondary monitors and disable screen locking for an immersive movie experience.
-
-**Keybinding:** `Super + Alt + M`
-
-**Features:**
-- Select a "Solo" monitor to stay on
-- Powers off all other monitors via DPMS
-- Enables Caelestia's Wayland idle inhibitor (`caelestia shell idleInhibitor enable`) to prevent screen lock/blanking
-- "Restore" option brings back all displays and restores normal idle timeouts
-
 ### App-Specific Help
 
 Shows keyboard shortcuts for the currently active application.
@@ -312,7 +300,7 @@ Uses Hyprland's built-in `workspace previous` dispatcher; press again to jump ba
 
 ### Focus Mode
 
-A one-key toggle for distraction-free work — similar to Movie Mode but for *coding*, not entertainment (multi-monitor and idle lock are left intact).
+A one-key toggle for distraction-free work (multi-monitor and idle lock are left intact).
 
 **Keybinding:** `Super + Alt + F`
 
@@ -354,7 +342,6 @@ Hardware-accelerated screen recorder powered by Caelestia (`caelestia record` + 
 | `keybinding_menu.sh` | Searchable keybinding help | `Super + /` |
 | `calculator.sh` | Quick calculator | `Super + Alt + C` |
 | `process_killer.sh` | Kill processes | `Super + Alt + P` |
-| `movie_mode.sh` | Solo display for movies | `Super + Alt + M` |
 | `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
 | `focus_mode.sh` | Focus mode (DND + dim) | `Super + Alt + F` |
 | `toggle_keep_awake.sh` | Toggle Keep Awake (idle inhibitor) | `Super + Ctrl + H` |

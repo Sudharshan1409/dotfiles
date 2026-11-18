@@ -39,7 +39,6 @@ cat > "$TEMP_FILE" << 'EOF'
 ⚙️ SYSTEM | Super + Shift + ? | App-specific shortcuts help
 🔧 UTILS | Super + Alt + C | Open calculator
 🔧 UTILS | Super + Alt + P | Kill a process
-🔧 UTILS | Super + Alt + M | Movie Mode (Solo Display)
 🔧 UTILS | Super + Alt + A | Audio device switcher
 🔧 UTILS | Super + Alt + R | Screen recorder (Caelestia utilities / stop)
 🔧 UTILS | Super + Alt + Shift + R | Quick record region with audio (toggle)
@@ -196,8 +195,6 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/calculator.sh")' ;;
     "Kill a process")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/process_killer.sh")' ;;
-    "Movie Mode (Solo Display)")
-        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/movie_mode.sh")' ;;
     "Audio device switcher")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/audio_switcher.sh")' ;;
     "Screen recorder (Caelestia utilities / stop)")
