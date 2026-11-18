@@ -366,12 +366,12 @@ setup_caelestia_shell_ubuntu() {
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
         cmake ninja-build golang
-        qt6-base-dev qt6-declarative-dev qt6-multimedia-dev qtwayland6-dev-tools qt6-wayland
+        qt6-base-dev qt6-declarative-dev qt6-multimedia-dev qt6-wayland-dev qt6-wayland
         wayland-protocols libwayland-dev libpipewire-0.3-dev libpulse-dev libpam0g-dev
         libfftw3-dev libasound2-dev libiniparser-dev libtool automake autoconf
-        libsensors4-dev libddcutil-dev libqalculate-dev libaubio-dev libnm-dev
+        libsensors-dev libddcutil-dev libqalculate-dev libaubio-dev libnm-dev
     )
-    sudo apt-get install -y "${CAEL_DEPS[@]}" 2>/dev/null || true
+    sudo apt-get install -y "${CAEL_DEPS[@]}"
 
     local SRC_DIR="$HOME/src"
     mkdir -p "$SRC_DIR"
