@@ -365,7 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
-        qt6-wayland-private-dev
+        qt6-wayland-private-dev qt6-base-private-dev qt6-declarative-private-dev
         libjemalloc-dev
         libjemalloc-dev
         libpolkit-agent-1-dev
