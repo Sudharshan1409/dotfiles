@@ -365,6 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
+        python3-build python3-installer python3-hatchling python3-hatch-vcs
         cmake ninja-build golang
         qt6-base-dev qt6-declarative-dev qt6-multimedia-dev qt6-wayland-dev qt6-wayland
         wayland-protocols libwayland-dev libpipewire-0.3-dev libpulse-dev libpam0g-dev
@@ -400,8 +401,8 @@ setup_caelestia_shell_ubuntu() {
         git clone https://github.com/caelestia-dots/cli.git "$SRC_DIR/caelestia-cli" >/dev/null 2>&1
         (
             cd "$SRC_DIR/caelestia-cli"
-            go build -o caelestia >/dev/null 2>&1
-            sudo cp caelestia /usr/local/bin/
+            python3 -m build --wheel >/dev/null 2>&1
+            sudo python3 -m installer dist/*.whl >/dev/null 2>&1
         )
         log_ok "Installed caelestia-cli"
     else
