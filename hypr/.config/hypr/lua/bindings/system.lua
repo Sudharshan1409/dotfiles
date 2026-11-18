@@ -85,8 +85,12 @@ hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "A"), hl.dsp.exec_cmd("~/.config/
 
 -- Recording & Focus
 
--- Screen recorder
-hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "R"), hl.dsp.exec_cmd("~/.config/hypr/scripts/screen_recorder.sh"))
+-- Screen recorder (stops active recording or opens Caelestia Quick Utilities)
+hl.bind(
+	KeyCombo(buttons.mainMod, buttons.alt, "R"),
+	hl.dsp.exec_cmd("pidof gpu-screen-recorder >/dev/null && caelestia record -c || caelestia shell drawers toggle utilities")
+)
+hl.bind(KeyCombo(buttons.mainMod, buttons.alt, buttons.shift, "R"), hl.dsp.exec_cmd("caelestia record -sr -c"))
 
 -- Focus mode
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "F"), hl.dsp.exec_cmd("~/.config/hypr/scripts/focus_mode.sh"))

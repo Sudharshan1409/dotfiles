@@ -32,7 +32,6 @@ setup_arch_packages() {
         nautilus
         grim
         slurp
-        wf-recorder
         gpu-screen-recorder
         wl-clipboard
         cliphist

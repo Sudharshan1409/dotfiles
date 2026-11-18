@@ -41,7 +41,8 @@ cat > "$TEMP_FILE" << 'EOF'
 🔧 UTILS | Super + Alt + P | Kill a process
 🔧 UTILS | Super + Alt + M | Movie Mode (Solo Display)
 🔧 UTILS | Super + Alt + A | Audio device switcher
-🔧 UTILS | Super + Alt + R | Screen recorder (toggle)
+🔧 UTILS | Super + Alt + R | Screen recorder (Caelestia utilities / stop)
+🔧 UTILS | Super + Alt + Shift + R | Quick record region with audio (toggle)
 🔧 UTILS | Super + Alt + F | Focus mode (toggle DND + dim inactive)
 🪟 WINDOWS | Super + C | Close active window
 🪟 WINDOWS | Super + V | Toggle floating mode
@@ -202,8 +203,10 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/movie_mode.sh")' ;;
     "Audio device switcher")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/audio_switcher.sh")' ;;
-    "Screen recorder (toggle)")
-        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screen_recorder.sh")' ;;
+    "Screen recorder (Caelestia utilities / stop)")
+        hyprctl repl 'hl.exec_cmd("pidof gpu-screen-recorder >/dev/null && caelestia record -c || caelestia shell drawers toggle utilities")' ;;
+    "Quick record region with audio (toggle)")
+        hyprctl repl 'hl.exec_cmd("caelestia record -sr -c")' ;;
     "Focus mode (toggle DND + dim inactive)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/focus_mode.sh")' ;;
     "Close active window")

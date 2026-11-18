@@ -76,18 +76,15 @@ sudo apt install grim slurp
 ```
 
 ### Screen Recording
-- `wf-recorder`: For recording the screen (used by the screen recorder utility, `Super + Alt + R`).
+- `gpu-screen-recorder`: Hardware-accelerated screen recorder used by Caelestia (`caelestia record` & Quick Utilities, `Super + Alt + R`).
 
 **Arch Linux Installation:**
 ```bash
-sudo pacman -S wf-recorder
+sudo pacman -S gpu-screen-recorder
 ```
 
 **Ubuntu Installation:**
-```bash
-sudo apt install wf-recorder
-```
-**Note:** `wf-recorder` is available in Ubuntu 22.04+ universe repository. On older releases, build from source: https://github.com/ammen99/wf-recorder
+Built automatically from source (`https://repo.dec05eba.com/gpu-screen-recorder`) by `./setup.sh` with `cap_sys_admin+ep` on `gsr-kms-server`.
 
 ### Power Management
 - `power-profiles-daemon`: Provides the `powerprofilesctl` CLI used by the battery monitor for auto-switching between `performance` / `balanced` / `power-saver`.
@@ -355,16 +352,16 @@ A toggleable floating Ghostty terminal on a dedicated `special:scratch` workspac
 
 ### Screen Recorder
 
-Toggle-based screen recorder built on `wf-recorder`.
+Hardware-accelerated screen recorder powered by Caelestia (`caelestia record` + `gpu-screen-recorder`).
 
-**Keybinding:** `Super + Alt + R`
+**Keybindings:**
+- `Super + Alt + R` — Opens Caelestia Quick Utilities when idle; stops & saves active recording when recording
+- `Super + Alt + Shift + R` — Instant toggle for region recording with system audio (`caelestia record -sr -c`)
 
 **Features:**
-- When idle, opens a rofi menu: region / active window / full screen, each with optional audio
-- When already recording, the same key stops and finalizes the file
-- Output: `~/Videos/Recordings/screen-<timestamp>.mp4`
-- Stopped recording's full path is auto-copied to the clipboard
-- Audio capture uses the default PulseAudio source (mic by default — set default source to a sink monitor with `pactl set-default-source <sink>.monitor` to capture system audio)
+- Fullscreen / Region modes with optional system audio via Quick Utilities or `caelestia record`
+- Pause/resume, live elapsed timer, and recordings list directly inside Quick Utilities
+- Output: `~/Videos/Recordings/recording_<timestamp>.mp4` (copied to clipboard on stop)
 
 ## Utility Scripts Reference
 
@@ -375,8 +372,7 @@ Toggle-based screen recorder built on `wf-recorder`.
 | `process_killer.sh` | Kill processes | `Super + Alt + P` |
 | `movie_mode.sh` | Solo display for movies | `Super + Alt + M` |
 | `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
-| `screen_recorder.sh` | Screen recorder (toggle) | `Super + Alt + R` |
-| `focus_mode.sh` | Focus mode (DND + hide bar + dim) | `Super + Alt + F` |
+| `focus_mode.sh` | Focus mode (DND + dim) | `Super + Alt + F` |
 | `battery_monitor.sh` | Battery alerts + auto power-profile | _autostart_ |
 | `window_switcher.sh` | MRU window switcher (all workspaces) | `Alt + Tab` |
 | `scratchpad_terminal.sh` | Floating dropdown terminal | `Super + S` |

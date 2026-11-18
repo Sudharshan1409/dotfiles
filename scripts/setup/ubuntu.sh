@@ -66,7 +66,6 @@ setup_ubuntu_packages() {
         nautilus
         grim
         slurp
-        wf-recorder
         wl-clipboard
         cliphist
         tesseract-ocr
