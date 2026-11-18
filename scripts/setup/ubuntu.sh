@@ -365,6 +365,8 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
+        libjemalloc-dev
+        libjemalloc-dev
         libpolkit-agent-1-dev
         libpolkit-gobject-1-dev
         libpolkit-agent-1-dev
