@@ -116,7 +116,7 @@ done
 # ------------------------------------------------------------------------------
 section_header "3. Wayland Desktop Components"
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
-WAYLAND_TOOLS=(hyprland qs caelestia hypridle rofi grim slurp satty cliphist wpctl playerctl brightnessctl)
+WAYLAND_TOOLS=(hyprland qs caelestia gpu-screen-recorder hypridle rofi grim slurp satty cliphist wpctl playerctl brightnessctl)
 for tool in "${WAYLAND_TOOLS[@]}"; do
     if command -v "$tool" >/dev/null 2>&1; then
         check_pass "Tool available: $tool"

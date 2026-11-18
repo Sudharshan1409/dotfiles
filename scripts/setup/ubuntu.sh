@@ -397,9 +397,36 @@ setup_caelestia_shell_ubuntu() {
         python3-hatchling
         python3-hatch-vcs
         cmake
+        meson
         ninja-build
         golang
+        libavcodec-dev
+        libavformat-dev
+        libavutil-dev
+        libavfilter-dev
+        libswresample-dev
+        libva-dev
+        libcap-dev
+        libcap2-bin
+        libdbus-1-dev
+        libvulkan-dev
+        libx11-dev
+        libxcomposite-dev
+        libxrandr-dev
+        libxdamage-dev
+        libxfixes-dev
+        mesa-va-drivers
     )
+
+    # Include Intel VAAPI hardware video encode driver if neither variant is installed yet
+    if ! dpkg-query -W -f='${Status}' intel-media-va-driver 2>/dev/null | grep -q "install ok installed" && \
+       ! dpkg-query -W -f='${Status}' intel-media-va-driver-non-free 2>/dev/null | grep -q "install ok installed"; then
+        if apt-cache show intel-media-va-driver-non-free >/dev/null 2>&1; then
+            CAEL_DEPS+=(intel-media-va-driver-non-free)
+        elif apt-cache show intel-media-va-driver >/dev/null 2>&1; then
+            CAEL_DEPS+=(intel-media-va-driver)
+        fi
+    fi
 
     local MISSING_CAEL_DEPS=()
     for pkg in "${CAEL_DEPS[@]}"; do
@@ -662,7 +689,40 @@ EOF
         log_ok "Configured /usr/local/bin/caelestia-shell wrapper"
     fi
 
-    # 10. Configure Caelestia wallpaper directory & Celsius weather units idempotently
+    # 10. Build and install gpu-screen-recorder (used by Caelestia screen recorder)
+    mkdir -p "$HOME/Videos/Recordings"
+    if ! command -v gpu-screen-recorder >/dev/null 2>&1 || ! command -v gsr-kms-server >/dev/null 2>&1; then
+        log_info "Building gpu-screen-recorder from source..."
+        rm -rf "$SRC_DIR/gpu-screen-recorder"
+        if git clone --depth 1 https://repo.dec05eba.com/gpu-screen-recorder "$SRC_DIR/gpu-screen-recorder" >/dev/null 2>&1 || \
+           git clone --depth 1 https://github.com/dec05eba/gpu-screen-recorder.git "$SRC_DIR/gpu-screen-recorder" >/dev/null 2>&1; then
+            (
+                set -e
+                cd "$SRC_DIR/gpu-screen-recorder"
+                meson setup build --prefix=/usr/local --buildtype=release -Dstrip=true -Dsystemd=false >/dev/null
+                ninja -C build >/dev/null
+                sudo ninja -C build install >/dev/null
+            )
+            log_ok "Installed gpu-screen-recorder"
+        else
+            log_warn "Failed to clone gpu-screen-recorder source repository"
+        fi
+    else
+        log_skip "gpu-screen-recorder already installed"
+    fi
+
+    # Ensure gsr-kms-server has cap_sys_admin+ep for passwordless monitor capture
+    local GSR_KMS_BIN
+    GSR_KMS_BIN="$(command -v gsr-kms-server 2>/dev/null || true)"
+    if [ -n "$GSR_KMS_BIN" ] && [ -x /usr/sbin/getcap ] && [ -x /usr/sbin/setcap ]; then
+        if ! /usr/sbin/getcap "$GSR_KMS_BIN" 2>/dev/null | grep -q "cap_sys_admin"; then
+            log_info "Granting cap_sys_admin+ep to $GSR_KMS_BIN..."
+            sudo /usr/sbin/setcap cap_sys_admin+ep "$GSR_KMS_BIN"
+            log_ok "Configured cap_sys_admin+ep on gsr-kms-server"
+        fi
+    fi
+
+    # 11. Configure Caelestia wallpaper directory & Celsius weather units idempotently
     mkdir -p "$HOME/.config/caelestia"
     if [ ! -f "$HOME/.config/caelestia/shell.json" ]; then
         printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  },\n  "services": {\n    "weatherUnits": "Celsius"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"

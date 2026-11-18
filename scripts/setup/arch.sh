@@ -33,6 +33,7 @@ setup_arch_packages() {
         grim
         slurp
         wf-recorder
+        gpu-screen-recorder
         wl-clipboard
         cliphist
         tesseract
@@ -219,8 +220,8 @@ setup_caelestia_shell_arch() {
         fi
     fi
 
-    # Configure Caelestia wallpaper directory & Celsius weather units idempotently
-    mkdir -p "$HOME/.config/caelestia"
+    # Configure Caelestia wallpaper directory, recordings dir & Celsius weather units idempotently
+    mkdir -p "$HOME/.config/caelestia" "$HOME/Videos/Recordings"
     if [ ! -f "$HOME/.config/caelestia/shell.json" ]; then
         printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  },\n  "services": {\n    "weatherUnits": "Celsius"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"
         log_ok "Configured Caelestia shell.json (wallpaperDir & Celsius weather)"
