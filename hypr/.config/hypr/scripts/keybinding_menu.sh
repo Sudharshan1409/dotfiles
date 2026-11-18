@@ -30,7 +30,9 @@ cat > "$TEMP_FILE" << 'EOF'
 ⚙️ SYSTEM | Super + Ctrl + S | Suspend the system
 ⚙️ SYSTEM | Super + Ctrl + H | Toggle screen lock on idle
 ⚙️ SYSTEM | Super + Ctrl + X | Open power menu
-⚙️ SYSTEM | Super + Ctrl + W | Change to random wallpaper
+⚙️ SYSTEM | Super + Ctrl + W | Open wallpaper picker (live preview)
+⚙️ SYSTEM | Super + Ctrl + Shift + W | Change to random wallpaper
+⚙️ SYSTEM | Super + Ctrl + , | Open Caelestia settings (Nexus)
 ⚙️ SYSTEM | Super + Ctrl + D | Open monitor profile manager
 ⚙️ SYSTEM | Super + Ctrl + Shift + D | Auto-apply monitor profile
 ⚙️ SYSTEM | Super + Shift + T | Extract text from screen (OCR)
@@ -183,8 +185,13 @@ case "$DESCRIPTION" in
     "Open power menu")
         # hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/power-menu.sh")' ;;
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle session")' ;;
+    "Open wallpaper picker (live preview)")
+        hyprctl repl 'hl.exec_cmd("caelestia shell wallpaper picker || caelestia shell nexus open")' ;;
     "Change to random wallpaper")
-        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh")' ;;
+        # hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia wallpaper -r ~/.config/backgrounds -n -N")' ;;
+    "Open Caelestia settings (Nexus)")
+        hyprctl repl 'hl.exec_cmd("caelestia shell nexus open")' ;;
     "Open monitor profile manager")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/monitor_profile_manager.sh menu")' ;;
     "Auto-apply monitor profile")

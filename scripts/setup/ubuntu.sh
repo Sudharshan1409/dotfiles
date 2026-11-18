@@ -551,8 +551,104 @@ setup_caelestia_shell_ubuntu() {
             sed -i 's/char\.index/charItem.index/g' modules/lock/center/InputField.qml
             sed -i 's/target: char$/target: charItem/g' modules/lock/center/InputField.qml
             sed -i 's/charShape/charItemShape/g' modules/lock/center/InputField.qml
-            # Allow Left/Right arrow navigation in horizontal launcher wallpaper carousel
-            sed -i '/Keys\.onDownPressed: list\.currentList?\.incrementCurrentIndex()/a \        Keys.onLeftPressed: event => { if (list.showWallpapers) { list.currentList?.decrementCurrentIndex(); event.accepted = true; } else { event.accepted = false; } }\n        Keys.onRightPressed: event => { if (list.showWallpapers) { list.currentList?.incrementCurrentIndex(); event.accepted = true; } else { event.accepted = false; } }' modules/launcher/Content.qml
+            # Allow Left/Right arrow navigation & direct 'caelestia shell wallpaper picker' IPC
+            python3 - <<'PY'
+from pathlib import Path
+
+wall_p = Path("services/Wallpapers.qml")
+w = wall_p.read_text()
+if "openPickerRequested" not in w:
+    w = w.replace(
+        "    property bool showPreview: false\n",
+        "    property bool showPreview: false\n    property bool openPickerRequested: false\n",
+        1,
+    )
+    w = w.replace(
+        '        target: "wallpaper"',
+        '''        function picker(): void {
+            const screenState = ShellState.forActive();
+            if (!screenState)
+                return;
+            if (screenState.launcher) {
+                const search = ShellState.componentsForActive()?.find("launcherSearch", null);
+                if (search && search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)) {
+                    screenState.launcher = false;
+                    return;
+                }
+                if (search) {
+                    search.text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                    search.forceActiveFocus();
+                    return;
+                }
+            }
+            root.openPickerRequested = true;
+            screenState.launcher = true;
+        }
+
+        target: "wallpaper"''',
+        1,
+    )
+    wall_p.write_text(w)
+
+cont_p = Path("modules/launcher/Content.qml")
+c = cont_p.read_text()
+if "onLeftPressed" not in c:
+    c = c.replace(
+        "        Keys.onDownPressed: list.currentList?.incrementCurrentIndex()",
+        """        Keys.onDownPressed: list.currentList?.incrementCurrentIndex()
+        Keys.onLeftPressed: event => {
+            if (list.showWallpapers) {
+                list.currentList?.decrementCurrentIndex();
+                event.accepted = true;
+            } else {
+                event.accepted = false;
+            }
+        }
+        Keys.onRightPressed: event => {
+            if (list.showWallpapers) {
+                list.currentList?.incrementCurrentIndex();
+                event.accepted = true;
+            } else {
+                event.accepted = false;
+            }
+        }""",
+        1,
+    )
+if "openPickerRequested" not in c:
+    c = c.replace(
+        '        objectName: "launcherSearch"',
+        '        objectName: "launcherSearch"\n        text: Wallpapers.openPickerRequested ? `${GlobalConfig.launcher.actionPrefix}wallpaper ` : ""',
+        1,
+    )
+    c = c.replace(
+        """        Component.onCompleted: forceActiveFocus()
+
+        Connections {
+            function onLauncherChanged(): void {
+                if (!root.screenState.launcher)
+                    search.text = "";
+            }""",
+        """        Component.onCompleted: {
+            if (Wallpapers.openPickerRequested) {
+                text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                Wallpapers.openPickerRequested = false;
+            }
+            forceActiveFocus();
+        }
+
+        Connections {
+            function onLauncherChanged(): void {
+                if (!root.screenState.launcher) {
+                    search.text = "";
+                } else if (Wallpapers.openPickerRequested) {
+                    Wallpapers.openPickerRequested = false;
+                    search.text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                }
+            }""",
+        1,
+    )
+cont_p.write_text(c)
+PY
 
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_QSCONFDIR="$CAEL_CONF" -DINSTALL_QMLDIR="$QML_DIR" >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1

@@ -32,8 +32,17 @@ hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "H"), hl.dsp.exec_cmd("~/.config
 -- hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "X"), hl.dsp.exec_cmd("~/.config/waybar/scripts/power-menu.sh"))
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "X"), hl.dsp.exec_cmd("caelestia shell drawers toggle session"))
 
--- Set wallpaper
-hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "W"), hl.dsp.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh"))
+-- Wallpaper & Caelestia Settings
+-- hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "W"), hl.dsp.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh"))
+hl.bind(
+	KeyCombo(buttons.mainMod, buttons.ctrl, "W"),
+	hl.dsp.exec_cmd("caelestia shell wallpaper picker || caelestia shell nexus open")
+)
+hl.bind(
+	KeyCombo(buttons.mainMod, buttons.ctrl, buttons.shift, "W"),
+	hl.dsp.exec_cmd("caelestia wallpaper -r ~/.config/backgrounds -n -N")
+)
+hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "comma"), hl.dsp.exec_cmd("caelestia shell nexus open"))
 
 -- Monitor Profile Manager
 
