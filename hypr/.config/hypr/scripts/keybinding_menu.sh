@@ -28,7 +28,7 @@ cat > "$TEMP_FILE" << 'EOF'
 ⚙️ SYSTEM | Super + Ctrl + R | Reload Hyprland configuration
 ⚙️ SYSTEM | Super + Ctrl + L | Lock the screen
 ⚙️ SYSTEM | Super + Ctrl + S | Suspend the system
-⚙️ SYSTEM | Super + Ctrl + H | Toggle screen lock on idle
+⚙️ SYSTEM | Super + Ctrl + H | Toggle Keep Awake (idle inhibitor)
 ⚙️ SYSTEM | Super + Ctrl + X | Open power menu
 ⚙️ SYSTEM | Super + Ctrl + W | Open wallpaper picker (live preview)
 ⚙️ SYSTEM | Super + Ctrl + Shift + W | Change to random wallpaper
@@ -180,7 +180,7 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("caelestia shell lock lock")' ;;
     "Suspend the system")
         hyprctl repl 'hl.exec_cmd("systemctl suspend")' ;;
-    "Toggle screen lock on idle")
+    "Toggle Keep Awake (idle inhibitor)"|"Toggle screen lock on idle")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh")' ;;
     "Open power menu")
         # hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/power-menu.sh")' ;;
