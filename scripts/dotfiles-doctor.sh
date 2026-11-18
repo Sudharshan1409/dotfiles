@@ -117,7 +117,8 @@ done
 # 3. Core System & Wayland Tools
 # ------------------------------------------------------------------------------
 section_header "3. Wayland Desktop Components"
-WAYLAND_TOOLS=(hyprland waybar swaync hyprlock hypridle rofi grim slurp satty cliphist pamixer playerctl brightnessctl)
+export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
+WAYLAND_TOOLS=(hyprland qs caelestia waybar swaync hyprlock hypridle rofi grim slurp satty cliphist pamixer playerctl brightnessctl)
 for tool in "${WAYLAND_TOOLS[@]}"; do
     if command -v "$tool" >/dev/null 2>&1; then
         check_pass "Tool available: $tool"
@@ -199,6 +200,18 @@ if command -v fc-list >/dev/null 2>&1; then
         check_pass "Font: Symbols Nerd Font installed"
     else
         check_warn "Symbols Nerd Font not detected in font cache"
+    fi
+
+    if fc-list : family | grep -q -i "Material Symbols Rounded"; then
+        check_pass "Font: Material Symbols Rounded installed (Caelestia icons)"
+    else
+        check_warn "Material Symbols Rounded not detected in font cache"
+    fi
+
+    if fc-list : family | grep -q -i "^Rubik"; then
+        check_pass "Font: Rubik installed (Caelestia UI)"
+    else
+        check_warn "Rubik font not detected in font cache"
     fi
 else
     check_warn "fc-list utility not available"

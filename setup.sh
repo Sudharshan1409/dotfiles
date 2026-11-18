@@ -119,13 +119,13 @@ case "$OS_TYPE" in
     ubuntu|debian)
         # shellcheck disable=SC1091
         source "$DOTFILES_DIR/scripts/setup/ubuntu.sh"
-        TOTAL_STEPS=23
+        TOTAL_STEPS=24
         OS_DISPLAY_NAME="Ubuntu"
         ;;
     arch)
         # shellcheck disable=SC1091
         source "$DOTFILES_DIR/scripts/setup/arch.sh"
-        TOTAL_STEPS=19
+        TOTAL_STEPS=20
         OS_DISPLAY_NAME="Arch Linux"
         ;;
     *)
