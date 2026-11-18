@@ -219,11 +219,20 @@ setup_caelestia_shell_arch() {
         fi
     fi
 
-    # Configure Caelestia wallpaper directory (~/.config/backgrounds) idempotently
+    # Configure Caelestia wallpaper directory & Celsius weather units idempotently
     mkdir -p "$HOME/.config/caelestia"
     if [ ! -f "$HOME/.config/caelestia/shell.json" ]; then
-        printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"
-        log_ok "Configured Caelestia wallpaperDir -> ~/.config/backgrounds"
+        printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  },\n  "services": {\n    "weatherUnits": "Celsius"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"
+        log_ok "Configured Caelestia shell.json (wallpaperDir & Celsius weather)"
+    elif ! grep -q '"weatherUnits"' "$HOME/.config/caelestia/shell.json" 2>/dev/null; then
+        python3 -c '
+import json, pathlib
+p = pathlib.Path.home() / ".config/caelestia/shell.json"
+d = json.loads(p.read_text())
+d.setdefault("paths", {}).setdefault("wallpaperDir", "~/.config/backgrounds")
+d.setdefault("services", {})["weatherUnits"] = "Celsius"
+p.write_text(json.dumps(d, indent=4) + "\n")
+' 2>/dev/null && log_ok "Configured Caelestia weatherUnits -> Celsius"
     fi
     if [ ! -f "$HOME/.config/caelestia/cli.json" ]; then
         printf '{\n  "theme": {\n    "enableDiscord": false,\n    "enableChromium": false\n  }\n}\n' > "$HOME/.config/caelestia/cli.json"
