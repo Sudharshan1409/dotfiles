@@ -355,3 +355,118 @@ setup_ubuntu_displaylink() {
         fi
     fi
 }
+setup_caelestia_shell_ubuntu() {
+    step_header "Verifying Caelestia Shell (Desktop UI) & Dependencies"
+
+    if command -v caelestia-shell >/dev/null 2>&1 && command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
+        log_skip "Caelestia Shell and its core components are already installed"
+        return
+    fi
+
+    log_info "Installing build dependencies via APT..."
+    local CAEL_DEPS=(
+        cmake ninja-build golang
+        qt6-base-dev qt6-declarative-dev qt6-multimedia-dev qtwayland6-dev-tools qt6-wayland
+        wayland-protocols libwayland-dev libpipewire-0.3-dev libpulse-dev libpam0g-dev
+        libfftw3-dev libasound2-dev libiniparser-dev libtool automake autoconf
+        libsensors4-dev libddcutil-dev libqalculate-dev libaubio-dev libnm-dev
+    )
+    sudo apt-get install -y "${CAEL_DEPS[@]}" 2>/dev/null || true
+
+    local SRC_DIR="$HOME/src"
+    mkdir -p "$SRC_DIR"
+
+    # Build and install cava (shared library)
+    if [ ! -f "/usr/local/lib/libcava.so" ] && [ ! -f "/usr/lib/libcava.so" ]; then
+        log_info "Building libcava from source..."
+        if [ -d "$SRC_DIR/cava" ]; then rm -rf "$SRC_DIR/cava"; fi
+        git clone https://github.com/LukashonakV/cava.git "$SRC_DIR/cava" >/dev/null 2>&1
+        (
+            cd "$SRC_DIR/cava"
+            ./autogen.sh >/dev/null 2>&1
+            ./configure --prefix=/usr/local >/dev/null 2>&1
+            make -j$(nproc) >/dev/null 2>&1
+            sudo make install >/dev/null 2>&1
+        )
+        log_ok "Installed libcava"
+    else
+        log_skip "libcava already installed"
+    fi
+
+    # Build and install caelestia-cli
+    if ! command -v caelestia >/dev/null 2>&1; then
+        log_info "Building caelestia-cli..."
+        if [ -d "$SRC_DIR/caelestia-cli" ]; then rm -rf "$SRC_DIR/caelestia-cli"; fi
+        git clone https://github.com/caelestia-dots/cli.git "$SRC_DIR/caelestia-cli" >/dev/null 2>&1
+        (
+            cd "$SRC_DIR/caelestia-cli"
+            go build -o caelestia >/dev/null 2>&1
+            sudo cp caelestia /usr/local/bin/
+        )
+        log_ok "Installed caelestia-cli"
+    else
+        log_skip "caelestia-cli already installed"
+    fi
+
+    # Build and install m3shapes
+    if [ ! -d "/usr/local/lib/qt6/qml/M3Shapes" ] && [ ! -d "/usr/lib/qt6/qml/M3Shapes" ] && [ ! -d "/usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes" ]; then
+        log_info "Building qt6-m3shapes..."
+        if [ -d "$SRC_DIR/m3shapes" ]; then rm -rf "$SRC_DIR/m3shapes"; fi
+        git clone https://github.com/soramanew/m3shapes.git "$SRC_DIR/m3shapes" >/dev/null 2>&1
+        (
+            cd "$SRC_DIR/m3shapes"
+            cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local >/dev/null 2>&1
+            cmake --build build >/dev/null 2>&1
+            sudo cmake --install build >/dev/null 2>&1
+        )
+        log_ok "Installed qt6-m3shapes"
+    else
+        log_skip "qt6-m3shapes already installed"
+    fi
+
+    # Build and install quickshell
+    if ! command -v qs >/dev/null 2>&1; then
+        log_info "Building quickshell-git..."
+        if [ -d "$SRC_DIR/quickshell" ]; then rm -rf "$SRC_DIR/quickshell"; fi
+        git clone https://git.outfoxxed.me/quickshell/quickshell.git "$SRC_DIR/quickshell" >/dev/null 2>&1
+        (
+            cd "$SRC_DIR/quickshell"
+            cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DQS_USE_X11=OFF >/dev/null 2>&1
+            cmake --build build >/dev/null 2>&1
+            sudo cmake --install build >/dev/null 2>&1
+        )
+        log_ok "Installed quickshell"
+    else
+        log_skip "quickshell already installed"
+    fi
+
+    # Build and install caelestia-shell
+    if ! command -v caelestia-shell >/dev/null 2>&1; then
+        log_info "Building caelestia-shell..."
+        local CAEL_CONF="$HOME/.config/quickshell/caelestia"
+        if [ -d "$CAEL_CONF" ]; then rm -rf "$CAEL_CONF"; fi
+        mkdir -p "$HOME/.config/quickshell"
+        git clone https://github.com/caelestia-dots/shell.git "$CAEL_CONF" >/dev/null 2>&1
+        (
+            cd "$CAEL_CONF"
+            # Get qt6 qml path dynamically for install
+            local QML_DIR=$(qmake6 -query QT_INSTALL_QML 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/qt6/qml")
+            cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_QSCONFDIR="$CAEL_CONF" -DINSTALL_QMLDIR="$QML_DIR" >/dev/null 2>&1
+            cmake --build build >/dev/null 2>&1
+            sudo cmake --install build >/dev/null 2>&1
+            
+            # create wrapper
+            echo '#!/bin/bash' > caelestia-shell
+            echo 'CAELESTIA_LIB_DIR=/usr/local/lib /usr/local/bin/qs -p '"$CAEL_CONF"' "$@"' >> caelestia-shell
+            chmod +x caelestia-shell
+            sudo cp caelestia-shell /usr/local/bin/
+            
+            sudo chown -R $USER:$USER "$CAEL_CONF"
+        )
+        log_ok "Installed caelestia-shell"
+    else
+        log_skip "caelestia-shell already installed"
+    fi
+    
+    sudo ldconfig 2>/dev/null || true
+}

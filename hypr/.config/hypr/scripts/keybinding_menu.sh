@@ -172,7 +172,7 @@ case "$DESCRIPTION" in
     "Reload Hyprland configuration")
         hyprctl repl 'hl.exec_cmd("hyprctl reload && notify-send -i '\''dialog-information'\'' -a '\''Hyprland'\'' '\''Hyprland'\'' '\''Config reloaded successfully!'\''")' ;;
     "Lock the screen")
-        hyprctl repl 'hl.exec_cmd("hyprlock")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia-shell -m lock")' ;;
     "Suspend the system")
         hyprctl repl 'hl.exec_cmd("systemctl suspend")' ;;
     "Toggle screen lock on idle")

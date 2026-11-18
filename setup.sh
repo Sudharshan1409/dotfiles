@@ -146,8 +146,10 @@ init_sudo
 if [ "$OS_TYPE" = "ubuntu" ] || [ "$OS_TYPE" = "debian" ]; then
     setup_ubuntu_packages
     setup_ubuntu_homebrew
+    setup_caelestia_shell_ubuntu
 elif [ "$OS_TYPE" = "arch" ]; then
     setup_arch_packages
+    setup_caelestia_shell_arch
 fi
 
 # 3. Run Common System & Dotfile Configurations

@@ -214,3 +214,26 @@ setup_arch_displaylink() {
         fi
     fi
 }
+setup_caelestia_shell_arch() {
+    step_header "Verifying Caelestia Shell (Desktop UI) & Dependencies"
+    
+    if command -v caelestia-shell >/dev/null 2>&1 && command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
+        log_skip "Caelestia Shell is already installed"
+        return
+    fi
+    
+    local AUR_HELPER=""
+    if command -v yay >/dev/null 2>&1; then
+        AUR_HELPER="yay"
+    elif command -v paru >/dev/null 2>&1; then
+        AUR_HELPER="paru"
+    fi
+    
+    if [ -n "$AUR_HELPER" ]; then
+        log_info "Installing caelestia-shell via $AUR_HELPER..."
+        $AUR_HELPER -S --needed --noconfirm caelestia-shell 2>/dev/null
+        log_ok "Installed caelestia-shell via AUR"
+    else
+        log_warn "AUR helper (yay/paru) not found; please install 'caelestia-shell' manually"
+    fi
+}
