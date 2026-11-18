@@ -29,9 +29,15 @@ if [ -z "$WAYLAND_DISPLAY" ] && [ -S "/run/user/$(id -u)/wayland-0" ]; then
     export WAYLAND_DISPLAY="wayland-0"
 fi
 
-# Wait for swaync to be ready (notification daemon)
+# Wait for notification daemon (Caelestia / Quickshell or swaync) to be ready
+# for i in {1..30}; do
+#     if pgrep -x "swaync" > /dev/null; then
+#         break
+#     fi
+#     sleep 0.5
+# done
 for i in {1..30}; do
-    if pgrep -x "swaync" > /dev/null; then
+    if pgrep -x "quickshell" > /dev/null || pgrep -x "qs" > /dev/null || pgrep -x "swaync" > /dev/null; then
         break
     fi
     sleep 0.5

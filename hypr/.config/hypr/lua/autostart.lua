@@ -9,7 +9,7 @@ hl.on("hyprland.start", function()
 
 -- Core desktop services
     -- hl.exec_cmd("waybar & swaync & hypridle & (which swww-daemon >/dev/null 2>&1 && swww-daemon || hyprpaper)")
-    hl.exec_cmd("caelestia-shell & hypridle")
+    hl.exec_cmd("caelestia shell -d & hypridle")
     hl.exec_cmd("hyprctl setcursor catppuccin-mocha-dark-cursors 24")
 
 -- Polkit authentication agent

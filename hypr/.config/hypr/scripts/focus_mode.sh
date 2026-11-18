@@ -14,8 +14,9 @@ STATE_FILE="/tmp/focus_mode.state"
 
 if [ -f "$STATE_FILE" ]; then
     # --- Disable focus mode ---
-    pgrep swaync >/dev/null && swaync-client -df >/dev/null 2>&1
-    pgrep waybar >/dev/null && pkill -SIGUSR1 waybar
+    # swaync-client -df >/dev/null 2>&1
+    # pkill -SIGUSR1 waybar
+    caelestia shell notifs disableDnd >/dev/null 2>&1
     hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive false")' >/dev/null
     rm -f "$STATE_FILE"
 
@@ -32,8 +33,9 @@ else
     # Small delay so the toast renders before DND mutes the channel.
     sleep 0.2
 
-    pgrep swaync >/dev/null && swaync-client -dn >/dev/null 2>&1
-    pgrep waybar >/dev/null && pkill -SIGUSR1 waybar
+    # swaync-client -dn >/dev/null 2>&1
+    # pkill -SIGUSR1 waybar
+    caelestia shell notifs enableDnd >/dev/null 2>&1
     hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive true")' >/dev/null
 
     touch "$STATE_FILE"

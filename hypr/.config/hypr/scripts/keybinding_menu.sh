@@ -146,7 +146,8 @@ case "$DESCRIPTION" in
     "Toggle scratchpad terminal")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/scratchpad_terminal.sh")' ;;
     "Open application launcher (Rofi)")
-        hyprctl repl 'hl.exec_cmd("rofi -show drun -show-icons -display-drune '\''Apps'\'' -theme ~/.config/rofi/launcher-elegant.rasi")' ;;
+        # hyprctl repl 'hl.exec_cmd("rofi -show drun -show-icons -display-drune '\''Apps'\'' -theme ~/.config/rofi/launcher-elegant.rasi")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle launcher")' ;;
     "Quick FZF Finder (Folders in Yazi / Files in Neovim)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/quick_fzf_finder.sh")' ;;
     "Open Spotify")
@@ -162,7 +163,8 @@ case "$DESCRIPTION" in
     "Open Bluetooth menu")
         hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/launch_bluetooth.sh")' ;;
     "Open notification center")
-        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/swaync-client.sh")' ;;
+        # hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/swaync-client.sh")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle sidebar")' ;;
     "Show workspace overview")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/workspace_overview.sh")' ;;
     "Show workspace overview (alternate)")
@@ -172,13 +174,15 @@ case "$DESCRIPTION" in
     "Reload Hyprland configuration")
         hyprctl repl 'hl.exec_cmd("hyprctl reload && notify-send -i '\''dialog-information'\'' -a '\''Hyprland'\'' '\''Hyprland'\'' '\''Config reloaded successfully!'\''")' ;;
     "Lock the screen")
-        hyprctl repl 'hl.exec_cmd("caelestia-shell -m lock")' ;;
+        # hyprctl repl 'hl.exec_cmd("hyprlock")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia shell lock lock")' ;;
     "Suspend the system")
         hyprctl repl 'hl.exec_cmd("systemctl suspend")' ;;
     "Toggle screen lock on idle")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh")' ;;
     "Open power menu")
-        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/power-menu.sh")' ;;
+        # hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/power-menu.sh")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle session")' ;;
     "Change to random wallpaper")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh")' ;;
     "Open monitor profile manager")

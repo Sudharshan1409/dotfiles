@@ -4,3 +4,4 @@ monitor_config
 .cache/
 .logs/
 *.log
+scheme/

@@ -16,6 +16,13 @@ local currentPath = os.getenv("PATH") or ""
 
 hl.env("PATH", home .. "/.local/bin:/home/linuxbrew/.linuxbrew/bin:" .. currentPath)
 
+-- Point Caelestia Shell to /usr/local/lib/caelestia when compiled locally (Ubuntu)
+local caelestiaLocalLib = io.open("/usr/local/lib/caelestia/version", "r")
+if caelestiaLocalLib then
+	caelestiaLocalLib:close()
+	hl.env("CAELESTIA_LIB_DIR", "/usr/local/lib/caelestia")
+end
+
 -- -----------------------------------------------------------------------------
 -- Force all apps to use Wayland
 -- -----------------------------------------------------------------------------

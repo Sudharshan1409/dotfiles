@@ -19,7 +19,8 @@ hl.bind(KeyCombo(buttons.mainMod, buttons.shift, "F"), hl.dsp.exec_cmd("~/.confi
 hl.bind(KeyCombo(buttons.mainMod, buttons.space), hl.dsp.exec_cmd(commands.menu))
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "V"), hl.dsp.exec_cmd("~/.config/hypr/scripts/clipboard.sh"))
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "B"), hl.dsp.exec_cmd("~/.config/waybar/scripts/launch_bluetooth.sh"))
-hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "N"), hl.dsp.exec_cmd("~/.config/waybar/scripts/swaync-client.sh"))
+-- hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "N"), hl.dsp.exec_cmd("~/.config/waybar/scripts/swaync-client.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "N"), hl.dsp.exec_cmd("caelestia shell drawers toggle sidebar"))
 --
 -- --- Workspace Overview ---
 --

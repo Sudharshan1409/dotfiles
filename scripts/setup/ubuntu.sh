@@ -358,48 +358,120 @@ setup_ubuntu_displaylink() {
 setup_caelestia_shell_ubuntu() {
     step_header "Verifying Caelestia Shell (Desktop UI) & Dependencies"
 
-    if command -v caelestia-shell >/dev/null 2>&1 && command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
-        log_skip "Caelestia Shell and its core components are already installed"
-        return
-    fi
+    export PATH="$HOME/.local/bin:$PATH"
 
-    log_info "Installing build dependencies via APT..."
+    # 1. Verify APT build & runtime dependencies idempotently
     local CAEL_DEPS=(
-        qt6-image-formats-plugins ddcutil
-        qt6-wayland-private-dev qt6-base-private-dev qt6-declarative-private-dev libunwind-dev
-        libjemalloc-dev
+        qt6-image-formats-plugins
+        ddcutil
+        qt6-wayland-private-dev
+        qt6-base-private-dev
+        qt6-declarative-private-dev
+        qt6-shadertools-dev
+        qt6-base-dev
+        qt6-declarative-dev
+        qt6-multimedia-dev
+        qt6-wayland-dev
+        qt6-wayland
+        libunwind-dev
         libjemalloc-dev
         libpolkit-agent-1-dev
         libpolkit-gobject-1-dev
-        libpolkit-agent-1-dev
-        libdrm-dev libegl1-mesa-dev libgbm-dev
-        libgbm-dev libegl-dev libegl1-mesa-dev
+        libdrm-dev
+        libegl-dev
+        libegl1-mesa-dev
+        libgbm-dev
         libcli11-dev
-        libxkbcommon-dev libx11-xcb-dev
-        qt6-shadertools-dev
+        libxkbcommon-dev
+        libx11-xcb-dev
+        wayland-protocols
+        libwayland-dev
+        libpipewire-0.3-dev
+        libpulse-dev
+        libpam0g-dev
+        libfftw3-dev
+        libasound2-dev
+        libiniparser-dev
+        libtool
+        automake
+        autoconf
+        libsensors-dev
+        libddcutil-dev
+        libqalculate-dev
+        libaubio-dev
+        libnm-dev
         pipx
-        python3-build python3-installer python3-hatchling python3-hatch-vcs
-        cmake ninja-build golang
-        qt6-base-dev qt6-declarative-dev qt6-multimedia-dev qt6-wayland-dev qt6-wayland
-        wayland-protocols libwayland-dev libpipewire-0.3-dev libpulse-dev libpam0g-dev
-        libfftw3-dev libasound2-dev libiniparser-dev libtool automake autoconf
-        libsensors-dev libddcutil-dev libqalculate-dev libaubio-dev libnm-dev
+        python3-build
+        python3-installer
+        python3-hatchling
+        python3-hatch-vcs
+        cmake
+        ninja-build
+        golang
     )
-    sudo apt-get install -y "${CAEL_DEPS[@]}"
+
+    local MISSING_CAEL_DEPS=()
+    for pkg in "${CAEL_DEPS[@]}"; do
+        if ! dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed"; then
+            MISSING_CAEL_DEPS+=("$pkg")
+        fi
+    done
+
+    if [ ${#MISSING_CAEL_DEPS[@]} -eq 0 ]; then
+        log_skip "All ${#CAEL_DEPS[@]} Caelestia APT dependencies are already installed"
+    else
+        log_info "Installing ${#MISSING_CAEL_DEPS[@]} missing Caelestia APT package(s)..."
+        sudo apt-get install -y "${MISSING_CAEL_DEPS[@]}"
+        log_ok "Installed missing Caelestia APT dependencies"
+    fi
+
+    # 2. Install required variable fonts (Material Symbols Rounded & Rubik) idempotently
+    local CAEL_FONT_DIR="$HOME/.local/share/fonts/caelestia"
+    if [ -f "$CAEL_FONT_DIR/MaterialSymbolsRounded.ttf" ] && [ -f "$CAEL_FONT_DIR/Rubik.ttf" ] && [ -f "$CAEL_FONT_DIR/Rubik-Italic.ttf" ]; then
+        log_skip "Caelestia required fonts (Material Symbols Rounded & Rubik) are already installed"
+    else
+        log_info "Downloading Caelestia variable fonts (Material Symbols Rounded & Rubik)..."
+        mkdir -p "$CAEL_FONT_DIR"
+        [ -f "$CAEL_FONT_DIR/MaterialSymbolsRounded.ttf" ] || curl -fsSL \
+            "https://raw.githubusercontent.com/google/material-design-icons/master/variablefont/MaterialSymbolsRounded%5BFILL%2CGRAD%2Copsz%2Cwght%5D.ttf" \
+            -o "$CAEL_FONT_DIR/MaterialSymbolsRounded.ttf"
+        [ -f "$CAEL_FONT_DIR/Rubik.ttf" ] || curl -fsSL \
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/rubik/Rubik%5Bwght%5D.ttf" \
+            -o "$CAEL_FONT_DIR/Rubik.ttf"
+        [ -f "$CAEL_FONT_DIR/Rubik-Italic.ttf" ] || curl -fsSL \
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/rubik/Rubik-Italic%5Bwght%5D.ttf" \
+            -o "$CAEL_FONT_DIR/Rubik-Italic.ttf"
+        fc-cache -f "$CAEL_FONT_DIR" >/dev/null 2>&1 || true
+        log_ok "Installed Caelestia variable fonts"
+    fi
+
+    # 3. Mask swaync systemd user service so D-Bus doesn't hijack org.freedesktop.Notifications
+    # (To restore SwayNC later: systemctl --user unmask swaync.service && systemctl --user enable --now swaync.service)
+    if command -v systemctl >/dev/null 2>&1; then
+        if [ "$(systemctl --user is-enabled swaync.service 2>/dev/null || true)" != "masked" ]; then
+            log_info "Masking swaync.service so Caelestia Shell owns org.freedesktop.Notifications..."
+            systemctl --user disable --now swaync.service >/dev/null 2>&1 || true
+            systemctl --user mask swaync.service >/dev/null 2>&1 || true
+            pkill -x swaync 2>/dev/null || true
+            log_ok "Masked swaync.service (use 'systemctl --user unmask swaync.service' to restore)"
+        else
+            log_skip "swaync.service is already masked"
+        fi
+    fi
 
     local SRC_DIR="$HOME/src"
     mkdir -p "$SRC_DIR"
 
-    # Build and install cava (shared library)
+    # 4. Build and install cava (shared library)
     if [ ! -f "/usr/local/lib/libcava.so" ] && [ ! -f "/usr/lib/libcava.so" ]; then
         log_info "Building libcava from source..."
-        if [ -d "$SRC_DIR/cava" ]; then rm -rf "$SRC_DIR/cava"; fi
+        rm -rf "$SRC_DIR/cava"
         git clone https://github.com/LukashonakV/cava.git "$SRC_DIR/cava" >/dev/null 2>&1
         (
             cd "$SRC_DIR/cava"
             ./autogen.sh >/dev/null 2>&1
             ./configure --prefix=/usr/local >/dev/null 2>&1
-            make -j$(nproc) >/dev/null 2>&1
+            make -j"$(nproc)" >/dev/null 2>&1
             sudo make install >/dev/null 2>&1
         )
         log_ok "Installed libcava"
@@ -407,14 +479,13 @@ setup_caelestia_shell_ubuntu() {
         log_skip "libcava already installed"
     fi
 
-    # Build and install caelestia-cli
+    # 5. Build and install caelestia-cli
     if ! command -v caelestia >/dev/null 2>&1; then
         log_info "Building caelestia-cli..."
-        if [ -d "$SRC_DIR/caelestia-cli" ]; then rm -rf "$SRC_DIR/caelestia-cli"; fi
+        rm -rf "$SRC_DIR/caelestia-cli"
         git clone https://github.com/caelestia-dots/cli.git "$SRC_DIR/caelestia-cli" >/dev/null 2>&1
         (
             cd "$SRC_DIR/caelestia-cli"
-            # python3 -m build --wheel >/dev/null 2>&1
             pipx install . --force
         )
         log_ok "Installed caelestia-cli"
@@ -422,51 +493,53 @@ setup_caelestia_shell_ubuntu() {
         log_skip "caelestia-cli already installed"
     fi
 
-    # Build and install m3shapes
-    if [ ! -d "/usr/local/lib/qt6/qml/M3Shapes" ] && [ ! -d "/usr/lib/qt6/qml/M3Shapes" ] && [ ! -d "/usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes" ]; then
+    # 6. Build and install qt6-m3shapes
+    local QML_DIR
+    QML_DIR=$(qmake6 -query QT_INSTALL_QML 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/qt6/qml")
+    if [ ! -d "/usr/local/lib/qt6/qml/M3Shapes" ] && [ ! -d "/usr/lib/qt6/qml/M3Shapes" ] && [ ! -d "$QML_DIR/M3Shapes" ]; then
         log_info "Building qt6-m3shapes..."
-        if [ -d "$SRC_DIR/m3shapes" ]; then rm -rf "$SRC_DIR/m3shapes"; fi
+        rm -rf "$SRC_DIR/m3shapes"
         git clone https://github.com/soramanew/m3shapes.git "$SRC_DIR/m3shapes" >/dev/null 2>&1
         (
             cd "$SRC_DIR/m3shapes"
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
-            sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes /usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes
         )
         log_ok "Installed qt6-m3shapes"
     else
         log_skip "qt6-m3shapes already installed"
     fi
+    if [ -d "/usr/local/lib/qt6/qml/M3Shapes" ] && [ ! -e "$QML_DIR/M3Shapes" ]; then
+        sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes "$QML_DIR/M3Shapes"
+    fi
 
-    # Build and install quickshell
+    # 7. Build and install quickshell
     if ! command -v qs >/dev/null 2>&1; then
         log_info "Building quickshell-git..."
-        if [ -d "$SRC_DIR/quickshell" ]; then rm -rf "$SRC_DIR/quickshell"; fi
+        rm -rf "$SRC_DIR/quickshell"
         git clone https://git.outfoxxed.me/quickshell/quickshell.git "$SRC_DIR/quickshell" >/dev/null 2>&1
         (
             cd "$SRC_DIR/quickshell"
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DQS_USE_X11=OFF -DVENDOR_CPPTRACE=ON >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
-            sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes /usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes
         )
         log_ok "Installed quickshell"
     else
         log_skip "quickshell already installed"
     fi
 
-    # Build and install caelestia-shell
-    if ! command -v caelestia-shell >/dev/null 2>&1; then
+    # 8. Build and install caelestia-shell
+    local CAEL_CONF="$HOME/.config/quickshell/caelestia"
+    if [ ! -f "$CAEL_CONF/shell.qml" ] || [ ! -d "$QML_DIR/Caelestia" ] || [ ! -f "/usr/local/lib/caelestia/version" ]; then
         log_info "Building caelestia-shell..."
-        local CAEL_CONF="$HOME/.config/quickshell/caelestia"
-        if [ -d "$CAEL_CONF" ]; then rm -rf "$CAEL_CONF"; fi
+        rm -rf "$CAEL_CONF"
         mkdir -p "$HOME/.config/quickshell"
         git clone https://github.com/caelestia-dots/shell.git "$CAEL_CONF" >/dev/null 2>&1
         (
             cd "$CAEL_CONF"
-            # Get qt6 qml path dynamically for install
-# Patch for Qt 6.10 compatibility
+            # Patch QML files for Ubuntu Qt 6.10 compatibility (Qt < 6.11)
             sed -i 's/^DoubleSpinBox {/SpinBox {/' components/controls/StyledSpinBox.qml
             sed -i 's/decimals:/\/\/ decimals:/' components/controls/StyledSpinBox.qml
             sed -i '3i import QtQuick.Controls' components/controls/StyledSpinBox.qml
@@ -474,28 +547,34 @@ setup_caelestia_shell_ubuntu() {
             sed -i 's/topRightRadius: itemBg.topRightRadius/\/\/ topRightRadius: itemBg.topRightRadius/' modules/nexus/common/ListEditor.qml
             sed -i 's/bottomLeftRadius: dialogBg.bottomLeftRadius/\/\/ bottomLeftRadius: dialogBg.bottomLeftRadius/' modules/nexus/common/DialogRowButton.qml
             sed -i 's/bottomRightRadius: dialogBg.bottomRightRadius/\/\/ bottomRightRadius: dialogBg.bottomRightRadius/' modules/nexus/common/DialogRowButton.qml
-sed -i 's/id: char$/id: charItem/' modules/lock/center/InputField.qml
-            sed -i 's/char\\.index/charItem\.index/g' modules/lock/center/InputField.qml
+            sed -i 's/id: char$/id: charItem/' modules/lock/center/InputField.qml
+            sed -i 's/char\.index/charItem.index/g' modules/lock/center/InputField.qml
             sed -i 's/target: char$/target: charItem/g' modules/lock/center/InputField.qml
             sed -i 's/charShape/charItemShape/g' modules/lock/center/InputField.qml
-            local QML_DIR=$(qmake6 -query QT_INSTALL_QML 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/qt6/qml")
+
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_QSCONFDIR="$CAEL_CONF" -DINSTALL_QMLDIR="$QML_DIR" >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
-            sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes /usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes
-            
-            # create wrapper
-            echo '#!/bin/bash' > caelestia-shell
-            echo 'CAELESTIA_LIB_DIR=/usr/local/lib /usr/local/bin/qs -p '"$CAEL_CONF"' "$@"' >> caelestia-shell
-            chmod +x caelestia-shell
-            sudo cp caelestia-shell /usr/local/bin/
-            
-            sudo chown -R $USER:$USER "$CAEL_CONF"
+            sudo chown -R "$USER:$USER" "$CAEL_CONF"
         )
         log_ok "Installed caelestia-shell"
     else
         log_skip "caelestia-shell already installed"
     fi
-    
+
+    # 9. Ensure /usr/local/bin/caelestia-shell convenience wrapper uses /usr/local/lib/caelestia
+    if [ ! -x "/usr/local/bin/caelestia-shell" ] || ! grep -q "CAELESTIA_LIB_DIR=/usr/local/lib/caelestia" /usr/local/bin/caelestia-shell 2>/dev/null; then
+        log_info "Updating /usr/local/bin/caelestia-shell wrapper..."
+        local TMP_WRAPPER
+        TMP_WRAPPER=$(mktemp)
+        cat > "$TMP_WRAPPER" <<EOF
+#!/bin/bash
+CAELESTIA_LIB_DIR=/usr/local/lib/caelestia /usr/local/bin/qs -p "$CAEL_CONF" "\$@"
+EOF
+        chmod +x "$TMP_WRAPPER"
+        sudo mv "$TMP_WRAPPER" /usr/local/bin/caelestia-shell
+        log_ok "Configured /usr/local/bin/caelestia-shell wrapper"
+    fi
+
     sudo ldconfig 2>/dev/null || true
 }

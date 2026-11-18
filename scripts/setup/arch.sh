@@ -216,24 +216,39 @@ setup_arch_displaylink() {
 }
 setup_caelestia_shell_arch() {
     step_header "Verifying Caelestia Shell (Desktop UI) & Dependencies"
-    
-    if command -v caelestia-shell >/dev/null 2>&1 && command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
-        log_skip "Caelestia Shell is already installed"
+
+    # Mask swaync systemd user service so D-Bus doesn't hijack org.freedesktop.Notifications
+    # (To restore SwayNC later: systemctl --user unmask swaync.service && systemctl --user enable --now swaync.service)
+    if command -v systemctl >/dev/null 2>&1; then
+        if [ "$(systemctl --user is-enabled swaync.service 2>/dev/null || true)" != "masked" ]; then
+            log_info "Masking swaync.service so Caelestia Shell owns org.freedesktop.Notifications..."
+            systemctl --user disable --now swaync.service >/dev/null 2>&1 || true
+            systemctl --user mask swaync.service >/dev/null 2>&1 || true
+            pkill -x swaync 2>/dev/null || true
+            log_ok "Masked swaync.service (use 'systemctl --user unmask swaync.service' to restore)"
+        else
+            log_skip "swaync.service is already masked"
+        fi
+    fi
+
+    if ( [ -f "/etc/xdg/quickshell/caelestia/shell.qml" ] || [ -f "$HOME/.config/quickshell/caelestia/shell.qml" ] ) && \
+       command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
+        log_skip "Caelestia Shell and CLI are already installed"
         return
     fi
-    
+
     local AUR_HELPER=""
     if command -v yay >/dev/null 2>&1; then
         AUR_HELPER="yay"
     elif command -v paru >/dev/null 2>&1; then
         AUR_HELPER="paru"
     fi
-    
+
     if [ -n "$AUR_HELPER" ]; then
-        log_info "Installing caelestia-shell via $AUR_HELPER..."
-        $AUR_HELPER -S --needed --noconfirm caelestia-shell 2>/dev/null
-        log_ok "Installed caelestia-shell via AUR"
+        log_info "Installing caelestia-shell and caelestia-cli via $AUR_HELPER..."
+        $AUR_HELPER -S --needed --noconfirm caelestia-shell caelestia-cli
+        log_ok "Installed caelestia-shell and caelestia-cli via AUR"
     else
-        log_warn "AUR helper (yay/paru) not found; please install 'caelestia-shell' manually"
+        log_warn "AUR helper (yay/paru) not found; please install 'caelestia-shell' and 'caelestia-cli' manually"
     fi
 }
