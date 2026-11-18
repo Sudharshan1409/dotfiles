@@ -365,7 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
-        qt6-image-formats-plugins
+        qt6-image-formats-plugins ddcutil
         qt6-wayland-private-dev qt6-base-private-dev qt6-declarative-private-dev libunwind-dev
         libjemalloc-dev
         libjemalloc-dev
