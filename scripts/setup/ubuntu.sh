@@ -365,7 +365,7 @@ setup_caelestia_shell_ubuntu() {
 
     log_info "Installing build dependencies via APT..."
     local CAEL_DEPS=(
-        qt6-wayland-private-dev qt6-base-private-dev qt6-declarative-private-dev libunwind-dev
+        qt6-wayland-private-dev qt6-base-private-dev qt6-declarative-private-dev libunwind-dev qt6-image-formats-plugins
         libjemalloc-dev
         libjemalloc-dev
         libpolkit-agent-1-dev
@@ -473,6 +473,10 @@ setup_caelestia_shell_ubuntu() {
             sed -i 's/topRightRadius: itemBg.topRightRadius/// topRightRadius: itemBg.topRightRadius/' modules/nexus/common/ListEditor.qml
             sed -i 's/bottomLeftRadius: dialogBg.bottomLeftRadius/// bottomLeftRadius: dialogBg.bottomLeftRadius/' modules/nexus/common/DialogRowButton.qml
             sed -i 's/bottomRightRadius: dialogBg.bottomRightRadius/// bottomRightRadius: dialogBg.bottomRightRadius/' modules/nexus/common/DialogRowButton.qml
+sed -i 's/id: char/id: charItem/' modules/lock/center/InputField.qml
+            sed -i 's/char./charItem./g' modules/lock/center/InputField.qml
+            sed -i 's/target: char$/target: charItem/g' modules/lock/center/InputField.qml
+            sed -i 's/charShape/charItemShape/g' modules/lock/center/InputField.qml
             local QML_DIR=$(qmake6 -query QT_INSTALL_QML 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/qt6/qml")
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_QSCONFDIR="$CAEL_CONF" -DINSTALL_QMLDIR="$QML_DIR" >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
