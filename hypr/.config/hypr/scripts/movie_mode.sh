@@ -1,39 +1,29 @@
 #!/bin/bash
 
 # Movie Mode (Solo Display)
-# Powers off all displays except the selected one via DPMS and stops hypridle.
+# Powers off all displays except the selected one via DPMS and enables Caelestia's idle inhibitor.
 # Uses Rofi for the interface and hyprctl for display control.
 
 ROFI_THEME="$HOME/.config/rofi/monitor-profile.rasi"
+export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
 
 # Function to get active monitors
 get_monitors() {
     hyprctl monitors -j | jq -r '.[] | "\(.name) [\(.description)]"'
 }
 
-# Function to stop hypridle if it's running
-stop_idle() {
-    if pgrep -x "hypridle" > /dev/null; then
-        killall hypridle
-        return 0 # Was running
-    fi
-    return 1 # Was not running
-}
-
-# Function to restore monitors and restart hypridle
+# Function to restore monitors and disable idle inhibitor
 restore_all() {
     # Turn all DPMS back on
     local all_monitors=$(hyprctl monitors -j | jq -r '.[].name')
     for mon in $all_monitors; do
         hyprctl repl "hl.dispatch(hl.dsp.dpms({state='on', monitor='$mon'}))"
     done
-    
-    # Restart hypridle
-    if ! pgrep -x "hypridle" > /dev/null; then
-        hypridle &
-    fi
-    
-    notify-send -a "Movie Mode" -i "video-display" "🎬 Restore Mode" "All displays powered on and screen lock re-enabled."
+
+    # Restore normal Caelestia idle timeouts
+    caelestia shell idleInhibitor disable >/dev/null 2>&1
+
+    notify-send -a "Movie Mode" -i "video-display" "🎬 Restore Mode" "All displays powered on and normal idle lock restored."
 }
 
 # Function to solo a monitor
@@ -41,9 +31,9 @@ solo_monitor() {
     local target_name="$1"
     # Get all monitors (including inactive ones to be thorough)
     local all_monitors=$(hyprctl monitors all -j | jq -r '.[].name')
-    
-    # Stop hypridle for the movie
-    stop_idle
+
+    # Enable Caelestia's native Wayland idle inhibitor for the movie
+    caelestia shell idleInhibitor enable >/dev/null 2>&1
     
     # Build a batch command for Hyprland to execute all at once
     # 1. Focus the target monitor first

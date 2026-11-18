@@ -60,7 +60,6 @@ setup_ubuntu_packages() {
         hyprland
         "$HYPR_GUI_HELPER"
         xdg-desktop-portal-hyprland
-        hypridle
         rofi
         htop
         nautilus
@@ -721,24 +720,51 @@ EOF
         fi
     fi
 
-    # 11. Configure Caelestia wallpaper directory & Celsius weather units idempotently
+    # 11. Configure Caelestia shell.json & cli.json defaults idempotently (preserving user Nexus settings)
     mkdir -p "$HOME/.config/caelestia"
-    if [ ! -f "$HOME/.config/caelestia/shell.json" ]; then
-        printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  },\n  "services": {\n    "weatherUnits": "Celsius"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"
-        log_ok "Configured Caelestia shell.json (wallpaperDir & Celsius weather)"
-    elif ! grep -q '"weatherUnits"' "$HOME/.config/caelestia/shell.json" 2>/dev/null; then
-        python3 -c '
+    python3 - <<'PY' 2>/dev/null && log_ok "Verified Caelestia shell.json & cli.json configuration"
 import json, pathlib
-p = pathlib.Path.home() / ".config/caelestia/shell.json"
-d = json.loads(p.read_text())
-d.setdefault("paths", {}).setdefault("wallpaperDir", "~/.config/backgrounds")
-d.setdefault("services", {})["weatherUnits"] = "Celsius"
-p.write_text(json.dumps(d, indent=4) + "\n")
-' 2>/dev/null && log_ok "Configured Caelestia weatherUnits -> Celsius"
-    fi
-    if [ ! -f "$HOME/.config/caelestia/cli.json" ]; then
-        printf '{\n  "theme": {\n    "enableDiscord": false,\n    "enableChromium": false\n  }\n}\n' > "$HOME/.config/caelestia/cli.json"
-    fi
+
+cael_dir = pathlib.Path.home() / ".config/caelestia"
+
+shell_p = cael_dir / "shell.json"
+try:
+    shell_d = json.loads(shell_p.read_text()) if shell_p.exists() else {}
+except Exception:
+    shell_d = {}
+
+gen = shell_d.setdefault("general", {})
+apps = gen.setdefault("apps", {})
+apps.setdefault("terminal", ["ghostty", "--gtk-single-instance=true", "--shell-integration-features=ssh-env"])
+apps.setdefault("explorer", ["nautilus"])
+apps.setdefault("playback", ["xdg-open"])
+apps.setdefault("audio", ["caelestia", "shell", "nexus", "open"])
+
+idle = gen.setdefault("idle", {})
+idle.setdefault("lockBeforeSleep", True)
+idle.setdefault("inhibitWhenAudio", True)
+idle.setdefault("inhibitWhenCharging", False)
+idle.setdefault("timeouts", [
+    {"timeout": 600, "idleAction": "lock"},
+    {"timeout": 900, "idleAction": "dpms off", "returnAction": "dpms on"},
+])
+
+shell_d.setdefault("paths", {}).setdefault("wallpaperDir", "~/.config/backgrounds")
+shell_d.setdefault("services", {}).setdefault("weatherUnits", "Celsius")
+shell_p.write_text(json.dumps(shell_d, indent=4) + "\n")
+
+cli_p = cael_dir / "cli.json"
+try:
+    cli_d = json.loads(cli_p.read_text()) if cli_p.exists() else {}
+except Exception:
+    cli_d = {}
+
+theme = cli_d.setdefault("theme", {})
+theme.setdefault("enableDiscord", False)
+theme.setdefault("enableChromium", False)
+theme.setdefault("postHook", "hyprctl reload >/dev/null 2>&1 || true")
+cli_p.write_text(json.dumps(cli_d, indent=4) + "\n")
+PY
 
     sudo ldconfig 2>/dev/null || true
 }

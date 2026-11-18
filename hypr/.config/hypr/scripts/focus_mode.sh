@@ -14,7 +14,7 @@ STATE_FILE="/tmp/focus_mode.state"
 if [ -f "$STATE_FILE" ]; then
     # --- Disable focus mode ---
     caelestia shell notifs disableDnd >/dev/null 2>&1
-    hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive false")' >/dev/null
+    hyprctl repl 'hl.config({ decoration = { dim_inactive = false } })' >/dev/null
     rm -f "$STATE_FILE"
 
     notify-send "Focus Mode" \
@@ -31,7 +31,7 @@ else
     sleep 0.2
 
     caelestia shell notifs enableDnd >/dev/null 2>&1
-    hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive true")' >/dev/null
+    hyprctl repl 'hl.config({ decoration = { dim_inactive = true } })' >/dev/null
 
     touch "$STATE_FILE"
 fi

@@ -8,12 +8,12 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS")
 
 -- Core desktop services
-    hl.exec_cmd("caelestia shell -d & hypridle")
+    hl.exec_cmd("caelestia shell -d")
     hl.exec_cmd("hyprctl setcursor catppuccin-mocha-dark-cursors 24")
 
--- Polkit authentication agent
+-- Polkit authentication agent (supports KDE & GNOME agents on Ubuntu and Arch)
     hl.exec_cmd(
-    	'sh -c "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1"'
+    	'sh -c "/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1 || /usr/lib/polkit-kde-authentication-agent-1 || /usr/libexec/polkit-kde-authentication-agent-1 || /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1"'
     )
 
 -- Clipboard history
@@ -25,7 +25,4 @@ hl.on("hyprland.start", function()
 
 -- Start monitor event listener for automatic profile switching
     hl.exec_cmd("~/.config/hypr/scripts/launch_monitor_listener.sh")
-
--- Start battery monitor (low-charge alerts + auto power-profile switching)
-    hl.exec_cmd("~/.config/hypr/scripts/launch_battery_monitor.sh")
 end)

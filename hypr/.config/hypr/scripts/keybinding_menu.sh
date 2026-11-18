@@ -115,9 +115,6 @@ cat > "$TEMP_FILE" << 'EOF'
 📸 SCREENSHOTS | Print | Screenshot active monitor & annotate
 📸 SCREENSHOTS | Super + Print | Screenshot active window & annotate
 📸 SCREENSHOTS | Super + Shift + Print | Screenshot selected region & annotate
-⌨️ INPUT | Super + C | Universal copy
-⌨️ INPUT | Super + V | Universal paste
-⌨️ INPUT | Super + X | Universal cut
 EOF
 
 # Show rofi menu with the temp file
@@ -176,7 +173,7 @@ case "$DESCRIPTION" in
     "Suspend the system")
         hyprctl repl 'hl.exec_cmd("systemctl suspend")' ;;
     "Toggle Keep Awake (idle inhibitor)")
-        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh")' ;;
+        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_keep_awake.sh")' ;;
     "Open power menu")
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle session")' ;;
     "Open wallpaper picker (live preview)")
@@ -349,12 +346,6 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screenshot_window_edit.sh")' ;;
     "Screenshot selected region"|"Screenshot selected region & annotate"|"Screenshot region & annotate (Satty/Swappy)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screenshot_edit.sh")' ;;
-    "Universal copy")
-        hyprctl repl 'hl.dispatch(hl.dsp.send_shortcut({mods={"CTRL"}, key="Insert"}))' ;;
-    "Universal paste")
-        hyprctl repl 'hl.dispatch(hl.dsp.send_shortcut({mods={"SHIFT"}, key="Insert"}))' ;;
-    "Universal cut")
-        hyprctl repl 'hl.dispatch(hl.dsp.send_shortcut({mods={"CTRL"}, key="X"}))' ;;
     *)
         notify-send "Keybinding Helper" "Unknown command: $DESCRIPTION" -t 3000
         exit 1

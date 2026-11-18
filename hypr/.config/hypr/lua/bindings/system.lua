@@ -25,7 +25,7 @@ hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "L"), hl.dsp.exec_cmd("caelestia
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "S"), hl.dsp.exec_cmd("systemctl suspend"))
 
 -- Toggle Keep Awake (idle inhibitor)
-hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "H"), hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "H"), hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle_keep_awake.sh"))
 
 -- Power menu
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "X"), hl.dsp.exec_cmd("caelestia shell drawers toggle session"))

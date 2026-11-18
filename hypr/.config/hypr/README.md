@@ -23,20 +23,19 @@ This configuration depends on a number of external packages. Here is a list of t
 
 ### Core Components
 - `hyprland`: The Wayland compositor itself.
-- `caelestia-shell` (`quickshell`): Unified Material 3 desktop shell (bar, notifications, launcher, wallpapers, lock screen, OSD, Wi-Fi/Bluetooth/Audio settings).
-- `hypridle`: The idle daemon (lock-on-suspend / sleep).
+- `caelestia-shell` (`quickshell`): Unified Material 3 desktop shell (bar, notifications, launcher, wallpapers, lock screen, idle & battery daemons, OSD, Wi-Fi/Bluetooth/Audio settings).
 - `ghostty`: The terminal emulator.
 - `nautilus`: The file manager.
 
 **Arch Linux Installation:**
 ```bash
-sudo pacman -S hyprland hypridle rofi-wayland ghostty nautilus
+sudo pacman -S hyprland rofi-wayland ghostty nautilus
 ```
 
 **Ubuntu Installation:**
 ```bash
 sudo add-apt-repository ppa:cppiber/hyprland -y && sudo apt update
-sudo apt install hyprland hypridle rofi ghostty nautilus
+sudo apt install hyprland rofi ghostty nautilus
 ```
 
 ### System Utilities
@@ -259,8 +258,8 @@ Turn off secondary monitors and disable screen locking for an immersive movie ex
 **Features:**
 - Select a "Solo" monitor to stay on
 - Powers off all other monitors via DPMS
-- Automatically stops `hypridle` to prevent screen lock/sleep
-- "Restore" option to bring back all displays and re-enable `hypridle`
+- Enables Caelestia's Wayland idle inhibitor (`caelestia shell idleInhibitor enable`) to prevent screen lock/blanking
+- "Restore" option brings back all displays and restores normal idle timeouts
 
 ### App-Specific Help
 
@@ -311,21 +310,6 @@ Ping-pong between the current workspace and the last-focused one — the workspa
 
 Uses Hyprland's built-in `workspace previous` dispatcher; press again to jump back. Lives entirely in `bindings/workspaces.conf`, no script needed.
 
-### Battery Monitor (Auto)
-
-A background daemon that watches battery state and automatically:
-
-- **Notifies** on low-charge thresholds while discharging (≤20% normal, ≤10% critical, ≤5% urgent)
-- **Toasts** on AC plug/unplug transitions and at full charge
-- **Switches power profiles** via `powerprofilesctl`:
-  - AC plugged in → `performance` (falls back to `balanced` if performance isn't available)
-  - On battery, >30% → `balanced`
-  - On battery, ≤30% → `power-saver`
-
-Poll interval: 30 seconds. Battery and AC paths are auto-detected (BAT0/BAT1, AC/ADP1/ACAD).
-
-The monitor starts automatically on Hyprland session start via `launch_battery_monitor.sh`, which kills stale instances first. Requires `power-profiles-daemon` (see Dependencies → Power Management).
-
 ### Focus Mode
 
 A one-key toggle for distraction-free work — similar to Movie Mode but for *coding*, not entertainment (multi-monitor and idle lock are left intact).
@@ -373,7 +357,7 @@ Hardware-accelerated screen recorder powered by Caelestia (`caelestia record` + 
 | `movie_mode.sh` | Solo display for movies | `Super + Alt + M` |
 | `audio_switcher.sh` | Switch audio devices | `Super + Alt + A` |
 | `focus_mode.sh` | Focus mode (DND + dim) | `Super + Alt + F` |
-| `battery_monitor.sh` | Battery alerts + auto power-profile | _autostart_ |
+| `toggle_keep_awake.sh` | Toggle Keep Awake (idle inhibitor) | `Super + Ctrl + H` |
 | `window_switcher.sh` | MRU window switcher (all workspaces) | `Alt + Tab` |
 | `scratchpad_terminal.sh` | Floating dropdown terminal | `Super + S` |
 | `exit_hyprland.sh` | Exit Hyprland (confirmation) | `Super + Ctrl + M` |

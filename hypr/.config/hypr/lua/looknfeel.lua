@@ -1,4 +1,14 @@
 -- ============================================================
+-- DYNAMIC CAELESTIA PALETTE (FALLBACK TO CATPPUCCIN MOCHA)
+-- ============================================================
+
+local ok, scheme = pcall(dofile, (os.getenv("HOME") or "") .. "/.config/hypr/scheme/current.lua")
+local active_c1 = ok and scheme and scheme.primary and ("rgba(" .. scheme.primary .. "ee)") or "rgba(cba6f7ee)"
+local active_c2 = ok and scheme and scheme.tertiary and ("rgba(" .. scheme.tertiary .. "ee)") or "rgba(89b4faee)"
+local inactive_c = ok and scheme and scheme.outlineVariant and ("rgba(" .. scheme.outlineVariant .. "aa)") or "rgba(595959aa)"
+local shadow_c = ok and scheme and scheme.shadow and ("rgba(" .. scheme.shadow .. "ee)") or "rgba(1a1a1aee)"
+
+-- ============================================================
 -- GENERAL LAYOUT PROPERTIES
 -- ============================================================
 
@@ -12,13 +22,13 @@ hl.config({
 		col = {
 			active_border = {
 				colors = {
-					"rgba(33ccffee)",
-					"rgba(00ff99ee)",
+					active_c1,
+					active_c2,
 				},
 				angle = 45,
 			},
 
-			inactive_border = "rgba(595959aa)",
+			inactive_border = inactive_c,
 		},
 
 		layout = "dwindle",
@@ -52,7 +62,7 @@ hl.config({
 			enabled = true,
 			range = 4,
 			render_power = 3,
-			color = "rgba(1a1a1aee)",
+			color = shadow_c,
 		},
 	},
 
@@ -65,13 +75,13 @@ hl.config({
 		col = {
 			border_active = {
 				colors = {
-					"rgba(33ccffee)",
-					"rgba(00ff99ee)",
+					active_c1,
+					active_c2,
 				},
 				angle = 45,
 			},
 
-			border_inactive = "rgba(595959aa)",
+			border_inactive = inactive_c,
 		},
 
 		groupbar = {
@@ -285,4 +295,16 @@ hl.animation({
 hl.animation({
 	leaf = "workspaces",
 	enabled = false,
+})
+
+-- ============================================================
+-- CAELESTIA LAYER RULES
+-- ============================================================
+
+-- Let Caelestia handle its own Material 3 QML animations without compositor fade
+hl.layer_rule({
+	match = {
+		namespace = "^caelestia-.*$",
+	},
+	no_anim = true,
 })

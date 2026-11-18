@@ -39,13 +39,3 @@ hl.device({
 
 -- windowrule = scroll_touchpad 1.5, match:class ^Alacritty$
 -- windowrule = scroll_touchpad 0.2, match:class ^com\.mitchellh\.ghostty$
-
--- -----------------------------------------------------------------------------
--- Universal Copy / Paste / Cut
--- -----------------------------------------------------------------------------
-
-hl.bind("SUPER + C", hl.dsp.send_shortcut({ mods = "CTRL", key = "Insert", window = "" }))
-
-hl.bind("SUPER + V", hl.dsp.send_shortcut({ mods = "SHIFT", key = "Insert", window = "" }))
-
-hl.bind("SUPER + X", hl.dsp.send_shortcut({ mods = "CTRL", key = "X", window = "" }))
