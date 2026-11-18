@@ -475,7 +475,7 @@ setup_caelestia_shell_ubuntu() {
             sed -i 's/bottomLeftRadius: dialogBg.bottomLeftRadius/\/\/ bottomLeftRadius: dialogBg.bottomLeftRadius/' modules/nexus/common/DialogRowButton.qml
             sed -i 's/bottomRightRadius: dialogBg.bottomRightRadius/\/\/ bottomRightRadius: dialogBg.bottomRightRadius/' modules/nexus/common/DialogRowButton.qml
 sed -i 's/id: char/id: charItem/' modules/lock/center/InputField.qml
-            sed -i 's/char./charItem./g' modules/lock/center/InputField.qml
+            sed -i 's/char\\./charItem\\./g' modules/lock/center/InputField.qml
             sed -i 's/target: char$/target: charItem/g' modules/lock/center/InputField.qml
             sed -i 's/charShape/charItemShape/g' modules/lock/center/InputField.qml
             local QML_DIR=$(qmake6 -query QT_INSTALL_QML 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/qt6/qml")
