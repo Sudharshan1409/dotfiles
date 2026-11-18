@@ -436,7 +436,7 @@ setup_caelestia_shell_ubuntu() {
         git clone https://git.outfoxxed.me/quickshell/quickshell.git "$SRC_DIR/quickshell" >/dev/null 2>&1
         (
             cd "$SRC_DIR/quickshell"
-            cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DQS_USE_X11=OFF >/dev/null 2>&1
+            cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DQS_USE_X11=OFF -DVENDOR_CPPTRACE=ON >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
         )
