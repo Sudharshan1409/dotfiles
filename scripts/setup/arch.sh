@@ -219,6 +219,7 @@ setup_caelestia_shell_arch() {
     fi
 
     # Configure Caelestia shell.json, cli.json & recordings dir idempotently (preserving user Nexus settings)
+    python3 "$DOTFILES_DIR/scripts/setup/patch_caelestia.py" 2>/dev/null || true
     mkdir -p "$HOME/.config/caelestia" "$HOME/Videos/Recordings"
     python3 - <<'PY' 2>/dev/null && log_ok "Verified Caelestia shell.json & cli.json configuration"
 import json, pathlib
@@ -230,6 +231,10 @@ try:
     shell_d = json.loads(shell_p.read_text()) if shell_p.exists() else {}
 except Exception:
     shell_d = {}
+
+bar_clock = shell_d.setdefault("bar", {}).setdefault("clock", {})
+bar_clock.setdefault("background", True)
+bar_clock.setdefault("showDate", True)
 
 gen = shell_d.setdefault("general", {})
 apps = gen.setdefault("apps", {})
@@ -266,6 +271,11 @@ PY
 
     if ( [ -f "/etc/xdg/quickshell/caelestia/shell.qml" ] || [ -f "$HOME/.config/quickshell/caelestia/shell.qml" ] ) && \
        command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
+        if [ -d "/etc/xdg/quickshell/caelestia" ] && [ ! -d "$HOME/.config/quickshell/caelestia" ]; then
+            mkdir -p "$HOME/.config/quickshell"
+            cp -r /etc/xdg/quickshell/caelestia "$HOME/.config/quickshell/caelestia"
+        fi
+        python3 "$DOTFILES_DIR/scripts/setup/patch_caelestia.py" 2>/dev/null || true
         log_skip "Caelestia Shell and CLI are already installed"
         return
     fi
@@ -280,6 +290,11 @@ PY
     if [ -n "$AUR_HELPER" ]; then
         log_info "Installing caelestia-shell and caelestia-cli via $AUR_HELPER..."
         $AUR_HELPER -S --needed --noconfirm caelestia-shell caelestia-cli
+        if [ -d "/etc/xdg/quickshell/caelestia" ] && [ ! -d "$HOME/.config/quickshell/caelestia" ]; then
+            mkdir -p "$HOME/.config/quickshell"
+            cp -r /etc/xdg/quickshell/caelestia "$HOME/.config/quickshell/caelestia"
+        fi
+        python3 "$DOTFILES_DIR/scripts/setup/patch_caelestia.py" 2>/dev/null || true
         log_ok "Installed caelestia-shell and caelestia-cli via AUR"
     else
         log_warn "AUR helper (yay/paru) not found; please install 'caelestia-shell' and 'caelestia-cli' manually"

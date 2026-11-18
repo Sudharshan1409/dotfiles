@@ -720,7 +720,8 @@ EOF
         fi
     fi
 
-    # 11. Configure Caelestia shell.json & cli.json defaults idempotently (preserving user Nexus settings)
+    # 11. Apply custom Caelestia QML enhancements & configure shell.json / cli.json idempotently
+    python3 "$DOTFILES_DIR/scripts/setup/patch_caelestia.py" 2>/dev/null || true
     mkdir -p "$HOME/.config/caelestia"
     python3 - <<'PY' 2>/dev/null && log_ok "Verified Caelestia shell.json & cli.json configuration"
 import json, pathlib
@@ -732,6 +733,10 @@ try:
     shell_d = json.loads(shell_p.read_text()) if shell_p.exists() else {}
 except Exception:
     shell_d = {}
+
+bar_clock = shell_d.setdefault("bar", {}).setdefault("clock", {})
+bar_clock.setdefault("background", True)
+bar_clock.setdefault("showDate", True)
 
 gen = shell_d.setdefault("general", {})
 apps = gen.setdefault("apps", {})
