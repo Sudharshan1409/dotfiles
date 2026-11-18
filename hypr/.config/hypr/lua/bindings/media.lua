@@ -10,19 +10,19 @@ local buttons = constants.buttons
 
 hl.bind(
 	"XF86AudioRaiseVolume",
-	hl.dsp.exec_cmd("~/.config/waybar/scripts/volume-control.sh up"),
+	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"),
 	{ repeating = true, locked = true }
 )
 
 hl.bind(
 	"XF86AudioLowerVolume",
-	hl.dsp.exec_cmd("~/.config/waybar/scripts/volume-control.sh down"),
+	hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
 	{ repeating = true, locked = true }
 )
 
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("~/.config/waybar/scripts/volume-control.sh mute"), { locked = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("~/.config/waybar/scripts/mic-control.sh mute"), { locked = true })
+hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
 
 -- Media Playback Controls
 -- bindl: locked
@@ -42,13 +42,13 @@ hl.bind("XF86AudioStop", hl.dsp.exec_cmd("playerctl stop"), { locked = true })
 
 hl.bind(
 	"XF86MonBrightnessUp",
-	hl.dsp.exec_cmd("~/.config/waybar/scripts/brightness-control.sh up"),
+	hl.dsp.exec_cmd("caelestia shell brightness set +5% || brightnessctl -q set +5%"),
 	{ repeating = true, locked = true }
 )
 
 hl.bind(
 	"XF86MonBrightnessDown",
-	hl.dsp.exec_cmd("~/.config/waybar/scripts/brightness-control.sh down"),
+	hl.dsp.exec_cmd("caelestia shell brightness set 5%- || brightnessctl -q set 5%-"),
 	{ repeating = true, locked = true }
 )
 

@@ -44,6 +44,7 @@
     "Navigation": {
         "aeroconf": "z ~/.config/aerospace",
         "batconf": "z \"$(bat --config-dir)\"",
+        "caelconf": "z ~/.config/caelestia",
         "config": "z ~/.config",
         "desk": "z ~/Desktop",
         "dotfiles": "z ~/dotfiles",
@@ -57,10 +58,8 @@
         "shellconf": "z ~/.config/zsh",
         "sketchyconf": "z ~/.config/sketchybar",
         "starconf": "z ~/.config/starship",
-        "swayconf": "z ~/.config/swaync",
         "tmuxconf": "z ~/.config/tmux",
         "vimconf": "z ~/.config/nvim",
-        "wayconf": "z ~/.config/waybar",
         "yaziconf": "z ~/.config/yazi"
     }
 }

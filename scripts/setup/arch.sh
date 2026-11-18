@@ -30,8 +30,6 @@ setup_arch_packages() {
         htop
         nvtop
         nautilus
-        pavucontrol
-        blueman
         grim
         slurp
         wf-recorder
@@ -39,13 +37,11 @@ setup_arch_packages() {
         cliphist
         tesseract
         tesseract-data-eng
-        network-manager-applet
         brightnessctl
         playerctl
         polkit-kde-agent
         libnotify
         xorg-xwayland
-        kitty
         ghostty
         tmux
         neovim

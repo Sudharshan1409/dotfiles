@@ -21,7 +21,7 @@ get_app_help() {
     local app_class="$1"
     
     case "$app_class" in
-        *ghostty*|*kitty*|*alacritty*|*terminal*)
+        *ghostty*|*alacritty*|*terminal*)
             cat << 'EOF'
 📋 Ghostty/Terminal Shortcuts:
 

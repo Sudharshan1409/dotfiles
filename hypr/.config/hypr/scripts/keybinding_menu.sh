@@ -20,7 +20,6 @@ cat > "$TEMP_FILE" << 'EOF'
 📱 APPS | Super + Alt + B | Open Backgrounds folder
 📱 APPS | Super + Alt + H | Open Home folder
 📱 APPS | Super + Ctrl + V | Open clipboard history
-📱 APPS | Super + Ctrl + B | Open Bluetooth menu
 📱 APPS | Super + Ctrl + N | Open notification center
 📱 APPS | Super + Ctrl + Tab | Show workspace overview
 📱 APPS | Super + ` | Show workspace overview (alternate)
@@ -161,8 +160,6 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("nautilus ~")' ;;
     "Open clipboard history")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/clipboard.sh")' ;;
-    "Open Bluetooth menu")
-        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/launch_bluetooth.sh")' ;;
     "Open notification center")
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle sidebar")' ;;
     "Show workspace overview")
@@ -328,11 +325,11 @@ case "$DESCRIPTION" in
     "Lock/unlock group (prevent grouping)")
         hyprctl repl 'hl.dispatch(hl.dsp.group.lock())' ;;
     "Increase volume")
-        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/volume-control.sh up")' ;;
+        hyprctl repl 'hl.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+")' ;;
     "Decrease volume")
-        hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/volume-control.sh down")' ;;
+        hyprctl repl 'hl.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")' ;;
     "Toggle mute")
-        hyprctl repl 'hl.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ toggle")' ;;
+        hyprctl repl 'hl.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")' ;;
     "Toggle media playback")
         hyprctl repl 'hl.exec_cmd("playerctl play-pause")' ;;
     "Skip to next track")
@@ -340,9 +337,9 @@ case "$DESCRIPTION" in
     "Go to previous track")
         hyprctl repl 'hl.exec_cmd("playerctl previous")' ;;
     "Increase screen brightness")
-        hyprctl repl 'hl.exec_cmd("brightnessctl set +5%")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia shell brightness set +5% || brightnessctl -q set +5%")' ;;
     "Decrease screen brightness")
-        hyprctl repl 'hl.exec_cmd("brightnessctl set 5%-")' ;;
+        hyprctl repl 'hl.exec_cmd("caelestia shell brightness set 5%- || brightnessctl -q set 5%-")' ;;
     "Screenshot active monitor"|"Screenshot active monitor & annotate")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screenshot_screen_edit.sh")' ;;
     "Screenshot active window"|"Screenshot active window & annotate")

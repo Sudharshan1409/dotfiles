@@ -67,7 +67,7 @@ hl.window_rule({
 
 hl.window_rule({
 	match = {
-		class = "^(Rofi|pavucontrol|blueman-manager|org\\.gnome\\.Calculator|blueberry\\.py|nm-connection-editor|org\\.kde\\.polkit-kde-authentication-agent-1|com\\.cisco\\.secureclient\\.gui|hyprland-share-picker)$",
+		class = "^(Rofi|org\\.gnome\\.Calculator|blueberry\\.py|org\\.kde\\.polkit-kde-authentication-agent-1|com\\.cisco\\.secureclient\\.gui|hyprland-share-picker)$",
 	},
 	float = true,
 })
@@ -84,14 +84,6 @@ hl.window_rule({
 -- -----------------------------------------------------------------------------
 -- Size & centering for floating windows
 -- -----------------------------------------------------------------------------
-
-hl.window_rule({
-	match = {
-		class = "^(pavucontrol|blueman-manager)$",
-	},
-	size = { "monitor_w * 0.6", "monitor_h * 0.6" },
-	center = true,
-})
 
 -- System monitor sizing & centering
 hl.window_rule({

@@ -200,7 +200,7 @@ while true; do
 🎙️  Change Input Device
 🔇 Toggle Output Mute
 🤐 Toggle Input Mute
-📊 Open Volume Control
+📊 Open Audio Settings (Nexus)
 ❌ Close"
     
     SELECTED=$(echo -e "$MENU" | rofi -dmenu \
@@ -251,8 +251,8 @@ while true; do
             exit 0
             ;;
             
-        "📊 Open Volume Control")
-            pavucontrol &
+        "📊 Open Audio Settings (Nexus)")
+            caelestia shell nexus open >/dev/null 2>&1 &
             exit 0
             ;;
     esac

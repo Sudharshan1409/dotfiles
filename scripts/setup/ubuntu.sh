@@ -71,15 +71,11 @@ setup_ubuntu_packages() {
         cliphist
         tesseract-ocr
         tesseract-ocr-eng
-        network-manager-gnome
-        pavucontrol
-        blueman
         brightnessctl
         playerctl
         polkit-kde-agent-1
         libnotify-bin
         xwayland
-        kitty
         tmux
         neovim
         fastfetch

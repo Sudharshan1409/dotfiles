@@ -18,7 +18,7 @@ get_processes() {
         cpu=$4
         mem=$5
         # Skip kernel processes and important system processes
-        if (cmd !~ /^\[/ && cmd !~ /systemd|dbus|network|pipewire|polkit|swaync|waybar|hypr/) {
+        if (cmd !~ /^\[/ && cmd !~ /systemd|dbus|network|pipewire|wireplumber|polkit|quickshell|caelestia|hypr/) {
             printf "%-8s │ %-6s │ %-6s │ %s\n", pid, cpu, mem, cmd
         }
     }'

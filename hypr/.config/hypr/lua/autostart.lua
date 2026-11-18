@@ -19,9 +19,6 @@ hl.on("hyprland.start", function()
 -- Clipboard history
     hl.exec_cmd("wl-paste --watch cliphist store")
 
--- Network manager applet
-    hl.exec_cmd("nm-applet --indicator")
-
 -- -----------------------------------------------------------------------------
 -- Custom Scripts
 -- -----------------------------------------------------------------------------

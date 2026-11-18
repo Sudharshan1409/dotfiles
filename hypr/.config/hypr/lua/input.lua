@@ -37,7 +37,7 @@ hl.device({
 -- NOTE: Hyprland does not support per-window scroll sensitivity rules.
 -- You can only set this globally or per-device.
 
--- windowrule = scroll_touchpad 1.5, match:class ^(Alacritty|kitty)$
+-- windowrule = scroll_touchpad 1.5, match:class ^Alacritty$
 -- windowrule = scroll_touchpad 0.2, match:class ^com\.mitchellh\.ghostty$
 
 -- -----------------------------------------------------------------------------

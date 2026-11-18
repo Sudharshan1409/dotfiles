@@ -23,38 +23,27 @@ This configuration depends on a number of external packages. Here is a list of t
 
 ### Core Components
 - `hyprland`: The Wayland compositor itself.
-- `waybar`: The status bar.
-- `sway-notification-center`: The notification daemon.
-- `hyprpaper`: The wallpaper daemon.
-- `hypridle`: The idle daemon.
-- `kitty`: The terminal emulator.
+- `caelestia-shell` (`quickshell`): Unified Material 3 desktop shell (bar, notifications, launcher, wallpapers, lock screen, OSD, Wi-Fi/Bluetooth/Audio settings).
+- `hypridle`: The idle daemon (lock-on-suspend / sleep).
+- `ghostty`: The terminal emulator.
 - `nautilus`: The file manager.
 
 **Arch Linux Installation:**
 ```bash
-sudo pacman -S hyprland waybar sway-notification-center hyprpaper hypridle hyprlock rofi kitty nautilus
+sudo pacman -S hyprland hypridle rofi-wayland ghostty nautilus
 ```
 
 **Ubuntu Installation:**
 ```bash
 sudo add-apt-repository ppa:cppiber/hyprland -y && sudo apt update
-sudo apt install hyprland waybar sway-notification-center hyprpaper hypridle rofi kitty nautilus
-```
-
-**Note:** `hyprlock` may not be available in the PPA. If it is not, you can build it from source:
-```bash
-git clone https://github.com/hyprwm/hyprlock.git
-cd hyprlock
-make all
-sudo make install
+sudo apt install hyprland hypridle rofi ghostty nautilus
 ```
 
 ### System Utilities
 - `polkit-gnome`: For authentication.
 - `wl-clipboard`: For copy/paste functionality.
 - `cliphist`: For clipboard history.
-- `network-manager-applet`: For graphical network management.
-- `pipewire-pulse`: For audio.
+- `pipewire-pulse` / `wireplumber` (`wpctl`): For audio.
 - `brightnessctl`: For brightness control.
 - `libnotify`: For desktop notifications.
 - `procps-ng`: For system monitoring utilities.
@@ -62,12 +51,12 @@ sudo make install
 
 **Arch Linux Installation:**
 ```bash
-sudo pacman -S polkit-gnome wl-clipboard cliphist network-manager-applet pipewire-pulse brightnessctl libnotify procps-ng coreutils util-linux findutils
+sudo pacman -S polkit-gnome wl-clipboard cliphist pipewire-pulse wireplumber brightnessctl libnotify procps-ng coreutils util-linux findutils
 ```
 
 **Ubuntu Installation:**
 ```bash
-sudo apt install policykit-1-gnome wl-clipboard network-manager-gnome pipewire-pulse brightnessctl libnotify4 procps coreutils util-linux findutils
+sudo apt install policykit-1-gnome wl-clipboard pipewire-pulse wireplumber brightnessctl libnotify-bin procps coreutils util-linux findutils
 ```
 **Note:** `cliphist` is not available in the default Ubuntu repositories. It needs to be installed from source.
 
@@ -142,8 +131,6 @@ sudo apt install qt5ct qt5-style-kvantum
 ### Applications
 - `brave-browser`: The web browser.
 - `spotify-launcher`: The Spotify client.
-- `pavucontrol`: PulseAudio volume control.
-- `blueman`: Bluetooth manager.
 - `gnome-calculator`: The calculator.
 - `blueberry`: Bluetooth configuration utility.
 - `qemu`: The emulator.
@@ -156,16 +143,16 @@ sudo apt install qt5ct qt5-style-kvantum
 - `pinta`: The image editor.
 - `imv`: The image viewer.
 - `alacritty`: An alternative terminal emulator.
-- `ghostty`: An alternative terminal emulator.
+- `ghostty`: Primary terminal emulator.
 - `sublime-text-4`: The text editor.
 - `onlyoffice-desktopeditors`: The office suite.
 - `localsend-bin`: The file sharing application.
-- `rofi`: The application launcher.
+- `rofi`: Utility menu selector.
 
 
 **Arch Linux Installation:**
 ```bash
-sudo pacman -S brave-browser spotify-launcher pavucontrol blueman gnome-calculator blueberry qemu retroarch steam vlc mpv kdenlive obs-studio pinta imv alacritty ghostty sublime-text-4 onlyoffice-desktopeditors
+sudo pacman -S brave-browser spotify-launcher gnome-calculator blueberry qemu retroarch steam vlc mpv kdenlive obs-studio pinta imv alacritty ghostty sublime-text-4 onlyoffice-desktopeditors
 yay -S localsend-bin
 ```
 
@@ -183,7 +170,7 @@ echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sou
 sudo apt-get update && sudo apt-get install spotify-client
 
 # Other Applications
-sudo apt install pavucontrol blueman gnome-calculator blueberry qemu-system retroarch steam vlc mpv kdenlive obs-studio pinta imv alacritty rofi
+sudo apt install gnome-calculator blueberry qemu-system retroarch steam vlc mpv kdenlive obs-studio pinta imv alacritty rofi
 
 # Sublime Text
 wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
@@ -263,7 +250,7 @@ Quickly toggle between audio input/output devices.
 - Switch between output devices (speakers, headphones)
 - Switch between input devices (microphones)
 - Toggle mute for input/output
-- Open pavucontrol for detailed control
+- Open Caelestia Nexus audio settings for detailed control
 - Menu closes automatically after any action
 
 ### Movie Mode (Solo Display)
@@ -349,8 +336,7 @@ A one-key toggle for distraction-free work — similar to Movie Mode but for *co
 **Keybinding:** `Super + Alt + F`
 
 **Features:**
-- Toggles swaync DND (notifications silenced and replayed on exit)
-- Hides waybar (via `SIGUSR1`)
+- Toggles Caelestia DND (`caelestia shell notifs enableDnd` / `disableDnd`)
 - Dims inactive windows (`decoration:dim_inactive`) so the focused window stands out
 - State tracked in `/tmp/focus_mode.state`; same key reverses everything
 - Pre-flight notification fires before DND so you always see the "ON" toast

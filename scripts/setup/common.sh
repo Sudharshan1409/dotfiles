@@ -12,11 +12,9 @@ setup_common_stow() {
         tmux
         nvim
         wezterm
-        kitty
         ghostty
         alacritty
         hypr
-        waybar
         rofi
         wlogout
         btop
@@ -25,6 +23,12 @@ setup_common_stow() {
     )
 
     cd "$DOTFILES_DIR"
+    # Ensure deprecated desktop packages are unstowed if stale symlinks exist
+    for legacy_pkg in swaync waybar kitty; do
+        if [ -d "$legacy_pkg" ]; then
+            stow -D "$legacy_pkg" 2>/dev/null || true
+        fi
+    done
     STOW_UPDATED=0
     for pkg in "${STOW_PACKAGES[@]}"; do
         if [ -d "$pkg" ]; then
