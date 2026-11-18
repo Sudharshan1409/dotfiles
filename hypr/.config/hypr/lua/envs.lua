@@ -16,6 +16,9 @@ local currentPath = os.getenv("PATH") or ""
 
 hl.env("PATH", home .. "/.local/bin:/home/linuxbrew/.linuxbrew/bin:" .. currentPath)
 
+-- Point Caelestia Shell & CLI to stowed wallpapers directory
+hl.env("CAELESTIA_WALLPAPERS_DIR", home .. "/.config/backgrounds")
+
 -- Point Caelestia Shell to /usr/local/lib/caelestia when compiled locally (Ubuntu)
 local caelestiaLocalLib = io.open("/usr/local/lib/caelestia/version", "r")
 if caelestiaLocalLib then

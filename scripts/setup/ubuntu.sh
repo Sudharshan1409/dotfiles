@@ -551,6 +551,8 @@ setup_caelestia_shell_ubuntu() {
             sed -i 's/char\.index/charItem.index/g' modules/lock/center/InputField.qml
             sed -i 's/target: char$/target: charItem/g' modules/lock/center/InputField.qml
             sed -i 's/charShape/charItemShape/g' modules/lock/center/InputField.qml
+            # Allow Left/Right arrow navigation in horizontal launcher wallpaper carousel
+            sed -i '/Keys\.onDownPressed: list\.currentList?\.incrementCurrentIndex()/a \        Keys.onLeftPressed: event => { if (list.showWallpapers) { list.currentList?.decrementCurrentIndex(); event.accepted = true; } else { event.accepted = false; } }\n        Keys.onRightPressed: event => { if (list.showWallpapers) { list.currentList?.incrementCurrentIndex(); event.accepted = true; } else { event.accepted = false; } }' modules/launcher/Content.qml
 
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_QSCONFDIR="$CAEL_CONF" -DINSTALL_QMLDIR="$QML_DIR" >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
@@ -563,17 +565,27 @@ setup_caelestia_shell_ubuntu() {
     fi
 
     # 9. Ensure /usr/local/bin/caelestia-shell convenience wrapper uses /usr/local/lib/caelestia
-    if [ ! -x "/usr/local/bin/caelestia-shell" ] || ! grep -q "CAELESTIA_LIB_DIR=/usr/local/lib/caelestia" /usr/local/bin/caelestia-shell 2>/dev/null; then
+    if [ ! -x "/usr/local/bin/caelestia-shell" ] || ! grep -q "CAELESTIA_WALLPAPERS_DIR=" /usr/local/bin/caelestia-shell 2>/dev/null; then
         log_info "Updating /usr/local/bin/caelestia-shell wrapper..."
         local TMP_WRAPPER
         TMP_WRAPPER=$(mktemp)
         cat > "$TMP_WRAPPER" <<EOF
 #!/bin/bash
-CAELESTIA_LIB_DIR=/usr/local/lib/caelestia /usr/local/bin/qs -p "$CAEL_CONF" "\$@"
+CAELESTIA_LIB_DIR=/usr/local/lib/caelestia CAELESTIA_WALLPAPERS_DIR="\${CAELESTIA_WALLPAPERS_DIR:-$HOME/.config/backgrounds}" /usr/local/bin/qs -p "$CAEL_CONF" "\$@"
 EOF
         chmod +x "$TMP_WRAPPER"
         sudo mv "$TMP_WRAPPER" /usr/local/bin/caelestia-shell
         log_ok "Configured /usr/local/bin/caelestia-shell wrapper"
+    fi
+
+    # 10. Configure Caelestia wallpaper directory (~/.config/backgrounds) idempotently
+    mkdir -p "$HOME/.config/caelestia"
+    if [ ! -f "$HOME/.config/caelestia/shell.json" ]; then
+        printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"
+        log_ok "Configured Caelestia wallpaperDir -> ~/.config/backgrounds"
+    fi
+    if [ ! -f "$HOME/.config/caelestia/cli.json" ]; then
+        printf '{\n  "theme": {\n    "enableDiscord": false,\n    "enableChromium": false\n  }\n}\n' > "$HOME/.config/caelestia/cli.json"
     fi
 
     sudo ldconfig 2>/dev/null || true

@@ -231,6 +231,16 @@ setup_caelestia_shell_arch() {
         fi
     fi
 
+    # Configure Caelestia wallpaper directory (~/.config/backgrounds) idempotently
+    mkdir -p "$HOME/.config/caelestia"
+    if [ ! -f "$HOME/.config/caelestia/shell.json" ]; then
+        printf '{\n  "paths": {\n    "wallpaperDir": "~/.config/backgrounds"\n  }\n}\n' > "$HOME/.config/caelestia/shell.json"
+        log_ok "Configured Caelestia wallpaperDir -> ~/.config/backgrounds"
+    fi
+    if [ ! -f "$HOME/.config/caelestia/cli.json" ]; then
+        printf '{\n  "theme": {\n    "enableDiscord": false,\n    "enableChromium": false\n  }\n}\n' > "$HOME/.config/caelestia/cli.json"
+    fi
+
     if ( [ -f "/etc/xdg/quickshell/caelestia/shell.qml" ] || [ -f "$HOME/.config/quickshell/caelestia/shell.qml" ] ) && \
        command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then
         log_skip "Caelestia Shell and CLI are already installed"

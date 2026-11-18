@@ -1,6 +1,7 @@
 #!/bin/zsh
 export EDITOR="nvim"
 export VISUAL="nvim"
+export CAELESTIA_WALLPAPERS_DIR="$HOME/.config/backgrounds"
 
 # Shared paths used by every cli/*.sh
 _VENV_DIR="$HOME/.config/zsh/venv"
