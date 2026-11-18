@@ -71,10 +71,5 @@ update-all() {
         echo "✓ TLDR database updated"
     fi
 
-    # 6. Lockscreen cache refresh
-    if [ -x "$HOME/.config/hypr/scripts/cache_lockscreen_info.sh" ]; then
-        "$HOME/.config/hypr/scripts/cache_lockscreen_info.sh" 2>/dev/null || true
-    fi
-
     echo -e "\n\033[1;32m✅ Universal update complete!\033[0m\n"
 }

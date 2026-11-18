@@ -119,13 +119,13 @@ case "$OS_TYPE" in
     ubuntu|debian)
         # shellcheck disable=SC1091
         source "$DOTFILES_DIR/scripts/setup/ubuntu.sh"
-        TOTAL_STEPS=24
+        TOTAL_STEPS=23
         OS_DISPLAY_NAME="Ubuntu"
         ;;
     arch)
         # shellcheck disable=SC1091
         source "$DOTFILES_DIR/scripts/setup/arch.sh"
-        TOTAL_STEPS=20
+        TOTAL_STEPS=19
         OS_DISPLAY_NAME="Arch Linux"
         ;;
     *)
@@ -164,7 +164,6 @@ setup_common_yazi
 setup_common_picture_dirs
 setup_common_permissions
 setup_common_services
-setup_common_rfkill
 setup_common_shell
 setup_common_brightness
 setup_common_ethernet

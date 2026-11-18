@@ -19,21 +19,18 @@ hl.bind(
 )
 
 -- Lock screen
--- hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "L"), hl.dsp.exec_cmd("hyprlock"))
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "L"), hl.dsp.exec_cmd("caelestia shell lock lock"))
 
 -- Suspend system
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "S"), hl.dsp.exec_cmd("systemctl suspend"))
 
--- Toggle hypridle
+-- Toggle Keep Awake (idle inhibitor)
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "H"), hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh"))
 
 -- Power menu
--- hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "X"), hl.dsp.exec_cmd("~/.config/waybar/scripts/power-menu.sh"))
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "X"), hl.dsp.exec_cmd("caelestia shell drawers toggle session"))
 
 -- Wallpaper & Caelestia Settings
--- hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "W"), hl.dsp.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh"))
 hl.bind(
 	KeyCombo(buttons.mainMod, buttons.ctrl, "W"),
 	hl.dsp.exec_cmd("caelestia shell wallpaper picker || caelestia shell nexus open")

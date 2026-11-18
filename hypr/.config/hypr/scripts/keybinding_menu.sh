@@ -13,7 +13,7 @@ TEMP_FILE=$(mktemp)
 cat > "$TEMP_FILE" << 'EOF'
 📱 APPS | Super + Enter | Open terminal (Ghostty)
 📱 APPS | Super + S | Toggle scratchpad terminal
-📱 APPS | Super + Space | Open application launcher (Rofi)
+📱 APPS | Super + Space | Open application launcher (Caelestia)
 📱 APPS | Super + Shift + F | Quick FZF Finder (Folders in Yazi / Files in Neovim)
 📱 APPS | Super + Alt + S | Open Spotify
 📱 APPS | Super + Alt + D | Open Downloads folder
@@ -43,7 +43,7 @@ cat > "$TEMP_FILE" << 'EOF'
 🔧 UTILS | Super + Alt + M | Movie Mode (Solo Display)
 🔧 UTILS | Super + Alt + A | Audio device switcher
 🔧 UTILS | Super + Alt + R | Screen recorder (toggle)
-🔧 UTILS | Super + Alt + F | Focus mode (toggle DND + hide waybar)
+🔧 UTILS | Super + Alt + F | Focus mode (toggle DND + dim inactive)
 🪟 WINDOWS | Super + C | Close active window
 🪟 WINDOWS | Super + V | Toggle floating mode
 🪟 WINDOWS | Super + F | Toggle fullscreen mode
@@ -147,8 +147,7 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("ghostty")' ;;
     "Toggle scratchpad terminal")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/scratchpad_terminal.sh")' ;;
-    "Open application launcher (Rofi)")
-        # hyprctl repl 'hl.exec_cmd("rofi -show drun -show-icons -display-drune '\''Apps'\'' -theme ~/.config/rofi/launcher-elegant.rasi")' ;;
+    "Open application launcher (Caelestia)")
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle launcher")' ;;
     "Quick FZF Finder (Folders in Yazi / Files in Neovim)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/quick_fzf_finder.sh")' ;;
@@ -165,7 +164,6 @@ case "$DESCRIPTION" in
     "Open Bluetooth menu")
         hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/launch_bluetooth.sh")' ;;
     "Open notification center")
-        # hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/swaync-client.sh")' ;;
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle sidebar")' ;;
     "Show workspace overview")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/workspace_overview.sh")' ;;
@@ -176,19 +174,16 @@ case "$DESCRIPTION" in
     "Reload Hyprland configuration")
         hyprctl repl 'hl.exec_cmd("hyprctl reload && notify-send -i '\''dialog-information'\'' -a '\''Hyprland'\'' '\''Hyprland'\'' '\''Config reloaded successfully!'\''")' ;;
     "Lock the screen")
-        # hyprctl repl 'hl.exec_cmd("hyprlock")' ;;
         hyprctl repl 'hl.exec_cmd("caelestia shell lock lock")' ;;
     "Suspend the system")
         hyprctl repl 'hl.exec_cmd("systemctl suspend")' ;;
-    "Toggle Keep Awake (idle inhibitor)"|"Toggle screen lock on idle")
+    "Toggle Keep Awake (idle inhibitor)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/toggle_hypridle.sh")' ;;
     "Open power menu")
-        # hyprctl repl 'hl.exec_cmd("~/.config/waybar/scripts/power-menu.sh")' ;;
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle session")' ;;
     "Open wallpaper picker (live preview)")
         hyprctl repl 'hl.exec_cmd("caelestia shell wallpaper picker || caelestia shell nexus open")' ;;
     "Change to random wallpaper")
-        # hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/set_wallpaper.sh")' ;;
         hyprctl repl 'hl.exec_cmd("caelestia wallpaper -r ~/.config/backgrounds -n -N")' ;;
     "Open Caelestia settings (Nexus)")
         hyprctl repl 'hl.exec_cmd("caelestia shell nexus open")' ;;
@@ -212,7 +207,7 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/audio_switcher.sh")' ;;
     "Screen recorder (toggle)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/screen_recorder.sh")' ;;
-    "Focus mode (toggle DND + hide waybar)")
+    "Focus mode (toggle DND + dim inactive)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/focus_mode.sh")' ;;
     "Close active window")
         hyprctl repl 'hl.dispatch(hl.dsp.window.kill())';;

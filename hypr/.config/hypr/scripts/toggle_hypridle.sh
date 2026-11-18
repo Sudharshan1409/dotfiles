@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Legacy Waybar caffeine script (stops/starts hypridle directly):
-# exec "$HOME/.config/waybar/scripts/caffeine.sh" toggle
-
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
 
 # Ensure hypridle stays running so before_sleep_cmd / after_sleep_cmd always work
@@ -14,7 +11,7 @@ if ! pgrep -x "hypridle" >/dev/null 2>&1; then
     fi
 fi
 
-# Toggle Caelestia Shell's native Wayland idle inhibitor (falls back to caffeine.sh if Caelestia isn't active)
+# Toggle Caelestia Shell's native Wayland idle inhibitor
 if caelestia shell idleInhibitor toggle >/dev/null 2>&1; then
     STATE="$(caelestia shell idleInhibitor isEnabled 2>/dev/null | tr -d '[:space:]')"
     if [ "$STATE" = "true" ]; then
@@ -36,6 +33,4 @@ if caelestia shell idleInhibitor toggle >/dev/null 2>&1; then
             "Normal power management restored.\nScreen will dim and lock after idle timeout." \
             -t 3000
     fi
-else
-    exec "$HOME/.config/waybar/scripts/caffeine.sh" toggle
 fi

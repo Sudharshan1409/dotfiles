@@ -60,11 +60,7 @@ setup_ubuntu_packages() {
         hyprland
         "$HYPR_GUI_HELPER"
         xdg-desktop-portal-hyprland
-        waybar
-        sway-notification-center
-        hyprpaper
         hypridle
-        hyprlock
         rofi
         htop
         nautilus
@@ -89,7 +85,6 @@ setup_ubuntu_packages() {
         fastfetch
         btop
         fonts-jetbrains-mono
-        fonts-font-awesome
     )
 
     # Conditionally include ghostty if available in APT repositories (e.g. Ubuntu 26.04+)
@@ -445,17 +440,14 @@ setup_caelestia_shell_ubuntu() {
         log_ok "Installed Caelestia variable fonts"
     fi
 
-    # 3. Mask swaync systemd user service so D-Bus doesn't hijack org.freedesktop.Notifications
-    # (To restore SwayNC later: systemctl --user unmask swaync.service && systemctl --user enable --now swaync.service)
-    if command -v systemctl >/dev/null 2>&1; then
+    # 3. If legacy swaync.service is still present on the system, mask it so D-Bus doesn't steal org.freedesktop.Notifications
+    if command -v systemctl >/dev/null 2>&1 && systemctl --user list-unit-files swaync.service 2>/dev/null | grep -q "swaync.service"; then
         if [ "$(systemctl --user is-enabled swaync.service 2>/dev/null || true)" != "masked" ]; then
-            log_info "Masking swaync.service so Caelestia Shell owns org.freedesktop.Notifications..."
+            log_info "Masking legacy swaync.service so Caelestia Shell owns org.freedesktop.Notifications..."
             systemctl --user disable --now swaync.service >/dev/null 2>&1 || true
             systemctl --user mask swaync.service >/dev/null 2>&1 || true
             pkill -x swaync 2>/dev/null || true
-            log_ok "Masked swaync.service (use 'systemctl --user unmask swaync.service' to restore)"
-        else
-            log_skip "swaync.service is already masked"
+            log_ok "Masked legacy swaync.service"
         fi
     fi
 

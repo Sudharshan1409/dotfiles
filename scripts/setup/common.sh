@@ -17,7 +17,6 @@ setup_common_stow() {
         alacritty
         hypr
         waybar
-        swaync
         rofi
         wlogout
         btop
@@ -184,19 +183,6 @@ setup_common_services() {
         log_ok "Enabled and started power-profiles-daemon service"
     else
         log_skip "power-profiles-daemon service unit not found; skipping"
-    fi
-}
-
-setup_common_rfkill() {
-    step_header "Verifying rfkill sudoers permission for Waybar"
-    RFKILL_SUDOERS="/etc/sudoers.d/waybar-rfkill"
-    if [ -f "$RFKILL_SUDOERS" ] && grep -q "rfkill" "$RFKILL_SUDOERS" 2>/dev/null; then
-        log_skip "rfkill passwordless sudoers entry already exists at $RFKILL_SUDOERS"
-    else
-        log_info "Configuring passwordless sudo for rfkill (Waybar airplane mode toggle)..."
-        echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/rfkill, /usr/bin/rfkill" | sudo tee "$RFKILL_SUDOERS" >/dev/null
-        sudo chmod 0440 "$RFKILL_SUDOERS"
-        log_ok "Created $RFKILL_SUDOERS"
     fi
 }
 

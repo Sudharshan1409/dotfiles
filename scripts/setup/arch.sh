@@ -25,12 +25,7 @@ setup_arch_packages() {
         hyprland
         hyprland-qtutils
         flatpak
-        waybar
-        sway-notification-center
-        hyprpaper
-        swww
         hypridle
-        hyprlock
         rofi-wayland
         htop
         nvtop
@@ -217,17 +212,14 @@ setup_arch_displaylink() {
 setup_caelestia_shell_arch() {
     step_header "Verifying Caelestia Shell (Desktop UI) & Dependencies"
 
-    # Mask swaync systemd user service so D-Bus doesn't hijack org.freedesktop.Notifications
-    # (To restore SwayNC later: systemctl --user unmask swaync.service && systemctl --user enable --now swaync.service)
-    if command -v systemctl >/dev/null 2>&1; then
+    # If legacy swaync.service is still present on the system, mask it so D-Bus doesn't steal org.freedesktop.Notifications
+    if command -v systemctl >/dev/null 2>&1 && systemctl --user list-unit-files swaync.service 2>/dev/null | grep -q "swaync.service"; then
         if [ "$(systemctl --user is-enabled swaync.service 2>/dev/null || true)" != "masked" ]; then
-            log_info "Masking swaync.service so Caelestia Shell owns org.freedesktop.Notifications..."
+            log_info "Masking legacy swaync.service so Caelestia Shell owns org.freedesktop.Notifications..."
             systemctl --user disable --now swaync.service >/dev/null 2>&1 || true
             systemctl --user mask swaync.service >/dev/null 2>&1 || true
             pkill -x swaync 2>/dev/null || true
-            log_ok "Masked swaync.service (use 'systemctl --user unmask swaync.service' to restore)"
-        else
-            log_skip "swaync.service is already masked"
+            log_ok "Masked legacy swaync.service"
         fi
     fi
 

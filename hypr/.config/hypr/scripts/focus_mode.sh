@@ -3,10 +3,9 @@
 # Focus Mode: toggle a "leave me alone" desktop state.
 #
 # ON:
-#   - swaync DND on (notifications queued silently, replayed on exit)
-#   - waybar hidden (SIGUSR1 is waybar's built-in visibility toggle)
+#   - Caelestia DND on (notifications silenced)
 #   - inactive windows dimmed so the focused window stands out
-# OFF reverses all three.
+# OFF reverses both.
 #
 # State is tracked via /tmp/focus_mode.state so the same key toggles cleanly.
 
@@ -14,8 +13,6 @@ STATE_FILE="/tmp/focus_mode.state"
 
 if [ -f "$STATE_FILE" ]; then
     # --- Disable focus mode ---
-    # swaync-client -df >/dev/null 2>&1
-    # pkill -SIGUSR1 waybar
     caelestia shell notifs disableDnd >/dev/null 2>&1
     hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive false")' >/dev/null
     rm -f "$STATE_FILE"
@@ -27,14 +24,12 @@ else
     # --- Enable focus mode ---
     # Send the on-notification BEFORE enabling DND so it's actually visible.
     notify-send "Focus Mode" \
-        "🎯 Focus mode ON\nNotifications silenced, distractions hidden." \
+        "🎯 Focus mode ON\nNotifications silenced, distractions dimmed." \
         -i emblem-important -t 3000
 
     # Small delay so the toast renders before DND mutes the channel.
     sleep 0.2
 
-    # swaync-client -dn >/dev/null 2>&1
-    # pkill -SIGUSR1 waybar
     caelestia shell notifs enableDnd >/dev/null 2>&1
     hyprctl repl 'hl.exec_cmd("keyword decoration:dim_inactive true")' >/dev/null
 

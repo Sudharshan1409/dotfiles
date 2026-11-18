@@ -208,15 +208,9 @@ while [ $DBUS_WAIT_COUNT -lt $MAX_WAIT ]; do
         fi
     fi
 
-    # 2. Check if notification daemon (Caelestia / Quickshell or swaync) is running
-    # if ! pgrep -x "swaync" > /dev/null 2>&1; then
-    #     log "Waiting for swaync to start..."
-    #     DBUS_WAIT_COUNT=$((DBUS_WAIT_COUNT + 1))
-    #     sleep 1
-    #     continue
-    # fi
-    if ! (pgrep -x "quickshell" > /dev/null 2>&1 || pgrep -x "qs" > /dev/null 2>&1 || pgrep -x "swaync" > /dev/null 2>&1); then
-        log "Waiting for notification daemon (quickshell/swaync) to start..."
+    # 2. Check if notification daemon (Caelestia / Quickshell) is running
+    if ! (pgrep -x "quickshell" > /dev/null 2>&1 || pgrep -x "qs" > /dev/null 2>&1); then
+        log "Waiting for Caelestia notification daemon (quickshell) to start..."
         DBUS_WAIT_COUNT=$((DBUS_WAIT_COUNT + 1))
         sleep 1
         continue

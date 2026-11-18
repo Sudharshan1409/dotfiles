@@ -86,8 +86,6 @@ fi
 section_header "2. Symlink Integrity (GNU Stow)"
 CHECK_LINKS=(
     "$HOME/.config/hypr:$DOTFILES_DIR/hypr/.config/hypr"
-    "$HOME/.config/waybar:$DOTFILES_DIR/waybar/.config/waybar"
-    "$HOME/.config/swaync:$DOTFILES_DIR/swaync/.config/swaync"
     "$HOME/.config/nvim:$DOTFILES_DIR/nvim/.config/nvim"
     "$HOME/.config/rofi:$DOTFILES_DIR/rofi/.config/rofi"
     "$HOME/.zshrc:$DOTFILES_DIR/zsh/.zshrc"
@@ -118,7 +116,7 @@ done
 # ------------------------------------------------------------------------------
 section_header "3. Wayland Desktop Components"
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
-WAYLAND_TOOLS=(hyprland qs caelestia waybar swaync hyprlock hypridle rofi grim slurp satty cliphist pamixer playerctl brightnessctl)
+WAYLAND_TOOLS=(hyprland qs caelestia hypridle rofi grim slurp satty cliphist pamixer playerctl brightnessctl)
 for tool in "${WAYLAND_TOOLS[@]}"; do
     if command -v "$tool" >/dev/null 2>&1; then
         check_pass "Tool available: $tool"
@@ -127,12 +125,10 @@ for tool in "${WAYLAND_TOOLS[@]}"; do
     fi
 done
 
-if command -v swww >/dev/null 2>&1; then
-    check_pass "Wallpaper daemon: swww (smooth GPU transitions enabled)"
-elif command -v hyprpaper >/dev/null 2>&1; then
-    check_pass "Wallpaper daemon: hyprpaper"
+if [ -d "$HOME/.config/backgrounds" ]; then
+    check_pass "Wallpaper collection present: ~/.config/backgrounds (managed by Caelestia)"
 else
-    check_warn "No wallpaper daemon found (install swww or hyprpaper)"
+    check_warn "Wallpaper directory missing: ~/.config/backgrounds"
 fi
 
 # ------------------------------------------------------------------------------
@@ -168,22 +164,6 @@ for dir in "${DIRS[@]}"; do
         check_warn "Directory missing: ~/${dir#$HOME/}"
     fi
 done
-
-if [ -f "$HOME/Pictures/Pics/dp_professional.png" ] || [ -f "$HOME/Pictures/Pics/dp_professional.jpeg" ] || [ -f "$HOME/Pictures/Pics/dp_passport_size.jpeg" ]; then
-    check_pass "Profile picture present in ~/Pictures/Pics/"
-else
-    check_warn "Profile picture missing in ~/Pictures/Pics/ (needed by hyprlock)"
-fi
-
-if [ -f "$HOME/.cache/hypr/lockscreen_info.json" ]; then
-    if jq empty "$HOME/.cache/hypr/lockscreen_info.json" 2>/dev/null; then
-        check_pass "Lockscreen info cache valid JSON (~/.cache/hypr/lockscreen_info.json)"
-    else
-        check_fail "Lockscreen info cache is corrupt JSON"
-    fi
-else
-    check_warn "Lockscreen info cache not yet generated"
-fi
 
 # ------------------------------------------------------------------------------
 # 6. Nerd Fonts
