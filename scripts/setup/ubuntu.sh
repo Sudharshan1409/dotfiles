@@ -431,6 +431,7 @@ setup_caelestia_shell_ubuntu() {
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
+            sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes /usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes
         )
         log_ok "Installed qt6-m3shapes"
     else
@@ -447,6 +448,7 @@ setup_caelestia_shell_ubuntu() {
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DQS_USE_X11=OFF -DVENDOR_CPPTRACE=ON >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
+            sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes /usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes
         )
         log_ok "Installed quickshell"
     else
@@ -463,10 +465,19 @@ setup_caelestia_shell_ubuntu() {
         (
             cd "$CAEL_CONF"
             # Get qt6 qml path dynamically for install
+# Patch for Qt 6.10 compatibility
+            sed -i 's/^DoubleSpinBox {/SpinBox {/' components/controls/StyledSpinBox.qml
+            sed -i 's/decimals:/\/\/ decimals:/' components/controls/StyledSpinBox.qml
+            sed -i '3i import QtQuick.Controls' components/controls/StyledSpinBox.qml
+            sed -i 's/topLeftRadius: itemBg.topLeftRadius/// topLeftRadius: itemBg.topLeftRadius/' modules/nexus/common/ListEditor.qml
+            sed -i 's/topRightRadius: itemBg.topRightRadius/// topRightRadius: itemBg.topRightRadius/' modules/nexus/common/ListEditor.qml
+            sed -i 's/bottomLeftRadius: dialogBg.bottomLeftRadius/// bottomLeftRadius: dialogBg.bottomLeftRadius/' modules/nexus/common/DialogRowButton.qml
+            sed -i 's/bottomRightRadius: dialogBg.bottomRightRadius/// bottomRightRadius: dialogBg.bottomRightRadius/' modules/nexus/common/DialogRowButton.qml
             local QML_DIR=$(qmake6 -query QT_INSTALL_QML 2>/dev/null || echo "/usr/lib/x86_64-linux-gnu/qt6/qml")
             cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_QSCONFDIR="$CAEL_CONF" -DINSTALL_QMLDIR="$QML_DIR" >/dev/null 2>&1
             cmake --build build >/dev/null 2>&1
             sudo cmake --install build >/dev/null 2>&1
+            sudo ln -sf /usr/local/lib/qt6/qml/M3Shapes /usr/lib/x86_64-linux-gnu/qt6/qml/M3Shapes
             
             # create wrapper
             echo '#!/bin/bash' > caelestia-shell
