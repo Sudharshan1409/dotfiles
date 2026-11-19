@@ -15,6 +15,7 @@ setup_common_stow() {
         ghostty
         alacritty
         hypr
+        caelestia
         rofi
         wlogout
         btop
@@ -29,6 +30,10 @@ setup_common_stow() {
             stow -D "$legacy_pkg" 2>/dev/null || true
         fi
     done
+    # Ensure ~/.config/caelestia can be tree-folded cleanly if created before stow ran
+    if [ -d "$HOME/.config/caelestia" ] && [ ! -L "$HOME/.config/caelestia" ]; then
+        rm -rf "$HOME/.config/caelestia"
+    fi
     STOW_UPDATED=0
     for pkg in "${STOW_PACKAGES[@]}"; do
         if [ -d "$pkg" ]; then

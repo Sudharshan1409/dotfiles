@@ -86,6 +86,7 @@ fi
 section_header "2. Symlink Integrity (GNU Stow)"
 CHECK_LINKS=(
     "$HOME/.config/hypr:$DOTFILES_DIR/hypr/.config/hypr"
+    "$HOME/.config/caelestia:$DOTFILES_DIR/caelestia/.config/caelestia"
     "$HOME/.config/nvim:$DOTFILES_DIR/nvim/.config/nvim"
     "$HOME/.config/rofi:$DOTFILES_DIR/rofi/.config/rofi"
     "$HOME/.zshrc:$DOTFILES_DIR/zsh/.zshrc"

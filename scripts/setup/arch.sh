@@ -218,82 +218,9 @@ setup_caelestia_shell_arch() {
         fi
     fi
 
-    # Configure Caelestia shell.json, cli.json & recordings dir idempotently (preserving user Nexus settings)
+    # Ensure recordings dir exists & apply custom Caelestia QML enhancements (config files stowed via caelestia/)
+    mkdir -p "$HOME/Videos/Recordings"
     python3 "$DOTFILES_DIR/scripts/setup/patch_caelestia.py" 2>/dev/null || true
-    mkdir -p "$HOME/.config/caelestia" "$HOME/Videos/Recordings"
-    python3 - <<'PY' 2>/dev/null && log_ok "Verified Caelestia shell.json & cli.json configuration"
-import json, pathlib
-
-cael_dir = pathlib.Path.home() / ".config/caelestia"
-
-shell_p = cael_dir / "shell.json"
-try:
-    shell_d = json.loads(shell_p.read_text()) if shell_p.exists() else {}
-except Exception:
-    shell_d = {}
-
-bar_clock = shell_d.setdefault("bar", {}).setdefault("clock", {})
-bar_clock.setdefault("background", True)
-bar_clock.setdefault("showDate", True)
-
-bar_tray = shell_d.setdefault("bar", {}).setdefault("tray", {})
-bar_tray.setdefault("background", True)
-bar_tray.setdefault("recolour", True)
-
-bar_aw = shell_d.setdefault("bar", {}).setdefault("activeWindow", {})
-bar_aw.setdefault("compact", True)
-
-shell_d["bar"].setdefault("statusIcons", [
-    {"id": "lockStatus", "enabled": True},
-    {"id": "audio", "enabled": True},
-    {"id": "microphone", "enabled": True},
-    {"id": "kbLayout", "enabled": False},
-    {"id": "network", "enabled": True},
-    {"id": "bluetooth", "enabled": True},
-    {"id": "battery", "enabled": True},
-])
-
-tr = shell_d.setdefault("appearance", {}).setdefault("transparency", {})
-tr.setdefault("enabled", True)
-tr.setdefault("base", 0.85)
-tr.setdefault("layers", 0.4)
-
-border = shell_d.setdefault("border", {})
-border.setdefault("thickness", 6)
-border.setdefault("rounding", 20)
-
-gen = shell_d.setdefault("general", {})
-apps = gen.setdefault("apps", {})
-apps.setdefault("terminal", ["ghostty", "--gtk-single-instance=true", "--shell-integration-features=ssh-env"])
-apps.setdefault("explorer", ["nautilus"])
-apps.setdefault("playback", ["xdg-open"])
-apps.setdefault("audio", ["caelestia", "shell", "nexus", "open"])
-
-idle = gen.setdefault("idle", {})
-idle.setdefault("lockBeforeSleep", True)
-idle.setdefault("inhibitWhenAudio", True)
-idle.setdefault("inhibitWhenCharging", False)
-idle.setdefault("timeouts", [
-    {"timeout": 600, "idleAction": "lock"},
-    {"timeout": 900, "idleAction": "dpms off", "returnAction": "dpms on"},
-])
-
-shell_d.setdefault("paths", {}).setdefault("wallpaperDir", "~/.config/backgrounds")
-shell_d.setdefault("services", {}).setdefault("weatherUnits", "Celsius")
-shell_p.write_text(json.dumps(shell_d, indent=4) + "\n")
-
-cli_p = cael_dir / "cli.json"
-try:
-    cli_d = json.loads(cli_p.read_text()) if cli_p.exists() else {}
-except Exception:
-    cli_d = {}
-
-theme = cli_d.setdefault("theme", {})
-theme.setdefault("enableDiscord", False)
-theme.setdefault("enableChromium", False)
-theme.setdefault("postHook", "hyprctl reload >/dev/null 2>&1 || true")
-cli_p.write_text(json.dumps(cli_d, indent=4) + "\n")
-PY
 
     if ( [ -f "/etc/xdg/quickshell/caelestia/shell.qml" ] || [ -f "$HOME/.config/quickshell/caelestia/shell.qml" ] ) && \
        command -v qs >/dev/null 2>&1 && command -v caelestia >/dev/null 2>&1; then

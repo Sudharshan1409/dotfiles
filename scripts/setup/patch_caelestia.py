@@ -80,6 +80,38 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
                 tog_p.write_text(t.replace(target, replacement, 1))
                 changed = True
 
+    # 5. Match distro logo icon weight with default Caelestia logo in OsIcon.qml
+    os_p = cael_dir / "modules/bar/components/OsIcon.qml"
+    if os_p.exists():
+        o = os_p.read_text()
+        if "pointSize * 1.2)" in o and "id: distroIcon" in o:
+            old_blk = """    Component {
+        id: distroIcon
+
+        ColouredIcon {
+            source: SysInfo.osLogo
+            implicitSize: Math.round(Tokens.font.body.large.pointSize * 1.2)
+            colour: Colours.palette.m3tertiary
+        }
+    }"""
+            new_blk = old_blk.replace("pointSize * 1.2)", "pointSize * 1.55)")
+            if old_blk in o:
+                os_p.write_text(o.replace(old_blk, new_blk, 1))
+                changed = True
+
+    # 6. Auto-resolve Ubuntu's vector Yaru distro emblem in SysInfo.qml (keeps shell.json portable across Ubuntu & Arch)
+    sys_p = cael_dir / "utils/SysInfo.qml"
+    if sys_p.exists():
+        s = sys_p.read_text()
+        target = '            const logo = Quickshell.iconPath(fd("LOGO"), true);'
+        if "yaruLogo" not in s and target in s:
+            replacement = (
+                '            const yaruLogo = "/usr/share/icons/Yaru/scalable/places/distributor-logo-symbolic.svg";\n'
+                '            const logo = Quickshell.iconPath(fd("LOGO"), true) || (root.osId === "ubuntu" ? `file://${yaruLogo}` : "");'
+            )
+            sys_p.write_text(s.replace(target, replacement, 1))
+            changed = True
+
     return changed
 
 

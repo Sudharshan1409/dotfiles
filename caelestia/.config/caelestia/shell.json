@@ -1,0 +1,116 @@
+{
+    "appearance": {
+        "transparency": {
+            "base": 0.85,
+            "enabled": true,
+            "layers": 0.4
+        }
+    },
+    "bar": {
+        "activeWindow": {
+            "compact": true,
+            "inverted": false
+        },
+        "clock": {
+            "background": true,
+            "showDate": true
+        },
+        "statusIcons": [
+            {
+                "enabled": true,
+                "id": "lockStatus"
+            },
+            {
+                "enabled": true,
+                "id": "audio"
+            },
+            {
+                "enabled": true,
+                "id": "microphone"
+            },
+            {
+                "enabled": false,
+                "id": "kbLayout"
+            },
+            {
+                "enabled": true,
+                "id": "network"
+            },
+            {
+                "enabled": true,
+                "id": "bluetooth"
+            },
+            {
+                "enabled": true,
+                "id": "battery"
+            }
+        ],
+        "tray": {
+            "background": true,
+            "compact": false,
+            "recolour": true
+        },
+        "workspaces": {
+            "maxWindowIcons": 6,
+            "occupiedBg": true,
+            "perMonitor": true,
+            "showUnoccupied": true,
+            "shown": 5
+        }
+    },
+    "border": {
+        "rounding": 20,
+        "thickness": 6
+    },
+    "general": {
+        "apps": {
+            "audio": [
+                "caelestia",
+                "shell",
+                "nexus",
+                "open"
+            ],
+            "explorer": [
+                "nautilus"
+            ],
+            "playback": [
+                "xdg-open"
+            ],
+            "terminal": [
+                "ghostty",
+                "--gtk-single-instance=true",
+                "--shell-integration-features=ssh-env"
+            ]
+        },
+        "idle": {
+            "inhibitWhenAudio": true,
+            "inhibitWhenCharging": false,
+            "lockBeforeSleep": true,
+            "timeouts": [
+                {
+                    "enabled": true,
+                    "idleAction": "lock",
+                    "inhibitWhenAudio": false,
+                    "inhibitWhenCharging": false,
+                    "respectInhibitors": true,
+                    "timeout": 600
+                },
+                {
+                    "enabled": true,
+                    "idleAction": "dpms off",
+                    "inhibitWhenAudio": false,
+                    "inhibitWhenCharging": false,
+                    "respectInhibitors": true,
+                    "returnAction": "dpms on",
+                    "timeout": 900
+                }
+            ]
+        }
+    },
+    "paths": {
+        "wallpaperDir": "~/.config/backgrounds"
+    },
+    "services": {
+        "weatherUnits": "Celsius"
+    }
+}
