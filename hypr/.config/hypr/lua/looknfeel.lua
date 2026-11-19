@@ -54,8 +54,9 @@ hl.config({
 
 		blur = {
 			enabled = true,
-			size = 3,
+			size = 6,
 			passes = 3,
+			vibrancy = 0.2,
 		},
 
 		shadow = {
@@ -307,4 +308,13 @@ hl.layer_rule({
 		namespace = "^caelestia-.*$",
 	},
 	no_anim = true,
+})
+
+-- Frosted glass blur behind translucent Caelestia taskbar, popouts & drawers
+hl.layer_rule({
+	match = {
+		namespace = "^caelestia-drawers$",
+	},
+	blur = true,
+	ignore_alpha = 0.5,
 })

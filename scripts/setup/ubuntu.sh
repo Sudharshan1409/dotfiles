@@ -738,6 +738,11 @@ bar_clock = shell_d.setdefault("bar", {}).setdefault("clock", {})
 bar_clock.setdefault("background", True)
 bar_clock.setdefault("showDate", True)
 
+tr = shell_d.setdefault("appearance", {}).setdefault("transparency", {})
+tr.setdefault("enabled", True)
+tr.setdefault("base", 0.85)
+tr.setdefault("layers", 0.4)
+
 gen = shell_d.setdefault("general", {})
 apps = gen.setdefault("apps", {})
 apps.setdefault("terminal", ["ghostty", "--gtk-single-instance=true", "--shell-integration-features=ssh-env"])
