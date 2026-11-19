@@ -27,4 +27,4 @@ idx=$(echo "$display" | rofi -dmenu \
 [ -z "$idx" ] && exit 0
 
 addr=$(echo "$data" | sed -n "$((idx + 1))p" | cut -f1)
-[ -n "$addr" ] && hyprctl repl 'hl.dispatch(hl.dsp.focus({ window = "address:'$addr'" }))'
+[ -n "$addr" ] && hyprctl repl "hl.dispatch(hl.dsp.focus({ window = '$addr' }))"

@@ -72,6 +72,15 @@ hl.window_rule({
 	float = true,
 })
 
+-- Settings windows (Caelestia Nexus & GNOME Settings)
+hl.window_rule({
+	match = {
+		class = "^(org\\.quickshell|org\\.gnome\\.Settings)$",
+	},
+	float = true,
+	center = true,
+})
+
 -- System monitor popups (htop, nvtop in Ghostty)
 hl.window_rule({
 	match = {

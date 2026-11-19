@@ -107,10 +107,20 @@
             ]
         }
     },
+    "launcher": {
+        "enableDangerousActions": true,
+        "maxShown": 10,
+        "showOnHover": true,
+        "vimKeybinds": true
+    },
     "paths": {
         "wallpaperDir": "~/.config/backgrounds"
     },
     "services": {
         "weatherUnits": "Celsius"
+    },
+    "sidebar": {
+        "dragThreshold": 80,
+        "showOnHover": false
     }
 }

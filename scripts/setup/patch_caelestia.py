@@ -212,8 +212,231 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
                 1,
             )
             cont_changed = True
+        if "Qt.Key_L" not in c:
+            c = c.replace(
+                "if (event.key === Qt.Key_J || event.key === Qt.Key_N) {",
+                "if (event.key === Qt.Key_J || event.key === Qt.Key_L || event.key === Qt.Key_N) {",
+                1,
+            )
+            c = c.replace(
+                "} else if (event.key === Qt.Key_K || event.key === Qt.Key_P) {",
+                "} else if (event.key === Qt.Key_K || event.key === Qt.Key_H || event.key === Qt.Key_P) {",
+                1,
+            )
+            cont_changed = True
         if cont_changed:
             cont_p.write_text(c)
+            changed = True
+
+    # 9. Hybrid Workspace Hover Preview (Mini-Desktop on workspace shape, Single-Window on app icon)
+    wsp_src = assets_dir / "WorkspacePopout.qml"
+    wsp_dst = cael_dir / "modules/bar/popouts/WorkspacePopout.qml"
+    if wsp_src.exists() and wsp_dst.parent.is_dir():
+        src_text = wsp_src.read_text()
+        if not wsp_dst.exists() or wsp_dst.read_text() != src_text:
+            shutil.copyfile(wsp_src, wsp_dst)
+            changed = True
+
+    pstate_p = cael_dir / "modules/bar/popouts/PopoutState.qml"
+    if pstate_p.exists():
+        ps = pstate_p.read_text()
+        if "hoveredWorkspace" not in ps:
+            ps = ps.replace(
+                "    property bool hasCurrent\n",
+                "    property bool hasCurrent\n    property int hoveredWorkspace: 1\n    property var hoveredToplevel: null\n    property var detachToplevel: null\n",
+                1,
+            )
+            pstate_p.write_text(ps)
+            changed = True
+
+    wrap_p = cael_dir / "modules/bar/popouts/Wrapper.qml"
+    if wrap_p.exists():
+        wr = wrap_p.read_text()
+        wr_changed = False
+        if "hoveredWorkspace" not in wr:
+            wr = wr.replace(
+                "    property alias hasCurrent: popoutState.hasCurrent\n",
+                "    property alias hasCurrent: popoutState.hasCurrent\n    property alias hoveredWorkspace: popoutState.hoveredWorkspace\n    property alias hoveredToplevel: popoutState.hoveredToplevel\n",
+                1,
+            )
+            wr_changed = True
+        if "detachToplevel = null" not in wr:
+            wr = wr.replace(
+                '        detachedMode = "";\n',
+                '        detachedMode = "";\n        popoutState.detachToplevel = null;\n',
+                1,
+            )
+            wr = wr.replace(
+                "            client: Hypr.activeToplevel",
+                "            client: popoutState.detachToplevel ?? Hypr.activeToplevel",
+                1,
+            )
+            wr_changed = True
+        if wr_changed:
+            wrap_p.write_text(wr)
+            changed = True
+
+    if pop_p.exists():
+        p = pop_p.read_text()
+        if 'name: "workspace"' not in p:
+            target = """        Popout {
+            name: "calendar"
+            sourceComponent: CalendarPopout {}
+        }"""
+            replacement = target + """
+
+        Popout {
+            name: "workspace"
+            sourceComponent: WorkspacePopout {
+                popouts: root.popouts
+                screen: QsWindow.window?.screen ?? null
+            }
+        }"""
+            if target in p:
+                pop_p.write_text(p.replace(target, replacement, 1))
+                changed = True
+
+    ws_item_p = cael_dir / "modules/bar/components/workspaces/Workspace.qml"
+    if ws_item_p.exists():
+        wi = ws_item_p.read_text()
+        if "function hitTest(" not in wi:
+            wi = wi.replace(
+                """        if (focused)
+            shape.shape = focusedShapeList[Math.floor(Math.random() * focusedShapeList.length)];
+        else
+            shape.shape = Qt.binding(() => isOccupied ? MaterialShape.Square : MaterialShape.Circle);
+    }""",
+                """        if (focused)
+            shape.shape = focusedShapeList[Math.floor(Math.random() * focusedShapeList.length)];
+        else
+            shape.shape = Qt.binding(() => isOccupied ? MaterialShape.Square : MaterialShape.Circle);
+    }
+
+    function hitTest(barItem: Item, barY: real): var {
+        if (!isOccupied)
+            return null;
+        const winList = windows.item as LazyListView;
+        if (hasWindows && winList) {
+            const localY = barItem.mapToItem(winList, 0, barY).y;
+            if (localY >= 0 && localY <= winList.height) {
+                const winIcon = winList.itemAt(winList.width / 2, localY) as WinIcon;
+                if (winIcon && winIcon.modelData) {
+                    return {
+                        ws: root.ws,
+                        toplevel: winIcon.modelData,
+                        targetItem: winIcon
+                    };
+                }
+            }
+        }
+        return {
+            ws: root.ws,
+            toplevel: null,
+            targetItem: indicator
+        };
+    }""",
+                1,
+            )
+            old_del = """                delegate: MaterialIcon {
+                    id: win
+
+                    required property var modelData
+                    required property int index // Needed, LazyListView will fail to set it if it doesn't exist
+
+                    grade: 0
+                    horizontalAlignment: Text.AlignHCenter
+                    text: Icons.getAppCategoryIcon(modelData.lastIpcObject.class, "terminal")
+                    color: root.onOtherMonitor ? root.offMonitorColour : Colours.palette.m3onSurfaceVariant
+
+                    opacity: LazyListView.adding || LazyListView.removing ? 0 : 1
+
+                    Behavior on opacity {
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
+                    }
+
+                    Behavior on y {
+                        Anim {}
+                    }
+                }
+            }
+        }
+    }"""
+            new_del = """                delegate: WinIcon {}
+            }
+        }
+    }
+
+    component WinIcon: MaterialIcon {
+        id: win
+
+        required property var modelData
+        required property int index // Needed, LazyListView will fail to set it if it doesn't exist
+
+        grade: 0
+        horizontalAlignment: Text.AlignHCenter
+        text: Icons.getAppCategoryIcon(modelData.lastIpcObject.class, "terminal")
+        color: root.onOtherMonitor ? root.offMonitorColour : Colours.palette.m3onSurfaceVariant
+
+        opacity: LazyListView.adding || LazyListView.removing ? 0 : 1
+
+        Behavior on opacity {
+            Anim {
+                type: Anim.DefaultEffects
+            }
+        }
+
+        Behavior on y {
+            Anim {}
+        }
+    }"""
+            wi = wi.replace(old_del, new_del, 1)
+            ws_item_p.write_text(wi)
+            changed = True
+
+    ws_list_p = cael_dir / "modules/bar/components/workspaces/Workspaces.qml"
+    if ws_list_p.exists():
+        wl = ws_list_p.read_text()
+        if "function hitTest(" not in wl:
+            wl = wl.replace(
+                "        return index % shown;\n    }",
+                """        return index % shown;
+    }
+
+    function hitTest(barItem: Item, barY: real): var {
+        if (onSpecial)
+            return null;
+        const listY = barItem.mapToItem(workspaces, 0, barY).y;
+        const wsItem = workspaces.itemAt(workspaces.width / 2, listY) as Workspace;
+        return wsItem ? wsItem.hitTest(barItem, barY) : null;
+    }""",
+                1,
+            )
+            ws_list_p.write_text(wl)
+            changed = True
+
+    if bar_p.exists():
+        b = bar_p.read_text()
+        if 'popouts.currentName = "workspace"' not in b:
+            b = b.replace(
+                '        } else if (id === "clock") {',
+                """        } else if (id === "workspaces") {
+            const hit = (ch.item as Workspaces).hitTest(root, y);
+            if (hit) {
+                const target = hit.targetItem as Item;
+                popouts.hoveredWorkspace = hit.ws;
+                popouts.hoveredToplevel = hit.toplevel;
+                popouts.currentName = "workspace";
+                popouts.currentCenter = Qt.binding(() => target ? target.mapToItem(root, 0, target.height / 2).y : 0);
+                popouts.hasCurrent = true;
+            } else {
+                popouts.hasCurrent = false;
+            }
+        } else if (id === "clock") {""",
+                1,
+            )
+            bar_p.write_text(b)
             changed = True
 
     return changed
