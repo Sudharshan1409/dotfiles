@@ -1,12 +1,12 @@
 local commands = {
-	downloads = "nautilus ~/Downloads",
-	backgrounds = "nautilus ~/.config/backgrounds",
-	home = "nautilus ~",
+	downloads = "env -u GTK_THEME nautilus ~/Downloads",
+	backgrounds = "env -u GTK_THEME nautilus ~/.config/backgrounds",
+	home = "env -u GTK_THEME nautilus ~",
 	menu = "caelestia shell drawers toggle launcher",
 }
 
 local apps = {
-	terminal = "ghostty",
+	terminal = "env -u GTK_THEME ghostty",
 }
 
 local buttons = {

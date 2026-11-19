@@ -2,6 +2,11 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
+# Replay Caelestia dynamic Material You terminal ANSI sequences immediately at frame 0 (before Oh-My-Zsh loads)
+if [[ -o interactive && -t 1 && -f "$HOME/.local/state/caelestia/sequences.txt" ]]; then
+  command cat "$HOME/.local/state/caelestia/sequences.txt"
+fi
+
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -138,8 +143,3 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH="$HOME/tools/jadx/bin:$PATH"
 export PATH="/usr/bin:/bin:$PATH"
-
-# Replay Caelestia dynamic Material You terminal ANSI sequences on new interactive shells
-if [[ -o interactive && -t 1 && -f "$HOME/.local/state/caelestia/sequences.txt" ]]; then
-  command cat "$HOME/.local/state/caelestia/sequences.txt"
-fi

@@ -9,6 +9,7 @@ setup_common_stow() {
         backgrounds
         bat
         caelestia
+        fastfetch
         ghostty
         git
         hypr
@@ -16,6 +17,7 @@ setup_common_stow() {
         nvim
         rofi
         starship
+        systemd
         tmux
         yazi
         zellij
@@ -29,10 +31,12 @@ setup_common_stow() {
             stow -D "$legacy_pkg" 2>/dev/null || true
         fi
     done
-    # Ensure ~/.config/caelestia can be tree-folded cleanly if created before stow ran
-    if [ -d "$HOME/.config/caelestia" ] && [ ! -L "$HOME/.config/caelestia" ]; then
-        rm -rf "$HOME/.config/caelestia"
-    fi
+    # Ensure ~/.config/caelestia and ~/.config/fastfetch can be tree-folded cleanly if created before stow ran
+    for fold_dir in "$HOME/.config/caelestia" "$HOME/.config/fastfetch"; do
+        if [ -d "$fold_dir" ] && [ ! -L "$fold_dir" ]; then
+            rm -rf "$fold_dir"
+        fi
+    done
     STOW_UPDATED=0
     for pkg in "${STOW_PACKAGES[@]}"; do
         if [ -d "$pkg" ]; then
@@ -197,10 +201,48 @@ setup_common_desktop_theme() {
         rm -f "$CURSOR_ZIP"
     fi
 
-    # 2. Seed Rofi fallback theme & btop Caelestia theme before first wallpaper init
+    # 2. Seed Rofi/Zellij/btop themes & user avatar (~/.face) before first wallpaper init
     mkdir -p "$HOME/.local/state/caelestia/theme"
     if [ ! -f "$HOME/.local/state/caelestia/theme/rofi-colors.rasi" ] && [ -f "$HOME/.config/rofi/colors-fallback.rasi" ]; then
         cp "$HOME/.config/rofi/colors-fallback.rasi" "$HOME/.local/state/caelestia/theme/rofi-colors.rasi"
+    fi
+    if [ ! -f "$HOME/.local/state/caelestia/theme/caelestia.kdl" ]; then
+        cat > "$HOME/.local/state/caelestia/theme/caelestia.kdl" << 'EOF'
+themes {
+    caelestia {
+        fg 205 214 244
+        bg 17 17 27
+        red 243 139 168
+        green 137 180 250
+        yellow 249 226 175
+        blue 180 190 254
+        magenta 203 166 247
+        orange 250 179 135
+        cyan 148 226 213
+        black 30 30 46
+        white 205 214 244
+    }
+}
+EOF
+    fi
+    if [ -d "$HOME/.config/zellij" ]; then
+        ln -sfn "$HOME/.local/state/caelestia/theme" "$HOME/.config/zellij/themes"
+    fi
+    if [ ! -f "$HOME/.local/state/caelestia/theme/ghostty.conf" ]; then
+        cat > "$HOME/.local/state/caelestia/theme/ghostty.conf" << 'EOF'
+background = #1e1e2e
+foreground = #cdd6f4
+cursor-color = #cba6f7
+cursor-text = #11111b
+selection-background = #313244
+selection-foreground = #cdd6f4
+EOF
+    fi
+    if [ -d "$HOME/.config/ghostty" ]; then
+        ln -sfn "$HOME/.local/state/caelestia/theme" "$HOME/.config/ghostty/themes"
+    fi
+    if [ -f "$HOME/.config/caelestia/avatar.png" ] && [ ! -e "$HOME/.face" ]; then
+        ln -sfn "$HOME/.config/caelestia/avatar.png" "$HOME/.face"
     fi
     if [ ! -f "$HOME/.config/btop/btop.conf" ]; then
         mkdir -p "$HOME/.config/btop"
@@ -244,6 +286,11 @@ setup_common_services() {
         log_ok "Enabled and started power-profiles-daemon service"
     else
         log_skip "power-profiles-daemon service unit not found; skipping"
+    fi
+
+    if systemctl --user daemon-reload >/dev/null 2>&1; then
+        systemctl --user enable caelestia-shell.service cliphist.service >/dev/null 2>&1 || true
+        log_ok "Enabled systemd --user watchdog units (caelestia-shell & cliphist)"
     fi
 }
 

@@ -54,10 +54,9 @@ hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 hl.env("XCOMPOSEFILE", home .. "/.XCompose")
 
 -- -----------------------------------------------------------------------------
--- GTK theme
+-- GTK dark mode & Caelestia Material You gtk.css
+-- (Avoid setting GTK_THEME so GTK4/libadwaita loads ~/.config/gtk-4.0/gtk.css)
 -- -----------------------------------------------------------------------------
-
-hl.env("GTK_THEME", "Adwaita:dark")
 
 -- -----------------------------------------------------------------------------
 -- Ecosystem

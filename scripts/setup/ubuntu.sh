@@ -70,6 +70,7 @@ setup_ubuntu_packages() {
         tesseract-ocr
         tesseract-ocr-eng
         brightnessctl
+        wlsunset
         playerctl
         polkit-kde-agent-1
         libnotify-bin

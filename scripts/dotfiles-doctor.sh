@@ -81,6 +81,16 @@ if command -v Hyprland >/dev/null 2>&1; then
     fi
 fi
 
+if [ -n "$WAYLAND_DISPLAY" ] && command -v systemctl >/dev/null 2>&1; then
+    for svc in caelestia-shell.service cliphist.service; do
+        if systemctl --user is-active --quiet "$svc" 2>/dev/null; then
+            check_pass "Watchdog User Service active: $svc"
+        else
+            check_warn "Watchdog User Service not active: $svc"
+        fi
+    done
+fi
+
 SHELL_NAME=$(basename "$SHELL")
 if [ "$SHELL_NAME" = "zsh" ]; then
     check_pass "User Default Shell: zsh ($($SHELL --version | head -n 1))"
@@ -96,10 +106,13 @@ CHECK_LINKS=(
     "$HOME/.config/hypr:$DOTFILES_DIR/hypr/.config/hypr"
     "$HOME/.config/caelestia:$DOTFILES_DIR/caelestia/.config/caelestia"
     "$HOME/.config/backgrounds:$DOTFILES_DIR/backgrounds/.config/backgrounds"
+    "$HOME/.config/fastfetch:$DOTFILES_DIR/fastfetch/.config/fastfetch"
     "$HOME/.config/ghostty:$DOTFILES_DIR/ghostty/.config/ghostty"
     "$HOME/.config/nvim:$DOTFILES_DIR/nvim/.config/nvim"
     "$HOME/.config/rofi:$DOTFILES_DIR/rofi/.config/rofi"
     "$HOME/.config/starship:$DOTFILES_DIR/starship/.config/starship"
+    "$HOME/.config/systemd/user/caelestia-shell.service:$DOTFILES_DIR/systemd/.config/systemd/user/caelestia-shell.service"
+    "$HOME/.config/systemd/user/cliphist.service:$DOTFILES_DIR/systemd/.config/systemd/user/cliphist.service"
     "$HOME/.zshrc:$DOTFILES_DIR/zsh/.zshrc"
     "$HOME/.config/tmux:$DOTFILES_DIR/tmux/.config/tmux"
     "$HOME/.config/yazi:$DOTFILES_DIR/yazi/.config/yazi"
@@ -129,7 +142,7 @@ done
 # ------------------------------------------------------------------------------
 section_header "3. Wayland Desktop Components"
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
-WAYLAND_TOOLS=(hyprland qs caelestia gpu-screen-recorder rofi grim slurp satty cliphist wpctl playerctl brightnessctl)
+WAYLAND_TOOLS=(hyprland qs caelestia gpu-screen-recorder wlsunset rofi grim slurp satty cliphist wpctl playerctl brightnessctl)
 for tool in "${WAYLAND_TOOLS[@]}"; do
     if command -v "$tool" >/dev/null 2>&1; then
         check_pass "Tool available: $tool"
@@ -148,7 +161,7 @@ fi
 # 4. Core CLI & Development Utilities
 # ------------------------------------------------------------------------------
 section_header "4. CLI & Development Utilities"
-CLI_TOOLS=(git nvim tmux zellij fzf zoxide lsd bat delta lazygit fd rg jq tldr shellcheck starship fnm uv ghostty sesh)
+CLI_TOOLS=(git nvim tmux zellij fastfetch fzf zoxide lsd bat delta lazygit fd rg jq tldr shellcheck starship fnm uv ghostty sesh)
 for tool in "${CLI_TOOLS[@]}"; do
     RESOLVED_TOOL="$tool"
     [ "$tool" = "delta" ] && command -v git-delta >/dev/null 2>&1 && RESOLVED_TOOL="git-delta"
@@ -177,6 +190,12 @@ for dir in "${DIRS[@]}"; do
         check_warn "Directory missing: ~/${dir#$HOME/}"
     fi
 done
+
+if [ -f "$HOME/.face" ] || [ -L "$HOME/.face" ]; then
+    check_pass "Profile avatar present: ~/.face"
+else
+    check_warn "Profile avatar missing: ~/.face"
+fi
 
 # ------------------------------------------------------------------------------
 # 6. Nerd Fonts

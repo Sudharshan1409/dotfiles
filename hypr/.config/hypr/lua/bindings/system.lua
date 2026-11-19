@@ -87,6 +87,11 @@ hl.bind(
 )
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, buttons.shift, "R"), hl.dsp.exec_cmd("caelestia record -sr -c"))
 
--- Focus & Game Mode
+-- Focus, Night Light & Game Mode
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "F"), hl.dsp.exec_cmd("~/.config/hypr/scripts/focus_mode.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "N"), hl.dsp.global("caelestia:nightLightToggle"))
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "G"), hl.dsp.exec_cmd("caelestia shell gameMode toggle"))
+
+-- Laptop Clamshell / Lid Switch Handling
+hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("~/.config/hypr/scripts/lid_switch.sh close"), { locked = true })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("~/.config/hypr/scripts/lid_switch.sh open"), { locked = true })

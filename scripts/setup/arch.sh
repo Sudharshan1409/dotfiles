@@ -37,6 +37,7 @@ setup_arch_packages() {
         tesseract
         tesseract-data-eng
         brightnessctl
+        wlsunset
         playerctl
         polkit-kde-agent
         libnotify

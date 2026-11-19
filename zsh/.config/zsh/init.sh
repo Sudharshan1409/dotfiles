@@ -2,6 +2,9 @@
 export EDITOR="nvim"
 export VISUAL="nvim"
 export CAELESTIA_WALLPAPERS_DIR="$HOME/.config/backgrounds"
+if [ -f "$HOME/.local/state/caelestia/theme/lazygit-theme.yml" ]; then
+    export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.local/state/caelestia/theme/lazygit-theme.yml"
+fi
 
 # Shared paths used by every cli/*.sh
 _VENV_DIR="$HOME/.config/zsh/venv"

@@ -1,0 +1,15 @@
+[Unit]
+Description=Caelestia Material 3 Desktop Shell (Quickshell Watchdog)
+Documentation=https://github.com/caelestia-dots/shell
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'export PATH="$HOME/.local/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"; export CAELESTIA_WALLPAPERS_DIR="$HOME/.config/backgrounds"; [ -f /usr/local/lib/caelestia/version ] && export CAELESTIA_LIB_DIR="/usr/local/lib/caelestia"; exec qs -c caelestia -n'
+Restart=always
+RestartSec=1
+KillMode=process
+
+[Install]
+WantedBy=graphical-session.target

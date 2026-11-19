@@ -10,7 +10,7 @@
         "enableNvtop": true,
         "enableQt": true,
         "enableTerm": true,
-        "postHook": "hyprctl reload >/dev/null 2>&1 || true"
+        "postHook": "hyprctl reload >/dev/null 2>&1 || true; gdbus call --session --dest com.mitchellh.ghostty --object-path /com/mitchellh/ghostty --method org.gtk.Actions.Activate reload-config '[]' '{}' >/dev/null 2>&1 || true; tmux source-file ~/.local/state/caelestia/theme/tmux-colors.conf >/dev/null 2>&1 || true"
     },
     "toggles": {
         "music": {

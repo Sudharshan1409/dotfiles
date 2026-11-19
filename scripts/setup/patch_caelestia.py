@@ -449,32 +449,74 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
             picker_p.write_text(pk.replace(old_swappy, new_satty, 1))
             changed = True
 
-    # 11. Live Visual Alt+Tab WindowSwitcher (modules/windowswitcher/WindowSwitcher.qml + shell.qml)
-    wsw_src = assets_dir / "WindowSwitcher.qml"
-    wsw_dst = cael_dir / "modules/windowswitcher/WindowSwitcher.qml"
-    if wsw_src.exists():
-        wsw_dst.parent.mkdir(parents=True, exist_ok=True)
-        src_text = wsw_src.read_text()
-        if not wsw_dst.exists() or wsw_dst.read_text() != src_text:
-            shutil.copyfile(wsw_src, wsw_dst)
+    # 11. Live Visual Alt+Tab WindowSwitcher, Mission Control WorkspaceOverview, Visual Clipboard & NightLight
+    custom_modules = [
+        ("WindowSwitcher.qml", "modules/windowswitcher/WindowSwitcher.qml"),
+        ("WorkspaceOverview.qml", "modules/workspaceoverview/WorkspaceOverview.qml"),
+        ("ClipboardModal.qml", "modules/clipboard/ClipboardModal.qml"),
+        ("NightLight.qml", "services/NightLight.qml"),
+    ]
+    for src_name, rel_dst in custom_modules:
+        src_p = assets_dir / src_name
+        dst_p = cael_dir / rel_dst
+        if src_p.exists():
+            dst_p.parent.mkdir(parents=True, exist_ok=True)
+            src_text = src_p.read_text()
+            if not dst_p.exists() or dst_p.read_text() != src_text:
+                shutil.copyfile(src_p, dst_p)
+                changed = True
+
+    # Wire NightLight toggle button into Quick Utilities (modules/utilities/cards/Toggles.qml)
+    util_tog_p = cael_dir / "modules/utilities/cards/Toggles.qml"
+    if util_tog_p.exists():
+        ut = util_tog_p.read_text()
+        ut_orig = ut
+        if '"nightLight"' not in ut:
+            old_filter = """            seenIds.add(item.id);
+            return true;
+        });"""
+            new_filter = """            seenIds.add(item.id);
+            return true;
+        }).concat([{ id: "nightLight", enabled: true }]);"""
+            ut = ut.replace(old_filter, new_filter, 1)
+
+            old_choice = """                DelegateChoice {
+                    roleValue: "dnd" """
+            # Match exact dnd DelegateChoice header
+            ut = ut.replace(
+                '                DelegateChoice {\n                    roleValue: "dnd"',
+                """                DelegateChoice {
+                    roleValue: "nightLight"
+                    delegate: Toggle {
+                        icon: "bedtime"
+                        checked: NightLight.active
+                        onClicked: NightLight.toggle()
+                    }
+                }
+                DelegateChoice {
+                    roleValue: "dnd\"""",
+                1,
+            )
+        if ut != ut_orig:
+            util_tog_p.write_text(ut)
             changed = True
 
     shell_p = cael_dir / "shell.qml"
     if shell_p.exists():
         sh = shell_p.read_text()
         sh_orig = sh
-        if "import qs.modules.windowswitcher" not in sh:
-            sh = sh.replace(
-                "import qs.modules.lock",
-                "import qs.modules.lock\nimport qs.modules.windowswitcher",
-                1,
-            )
-        if "WindowSwitcher {}" not in sh:
-            sh = sh.replace(
-                "    AreaPicker {}",
-                "    AreaPicker {}\n    WindowSwitcher {}",
-                1,
-            )
+        for mod_imp in (
+            "import qs.modules.windowswitcher",
+            "import qs.modules.workspaceoverview",
+            "import qs.modules.clipboard",
+        ):
+            if mod_imp not in sh:
+                sh = sh.replace("import qs.modules.lock", f"import qs.modules.lock\n{mod_imp}", 1)
+        if "NightLight;" not in sh:
+            sh = sh.replace("        Brightness;", "        Brightness;\n        NightLight;", 1)
+        for mod_inst in ("WindowSwitcher {}", "WorkspaceOverview {}", "ClipboardModal {}"):
+            if mod_inst not in sh:
+                sh = sh.replace("    AreaPicker {}", f"    AreaPicker {{}}\n    {mod_inst}", 1)
         if sh != sh_orig:
             shell_p.write_text(sh)
             changed = True

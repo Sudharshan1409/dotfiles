@@ -22,9 +22,9 @@ hl.bind(KeyCombo(buttons.mainMod, buttons.shift, "F"), hl.dsp.exec_cmd("~/.confi
 hl.bind(KeyCombo(buttons.mainMod, buttons.space), hl.dsp.exec_cmd(commands.menu))
 hl.bind(KeyCombo(buttons.mainMod, "D"), hl.dsp.exec_cmd("caelestia shell drawers toggle dashboard"))
 hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "N"), hl.dsp.exec_cmd("caelestia shell drawers toggle sidebar"))
-hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "V"), hl.dsp.exec_cmd("~/.config/hypr/scripts/clipboard.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.ctrl, "V"), hl.dsp.global("caelestia:clipboardToggle"))
 hl.bind(KeyCombo(buttons.mainMod, "period"), hl.dsp.exec_cmd("~/.config/hypr/scripts/emoji_picker.sh"))
 --
--- --- Workspace Overview ---
+-- --- Spatial Workspace Overview (Mission Control) ---
 --
-hl.bind(KeyCombo(buttons.mainMod, buttons.grave), hl.dsp.exec_cmd("~/.config/hypr/scripts/workspace_overview.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.grave), hl.dsp.global("caelestia:workspaceOverviewToggle"))

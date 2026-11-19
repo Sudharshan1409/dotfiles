@@ -22,9 +22,9 @@ cat > "$TEMP_FILE" << 'EOF'
 📱 APPS | Ctrl + Shift + Esc | Toggle btop system monitor scratchpad (alternate)
 📱 APPS | Super + Alt + D | Open Downloads folder
 📱 APPS | Super + Alt + B | Open Backgrounds folder
-📱 APPS | Super + Ctrl + V | Open clipboard history
+📱 APPS | Super + Ctrl + V | Open visual clipboard history (with image previews)
 📱 APPS | Super + Ctrl + N | Open notification sidebar
-📱 APPS | Super + ` | Show workspace overview
+📱 APPS | Super + ` | Toggle Mission Control spatial workspace overview
 ⚙️ SYSTEM | Super + Ctrl + M | Exit Hyprland session
 ⚙️ SYSTEM | Super + Ctrl + R | Reload Hyprland configuration
 ⚙️ SYSTEM | Super + Ctrl + L | Lock the screen (Caelestia lock)
@@ -45,7 +45,9 @@ cat > "$TEMP_FILE" << 'EOF'
 🔧 UTILS | Super + Alt + R | Screen recorder (Caelestia utilities / stop)
 🔧 UTILS | Super + Alt + Shift + R | Quick record region with audio (toggle)
 🔧 UTILS | Super + Alt + F | Focus mode (toggle DND + dim inactive)
+🔧 UTILS | Super + Alt + N | Toggle Night Light (4200K blue-light filter)
 🔧 UTILS | Super + Alt + G | Toggle Game Mode (zero animations/blur/gaps)
+💻 LAPTOP | Lid Close / Open | Smart Clamshell Mode (docked) or Lock (undocked)
 🪟 WINDOWS | Super + C | Close active window
 🪟 WINDOWS | Super + V | Toggle floating mode
 🪟 WINDOWS | Super + F | Toggle fullscreen mode
@@ -147,12 +149,12 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("nautilus ~/Downloads")' ;;
     "Open Backgrounds folder")
         hyprctl repl 'hl.exec_cmd("nautilus ~/.config/backgrounds")' ;;
-    "Open clipboard history")
-        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/clipboard.sh")' ;;
+    "Open visual clipboard history (with image previews)")
+        hyprctl repl 'hl.exec_cmd("caelestia shell clipboard toggle")' ;;
     "Open notification sidebar")
         hyprctl repl 'hl.exec_cmd("caelestia shell drawers toggle sidebar")' ;;
-    "Show workspace overview")
-        hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/workspace_overview.sh")' ;;
+    "Toggle Mission Control spatial workspace overview")
+        hyprctl repl 'hl.exec_cmd("caelestia shell workspaceOverview toggle")' ;;
     "Exit Hyprland session")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/exit_hyprland.sh")' ;;
     "Reload Hyprland configuration")
@@ -193,6 +195,8 @@ case "$DESCRIPTION" in
         hyprctl repl 'hl.exec_cmd("caelestia record -sr -c")' ;;
     "Focus mode (toggle DND + dim inactive)")
         hyprctl repl 'hl.exec_cmd("~/.config/hypr/scripts/focus_mode.sh")' ;;
+    "Toggle Night Light (4200K blue-light filter)")
+        hyprctl repl 'hl.exec_cmd("caelestia shell nightLight toggle")' ;;
     "Toggle Game Mode (zero animations/blur/gaps)")
         hyprctl repl 'hl.exec_cmd("caelestia shell gameMode toggle")' ;;
     "Close active window")
