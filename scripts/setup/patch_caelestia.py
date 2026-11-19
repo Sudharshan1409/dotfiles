@@ -439,6 +439,46 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
             bar_p.write_text(b)
             changed = True
 
+    # 10. AreaPicker (Picker.qml): prefer Satty (Ubuntu/Arch) with fallback to Swappy or direct save+copy
+    picker_p = cael_dir / "modules/areapicker/Picker.qml"
+    if picker_p.exists():
+        pk = picker_p.read_text()
+        old_swappy = '                Quickshell.execDetached(["swappy", "-f", path]);'
+        new_satty = """                Quickshell.execDetached(["sh", "-c", 'export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"; OUT="$HOME/Pictures/Screenshots/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"; mkdir -p "$HOME/Pictures/Screenshots"; if command -v satty >/dev/null 2>&1; then satty --filename "$1" --output-filename "$OUT" --early-exit --actions-on-enter save-to-clipboard --save-after-copy --copy-command wl-copy; elif command -v swappy >/dev/null 2>&1; then swappy -f "$1" -o "$OUT"; else cp "$1" "$OUT" && wl-copy --type image/png < "$OUT" && notify-send -a caelestia-cli -i "$OUT" "Screenshot Captured" "Saved to $OUT and copied to clipboard"; fi; rm -f "$1"', "sh", path]);"""
+        if old_swappy in pk:
+            picker_p.write_text(pk.replace(old_swappy, new_satty, 1))
+            changed = True
+
+    # 11. Live Visual Alt+Tab WindowSwitcher (modules/windowswitcher/WindowSwitcher.qml + shell.qml)
+    wsw_src = assets_dir / "WindowSwitcher.qml"
+    wsw_dst = cael_dir / "modules/windowswitcher/WindowSwitcher.qml"
+    if wsw_src.exists():
+        wsw_dst.parent.mkdir(parents=True, exist_ok=True)
+        src_text = wsw_src.read_text()
+        if not wsw_dst.exists() or wsw_dst.read_text() != src_text:
+            shutil.copyfile(wsw_src, wsw_dst)
+            changed = True
+
+    shell_p = cael_dir / "shell.qml"
+    if shell_p.exists():
+        sh = shell_p.read_text()
+        sh_orig = sh
+        if "import qs.modules.windowswitcher" not in sh:
+            sh = sh.replace(
+                "import qs.modules.lock",
+                "import qs.modules.lock\nimport qs.modules.windowswitcher",
+                1,
+            )
+        if "WindowSwitcher {}" not in sh:
+            sh = sh.replace(
+                "    AreaPicker {}",
+                "    AreaPicker {}\n    WindowSwitcher {}",
+                1,
+            )
+        if sh != sh_orig:
+            shell_p.write_text(sh)
+            changed = True
+
     return changed
 
 

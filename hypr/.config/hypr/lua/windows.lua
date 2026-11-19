@@ -81,11 +81,11 @@ hl.window_rule({
 	center = true,
 })
 
--- System monitor popups (htop, nvtop in Ghostty)
+-- System monitor popups (btop, htop, nvtop in Ghostty)
 hl.window_rule({
 	match = {
 		class = "^(com\\.mitchellh\\.ghostty)$",
-		title = "^(htop|nvtop)$",
+		title = "^(btop|htop|nvtop)$",
 	},
 	float = true,
 })
@@ -98,7 +98,7 @@ hl.window_rule({
 hl.window_rule({
 	match = {
 		class = "^(com\\.mitchellh\\.ghostty)$",
-		title = "^(htop|nvtop)$",
+		title = "^(btop|htop|nvtop)$",
 	},
 	size = { 1400, 900 },
 	center = true,

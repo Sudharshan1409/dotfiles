@@ -73,6 +73,14 @@ else
     check_warn "Hyprland is not running or signature missing"
 fi
 
+if command -v Hyprland >/dev/null 2>&1; then
+    if Hyprland --verify-config 2>&1 | grep -q "^config ok$"; then
+        check_pass "Hyprland Config Validation: config ok (zero syntax/Lua errors)"
+    else
+        check_fail "Hyprland Config Validation failed (run 'Hyprland --verify-config')"
+    fi
+fi
+
 SHELL_NAME=$(basename "$SHELL")
 if [ "$SHELL_NAME" = "zsh" ]; then
     check_pass "User Default Shell: zsh ($($SHELL --version | head -n 1))"

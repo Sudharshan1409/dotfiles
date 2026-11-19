@@ -51,7 +51,8 @@ Item {
     function focusClient(client: var): void {
         const addr = client?.lastIpcObject?.address;
         if (addr) {
-            Hypr.dispatch(Hypr.usingLua ? `hl.dsp.focus({ window = "${addr}" })` : `focuswindow address:${addr}`);
+            const hexAddr = addr.startsWith("0x") ? addr : `0x${addr}`;
+            Hypr.dispatch(Hypr.usingLua ? `hl.dsp.focus({ window = "address:${hexAddr}" })` : `focuswindow address:${hexAddr}`);
             root.popouts.hasCurrent = false;
         }
     }

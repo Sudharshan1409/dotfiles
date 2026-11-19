@@ -197,7 +197,17 @@ setup_common_desktop_theme() {
         rm -f "$CURSOR_ZIP"
     fi
 
-    # 2. Initialize Caelestia wallpaper & dynamic dark palette on first boot
+    # 2. Seed Rofi fallback theme & btop Caelestia theme before first wallpaper init
+    mkdir -p "$HOME/.local/state/caelestia/theme"
+    if [ ! -f "$HOME/.local/state/caelestia/theme/rofi-colors.rasi" ] && [ -f "$HOME/.config/rofi/colors-fallback.rasi" ]; then
+        cp "$HOME/.config/rofi/colors-fallback.rasi" "$HOME/.local/state/caelestia/theme/rofi-colors.rasi"
+    fi
+    if [ ! -f "$HOME/.config/btop/btop.conf" ]; then
+        mkdir -p "$HOME/.config/btop"
+        printf 'color_theme = "caelestia"\ntheme_background = False\n' > "$HOME/.config/btop/btop.conf"
+    fi
+
+    # 3. Initialize Caelestia wallpaper & dynamic dark palette on first boot
     export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
     if command -v caelestia >/dev/null 2>&1; then
         if [ ! -f "$HOME/.local/state/caelestia/wallpaper/path.txt" ] && [ -d "$HOME/.config/backgrounds" ]; then

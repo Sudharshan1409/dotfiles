@@ -87,5 +87,6 @@ hl.bind(
 )
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, buttons.shift, "R"), hl.dsp.exec_cmd("caelestia record -sr -c"))
 
--- Focus mode
+-- Focus & Game Mode
 hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "F"), hl.dsp.exec_cmd("~/.config/hypr/scripts/focus_mode.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.alt, "G"), hl.dsp.exec_cmd("caelestia shell gameMode toggle"))

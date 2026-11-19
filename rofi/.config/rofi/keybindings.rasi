@@ -3,6 +3,8 @@
  * Catppuccin Mocha color scheme
  */
 
+@import "~/.local/state/caelestia/theme/rofi-colors.rasi"
+
 configuration {
     show-icons: false;
     disable-history: true;
@@ -10,17 +12,17 @@ configuration {
 }
 
 * {
-    bg: #1e1e2e;
-    bg-alt: #313244;
-    fg: #cdd6f4;
-    selected: #cba6f7;
-    selected-bg: #cba6f7;
-    selected-fg: #1e1e2e;
-    border-color: #cba6f7;
+    bg: @m3-bg;
+    bg-alt: @m3-surface;
+    fg: @m3-fg;
+    selected: @m3-primary;
+    selected-bg: @m3-primary;
+    selected-fg: @m3-on-primary;
+    border-color: @m3-primary;
     
-    background-color: @bg;
+    background-color: transparent;
     text-color: @fg;
-    font: "JetBrains Mono 11";
+    font: "JetBrainsMono Nerd Font 11";
 }
 
 window {
@@ -28,8 +30,8 @@ window {
     height: 650;
     border: 2px;
     border-color: @border-color;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 16px;
+    padding: 20px;
     background-color: @bg;
 }
 

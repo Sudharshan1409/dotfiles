@@ -1,0 +1,19 @@
+/* Fallback Material 3 dark palette before first Caelestia wallpaper run */
+* {
+    m3-bg:                  rgba(17, 17, 27, 0.88);
+    m3-bg-solid:            #11111b;
+    m3-surface:             rgba(30, 30, 46, 0.92);
+    m3-surface-high:        rgba(49, 50, 68, 0.95);
+    m3-fg:                  #cdd6f4;
+    m3-fg-muted:            #a6adc8;
+    m3-outline:             #45475a;
+    m3-primary:             #89b4fa;
+    m3-on-primary:          #11111b;
+    m3-primary-container:   #313244;
+    m3-on-primary-container:#cdd6f4;
+    m3-secondary:           #cba6f7;
+    m3-tertiary:            #94e2d5;
+    m3-error:               #f38ba8;
+    m3-on-error:            #11111b;
+    m3-success:             #a6e3a1;
+}

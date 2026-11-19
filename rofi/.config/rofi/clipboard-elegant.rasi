@@ -1,24 +1,25 @@
 /* ~/.config/rofi/launcher-elegant.rasi */
 /* A simple, elegant Catppuccin Mocha theme */
 
-* {
-    /* Catppuccin Mocha Palette */
-    background:       #1E1D2F; /* Base */
-    background-alt:   #181926; /* Crust */
-    foreground:       #CDD6F4; /* Text */
-    selected:         #89B4FA; /* Blue */
-    urgent:           #F38BA8; /* Red */
+@import "~/.local/state/caelestia/theme/rofi-colors.rasi"
 
-    font:             "JetBrains Mono Nerd Font 16"; /* Non-bold for a lighter feel */
+* {
+    background:       @m3-bg;
+    background-alt:   @m3-surface;
+    foreground:       @m3-fg;
+    selected:         @m3-primary;
+    urgent:           @m3-error;
+
+    font:             "JetBrainsMono Nerd Font 14";
     background-color: transparent;
     text-color:       @foreground;
 }
 
 window {
     background-color: @background;
-    border:           1px;
+    border:           2px;
     border-color:     @selected;
-    border-radius:    12px;
+    border-radius:    16px;
     width:            1200px;
     height:           700px;
     location:         center;
@@ -79,7 +80,7 @@ element-text {
 /* Highlight the selected item */
 element selected {
     background-color: @selected;
-    text-color:       @background; /* Invert text for readability */
+    text-color:       @m3-on-primary;
 }
 
 /* --- Message --- */

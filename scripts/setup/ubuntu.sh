@@ -78,6 +78,7 @@ setup_ubuntu_packages() {
         neovim
         fastfetch
         btop
+        qalc
         fonts-jetbrains-mono
     )
 

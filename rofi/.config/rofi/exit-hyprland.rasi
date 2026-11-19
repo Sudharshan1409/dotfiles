@@ -3,29 +3,31 @@
  * Catppuccin Mocha — destructive action (red accent)
  */
 
+@import "~/.local/state/caelestia/theme/rofi-colors.rasi"
+
 configuration {
     show-icons: false;
     disable-history: true;
 }
 
 * {
-    bg:          #1e1e2e;
-    bg-alt:      #313244;
-    fg:          #cdd6f4;
-    red:         #f38ba8;
-    green:       #a6e3a1;
-    subtext:     #a6adc8;
+    bg:          @m3-bg;
+    bg-alt:      @m3-surface;
+    fg:          @m3-fg;
+    red:         @m3-error;
+    green:       @m3-success;
+    subtext:     @m3-fg-muted;
 
-    background-color: @bg;
+    background-color: transparent;
     text-color:       @fg;
-    font:             "JetBrains Mono 12";
+    font:             "JetBrainsMono Nerd Font 12";
 }
 
 window {
     width:         420px;
     border:        2px;
     border-color:  @red;
-    border-radius: 12px;
+    border-radius: 16px;
     padding:       20px;
     background-color: @bg;
     location:      center;
@@ -84,7 +86,7 @@ element-text {
 
 element selected {
     background-color: @red;
-    text-color:       @bg;
+    text-color:       @m3-on-error;
     border-color:     @red;
 }
 

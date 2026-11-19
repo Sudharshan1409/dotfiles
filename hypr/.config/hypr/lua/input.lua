@@ -22,6 +22,59 @@ hl.config({
 })
 
 -- -----------------------------------------------------------------------------
+-- Trackpad Gestures (Hyprland 0.57+)
+-- -----------------------------------------------------------------------------
+
+-- 3-finger horizontal swipe: live 1:1 workspace switching
+hl.gesture({
+	fingers = 3,
+	direction = "horizontal",
+	action = "workspace",
+})
+
+-- 3-finger vertical swipes: Caelestia Launcher (up) & Dashboard (down)
+hl.gesture({
+	fingers = 3,
+	direction = "up",
+	action = {
+		finish = function()
+			hl.exec_cmd("caelestia shell drawers toggle launcher")
+		end,
+	},
+})
+
+hl.gesture({
+	fingers = 3,
+	direction = "down",
+	action = {
+		finish = function()
+			hl.exec_cmd("caelestia shell drawers toggle dashboard")
+		end,
+	},
+})
+
+-- 4-finger vertical swipes: Quick Utilities (up) & Scratchpad Terminal (down)
+hl.gesture({
+	fingers = 4,
+	direction = "up",
+	action = {
+		finish = function()
+			hl.exec_cmd("caelestia shell drawers toggle utilities")
+		end,
+	},
+})
+
+hl.gesture({
+	fingers = 4,
+	direction = "down",
+	action = {
+		finish = function()
+			hl.exec_cmd("~/.config/hypr/scripts/scratchpad_terminal.sh")
+		end,
+	},
+})
+
+-- -----------------------------------------------------------------------------
 -- Per-Device Configuration
 -- -----------------------------------------------------------------------------
 

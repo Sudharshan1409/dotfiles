@@ -46,6 +46,7 @@ setup_arch_packages() {
         neovim
         fastfetch
         btop
+        libqalculate
         eza
         fzf
         zoxide

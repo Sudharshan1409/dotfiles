@@ -1,137 +1,68 @@
-/* ~/.config/rofi/powermenu-vertical.rasi */
+/* Rofi Theme for Confirmation Dialog (Caelestia Material You) */
+@import "~/.local/state/caelestia/theme/rofi-colors.rasi"
 
 * {
+    background:       @m3-bg;
+    background-alt:   @m3-surface;
+    foreground:       @m3-fg;
+    selected:         @m3-primary;
+    urgent:           @m3-error;
 
-    /* Catppuccin Mocha Palette */
-
-    background:       #1E1D2F; /* Base */
-
-    background-alt:   #181926; /* Crust */
-
-    foreground:       #CDD6F4; /* Text */
-
-    selected:         #89B4FA; /* Blue */
-
-    urgent:           #F38BA8; /* Red */
-
-
-
-    font:             "JetBrains Mono Nerd Font 16"; /* Non-bold for a lighter feel */
-
+    font:             "JetBrainsMono Nerd Font 14";
     background-color: transparent;
-
     text-color:       @foreground;
-
 }
-
-
 
 window {
-
     background-color: @background;
-
-    border:           1px;
-
+    border:           2px;
     border-color:     @selected;
-
-    border-radius:    10px;
-
-    width:            600px;
-
+    border-radius:    16px;
+    width:            560px;
     location:         center;
-
     anchor:           center;
-
     padding:          20px;
-
 }
-
-
 
 mainbox {
-
     children:   [ "message", "listview" ];
-
     spacing:    15px;
-
 }
-
-
 
 message {
-
     background-color: @background-alt;
-
     border-radius:    10px;
-
-    padding:          10px;
-
+    padding:          12px;
     horizontal-align: 0.5;
-
 }
-
-
 
 inputbar {
-
     enabled: false;
-
 }
-
-
 
 listview {
-
     layout:     vertical;
-
     columns:    1;
-
     lines:      2;
-
-    spacing:    15px;
-
+    spacing:    12px;
 }
-
-
 
 element {
-
     background-color: @background-alt;
-
     border:           2px;
-
     border-color:     @background-alt;
-
     border-radius:    10px;
-
-    padding:          15px;
-
+    padding:          14px;
 }
-
-
 
 element-text {
-
     background-color: inherit;
-
     text-color:       inherit;
-
     horizontal-align: 0.5;
-
 }
 
-
-
-
-
-
-
 element selected {
-
     background-color: @selected;
-
-    text-color:       @background; /* Invert text for readability */
-
+    text-color:       @m3-on-primary;
     border-color:     @selected;
-
 }

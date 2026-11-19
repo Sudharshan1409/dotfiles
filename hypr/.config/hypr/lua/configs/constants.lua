@@ -2,7 +2,6 @@ local commands = {
 	downloads = "nautilus ~/Downloads",
 	backgrounds = "nautilus ~/.config/backgrounds",
 	home = "nautilus ~",
-	-- menu = 'rofi -show drun -show-icons -display-drune "Apps" -theme ~/.config/rofi/launcher-elegant.rasi',
 	menu = "caelestia shell drawers toggle launcher",
 }
 

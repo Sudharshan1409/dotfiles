@@ -1,5 +1,6 @@
 # Appearance
 theme = "Catppuccin Mocha"
+config-file = ?~/.local/state/caelestia/theme/ghostty.conf
 background-opacity = 0.85
 background-blur-radius = 20
 font-family = "JetBrainsMono Nerd Font"

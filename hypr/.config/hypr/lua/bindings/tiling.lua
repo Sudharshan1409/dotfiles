@@ -40,9 +40,12 @@ hl.bind(KeyCombo(buttons.mainMod, "L"), hl.dsp.focus({ direction = "r" }))
 hl.bind(KeyCombo(buttons.mainMod, "K"), hl.dsp.focus({ direction = "u" }))
 hl.bind(KeyCombo(buttons.mainMod, "J"), hl.dsp.focus({ direction = "d" }))
 
--- --- MRU Window Switcher ---
+-- --- Live Visual MRU Window Switcher (Caelestia Alt+Tab) ---
 
-hl.bind(KeyCombo(buttons.alt, buttons.tab), hl.dsp.exec_cmd("~/.config/hypr/scripts/window_switcher.sh"))
+hl.bind(KeyCombo(buttons.alt, buttons.tab), hl.dsp.global("caelestia:windowSwitcherNext"))
+hl.bind(KeyCombo(buttons.alt, buttons.shift, buttons.tab), hl.dsp.global("caelestia:windowSwitcherPrev"))
+hl.bind("Alt_L", hl.dsp.global("caelestia:windowSwitcherConfirm"), { non_consuming = true, ignore_mods = true, release = true })
+hl.bind("Alt_R", hl.dsp.global("caelestia:windowSwitcherConfirm"), { non_consuming = true, ignore_mods = true, release = true })
 
 -- --- Resize Tiled Windows ---
 

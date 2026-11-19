@@ -1,16 +1,17 @@
 /* ~/.config/rofi/workspace-overview.rasi */
 /* Rofi theme for workspace overview */
 
-* {
-    /* Catppuccin Mocha Palette */
-    background:       #1E1D2F;
-    background-alt:   #181926;
-    foreground:       #CDD6F4;
-    selected:         #89B4FA;
-    urgent:           #F38BA8;
-    success:          #A6E3A1;
+@import "~/.local/state/caelestia/theme/rofi-colors.rasi"
 
-    font:             "JetBrains Mono Nerd Font 14";
+* {
+    background:       @m3-bg;
+    background-alt:   @m3-surface;
+    foreground:       @m3-fg;
+    selected:         @m3-primary;
+    urgent:           @m3-error;
+    success:          @m3-success;
+
+    font:             "JetBrainsMono Nerd Font 14";
     background-color: transparent;
     text-color:       @foreground;
 }
@@ -78,7 +79,7 @@ element-text {
 /* Highlight the selected item */
 element selected {
     background-color: @selected;
-    text-color:       @background;
+    text-color:       @m3-on-primary;
 }
 
 /* Workspace number styling */

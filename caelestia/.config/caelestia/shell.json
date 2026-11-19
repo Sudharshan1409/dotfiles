@@ -6,6 +6,27 @@
             "layers": 0.4
         }
     },
+    "background": {
+        "desktopClock": {
+            "enabled": true,
+            "position": "bottom-right",
+            "scale": 1.0,
+            "shadow": {
+                "blur": 0.4,
+                "enabled": true,
+                "opacity": 0.7
+            }
+        },
+        "enabled": true,
+        "visualiser": {
+            "autoHide": true,
+            "blur": false,
+            "enabled": true,
+            "rounding": 1,
+            "spacing": 1
+        },
+        "wallpaperEnabled": true
+    },
     "bar": {
         "activeWindow": {
             "compact": true,
@@ -62,6 +83,11 @@
         "rounding": 20,
         "thickness": 6
     },
+    "dashboard": {
+        "enabled": true,
+        "showClockSeconds": true,
+        "showOnHover": true
+    },
     "general": {
         "apps": {
             "audio": [
@@ -113,6 +139,25 @@
         "showOnHover": true,
         "vimKeybinds": true
     },
+    "lock": {
+        "enableFprint": true,
+        "enableSessionControls": true,
+        "enabled": true,
+        "recolourLogo": true,
+        "useWallpaper": true
+    },
+    "notifs": {
+        "actionOnClick": true,
+        "defaultExpireTimeout": 5000,
+        "expire": true,
+        "fullscreenExpireTimeout": 2000
+    },
+    "osd": {
+        "enableBrightness": true,
+        "enableMicrophone": true,
+        "enabled": true,
+        "hideDelay": 2000
+    },
     "paths": {
         "wallpaperDir": "~/.config/backgrounds"
     },
@@ -122,5 +167,23 @@
     "sidebar": {
         "dragThreshold": 80,
         "showOnHover": false
+    },
+    "utilities": {
+        "enabled": true,
+        "gameMode": {
+            "options": {
+                "animations:enabled": false,
+                "decoration:blur:enabled": false,
+                "decoration:rounding": 0,
+                "decoration:shadow:enabled": false,
+                "general:allow_tearing": true,
+                "general:border_size": 1,
+                "general:gaps_in": 0,
+                "general:gaps_out": 0
+            }
+        },
+        "toasts": {
+            "nowPlaying": true
+        }
     }
 }

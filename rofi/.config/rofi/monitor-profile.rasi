@@ -1,17 +1,18 @@
 /* ~/.config/rofi/monitor-profile.rasi */
 /* Rofi theme for monitor profile selection */
 
-* {
-    /* Catppuccin Mocha Palette */
-    background:       #1E1D2F;
-    background-alt:   #181926;
-    foreground:       #CDD6F4;
-    selected:         #89B4FA;
-    urgent:           #F38BA8;
-    success:          #A6E3A1;
-    warning:          #F9E2AF;
+@import "~/.local/state/caelestia/theme/rofi-colors.rasi"
 
-    font:             "JetBrains Mono Nerd Font 16";
+* {
+    background:       @m3-bg;
+    background-alt:   @m3-surface;
+    foreground:       @m3-fg;
+    selected:         @m3-primary;
+    urgent:           @m3-error;
+    success:          @m3-success;
+    warning:          @m3-tertiary;
+
+    font:             "JetBrainsMono Nerd Font 15";
     background-color: transparent;
     text-color:       @foreground;
 }
@@ -92,7 +93,7 @@ element-text {
 /* Highlight the selected item */
 element selected {
     background-color: @selected;
-    text-color:       @background;
+    text-color:       @m3-on-primary;
 }
 
 /* --- Urgent items (for special options) --- */

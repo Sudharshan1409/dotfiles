@@ -6,18 +6,30 @@
 
 ROFI_THEME="$HOME/.config/rofi/calculator.rasi"
 
-# Function to calculate
+# Function to calculate (supports floats, powers, sqrt/sin/cos/log, pi, e)
 calculate() {
     local expr="$1"
-    # Use bc for calculations
-    result=$(echo "$expr" | bc 2>/dev/null)
-    
-    if [ -z "$result" ] || [ "$result" = "" ]; then
-        echo "Error"
-    else
-        # Remove trailing zeros and decimal point if whole number
-        echo "$result" | sed 's/^\./0./;s/\.$//;s/\.0*$//'
-    fi
+    python3 - "$expr" 2>/dev/null <<'PY' || echo "Error"
+import math, sys
+
+expr = sys.argv[1].strip().replace("^", "**")
+allowed = {k: getattr(math, k) for k in dir(math) if not k.startswith("_")}
+allowed.update({"abs": abs, "round": round, "min": min, "max": max, "hex": hex, "bin": bin})
+
+try:
+    val = eval(expr, {"__builtins__": {}}, allowed)
+    if isinstance(val, float):
+        if math.isnan(val) or math.isinf(val):
+            print("Error")
+        elif val.is_integer():
+            print(int(val))
+        else:
+            print(f"{val:.10f}".rstrip("0").rstrip("."))
+    else:
+        print(val)
+except Exception:
+    print("Error")
+PY
 }
 
 # Function to show history

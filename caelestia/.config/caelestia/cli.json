@@ -1,7 +1,57 @@
 {
     "theme": {
+        "enableBtop": true,
+        "enableCava": true,
         "enableChromium": false,
         "enableDiscord": false,
+        "enableGtk": true,
+        "enableHtop": true,
+        "enableHypr": true,
+        "enableNvtop": true,
+        "enableQt": true,
+        "enableTerm": true,
         "postHook": "hyprctl reload >/dev/null 2>&1 || true"
+    },
+    "toggles": {
+        "music": {
+            "spotify": {
+                "command": [
+                    "spotify"
+                ],
+                "enable": true,
+                "match": [
+                    {
+                        "class": "Spotify"
+                    },
+                    {
+                        "class": "spotify"
+                    },
+                    {
+                        "initialTitle": "Spotify"
+                    }
+                ],
+                "move": true
+            }
+        },
+        "sysmon": {
+            "btop": {
+                "command": [
+                    "ghostty",
+                    "--gtk-single-instance=false",
+                    "--title=btop",
+                    "-e",
+                    "btop"
+                ],
+                "enable": true,
+                "match": [
+                    {
+                        "title": "btop",
+                        "workspace": {
+                            "name": "special:sysmon"
+                        }
+                    }
+                ]
+            }
+        }
     }
 }

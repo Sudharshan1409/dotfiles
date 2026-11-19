@@ -1,183 +1,98 @@
 # Dotfiles Repository
 
-This repository contains configuration files for various tools and applications. Each tool is organized into its own top-level package directory, making it fully modular and compatible with GNU Stow. Below is an overview of the configurations available in this repository, along with links to their respective documentation.
+Modular, reproducible Linux (Ubuntu 26.04+ & Arch Linux) and macOS dotfiles managed with **GNU Stow**, featuring **Hyprland 0.57+ (Lua configuration)** + **Caelestia Shell (Quickshell)** with dynamic **Material You** palette synchronization across the desktop, terminal, and utilities.
 
-## Configurations
+---
+
+## Packages
+
+<details open>
+<summary><b>Desktop & Window Management (Linux Wayland)</b></summary>
+
+- **Hyprland (`hypr/`)**: Lua-configured dynamic tiling compositor (`hl.config`, `hl.window_rule`, `hl.gesture`, dynamic Material You borders, multi-monitor profile wizard).
+  - [Hyprland README](hypr/.config/hypr/README.md)
+- **Caelestia Shell (`caelestia/`)**: Unified Quickshell Material 3 desktop shell (`shell.json`, `cli.json`, user theme templates for Ghostty & Rofi, plus QML enhancements in `scripts/setup/patch_caelestia.py` for calendar hover popout, hybrid workspace mini-desktop + live window previews, and Satty screenshot integration).
+- **Rofi (`rofi/`)**: Glassmorphic Material You themed utility menus (keybinding cheat sheet, clipboard history, emoji/glyph picker, monitor profile wizard, scientific calculator, process killer).
+- **Backgrounds (`backgrounds/`)**: Curated wallpaper collection synced with Caelestia's dynamic colour generator.
+
+</details>
 
 <details>
-<summary>Shell & Terminal</summary>
+<summary><b>Shell, Terminal & Multiplexers</b></summary>
 
-- **Zsh**: Configuration files for Zsh, a powerful shell for interactive use.
-
+- **Ghostty (`ghostty/`)**: GPU-accelerated terminal with frosted glass blur and live Caelestia Material You theme sync.
+- **Zsh (`zsh/`)**: Oh-My-Zsh + Enigma CLI workflow dispatcher + Starship prompt + live ANSI palette replay.
   - [Zsh README](zsh/.config/zsh/README.md)
-
-- **Kitty**: Configuration files for Kitty, a fast, feature-rich, GPU-accelerated terminal emulator.
-
-  - [Kitty README](kitty/.config/kitty/README.md)
-
-- **WezTerm**: Configuration files for WezTerm, a GPU-accelerated terminal emulator.
-
-  - [WezTerm README](wezterm/.config/wezterm/README.md)
-
-- **Tmux**: Configuration files for Tmux, a terminal multiplexer.
-
-  - [Tmux README](tmux/.config/tmux/README.md)
-
-- **Zellij**: Configuration files for Zellij, a terminal workspace and multiplexer.
-
-  - [Zellij README](zellij/.config/zellij/README.md)
+- **Starship (`starship/`)**: Cross-shell prompt configuration.
+- **Tmux (`tmux/`)** & **Zellij (`zellij/`)**: Terminal multiplexers and session workspaces.
 
 </details>
 
 <details>
-<summary>Desktop & Window Management</summary>
+<summary><b>Development & CLI Tools</b></summary>
 
-- **Hypr**: Configuration files for Hyprland, a dynamic tiling Wayland compositor.
-
-  - [Hypr README](hypr/.config/hypr/README.md)
-
-- **Waybar**: Configuration files for Waybar, a highly customizable Wayland bar for Sway and Wlroots based compositors.
-
-  - [Waybar README](waybar/.config/waybar/README.md)
-
-  - **Note on Bluetooth**: The Waybar configuration uses an OS-specific script to launch the appropriate Bluetooth manager. On Arch Linux, it uses `blueberry`, and on Ubuntu, it uses `bzmenu`.
-
-- **Swaync**: Configuration for Swaync, a notification daemon for Wayland.
-
-  - [Swaync README](swaync/.config/swaync/README.md)
-
-- **Aerospace**: Configuration files for aerospace-related tools.
-
-  - [Aerospace README](aerospace/.config/aerospace/README.md)
-
-- **SketchyBar**: Configuration files for SketchyBar, a customizable status bar for macOS.
-
-  - [SketchyBar README](sketchybar/.config/sketchybar/README.md)
+- **Neovim (`nvim/`)**: Lazy.nvim IDE configuration.
+- **Git (`git/`)**: Git config, aliases, delta diffs, and GPG commit signing.
+- **Lazygit (`lazygit/`)**, **Yazi (`yazi/`)**, **Bat (`bat/`)**: Terminal UI tools.
 
 </details>
 
 <details>
-<summary>Development</summary>
+<summary><b>macOS Window Management</b></summary>
 
-- **Neovim**: Configuration files for Neovim, a highly customizable text editor.
-
-  - [Neovim README](nvim/.config/nvim/README.md)
-
-- **Git**: Configuration files for Git version control system.
-
-  - [Git README](git/.config/git/README.md)
+- **AeroSpace (`aerospace/`)** & **SketchyBar (`sketchybar/`)**: macOS tiling window manager and status bar configs.
 
 </details>
 
-<details>
-<summary>Command-Line Tools</summary>
+---
 
-- **Bat**: Configuration files for Bat, a better alternative for Cat command.
-  - [Bat README](bat/.config/bat/README.md)
+## Quick Start (Automated Provisioning)
 
-- **Yazi**: Configuration files for Yazi, a terminal file manager.
-
-  - [Yazi README](yazi/.config/yazi/README.md)
-
-</details>
-
-## Usage
-
-To use these configurations, clone the repository and copy the desired configuration files to your home directory. Make sure to back up your existing configuration files before replacing them.
-
-## Quick Start (Fresh Installation)
-
-To perform an end-to-end automated installation and setup of all system packages, desktop environment, CLI utilities, dotfiles symlinks, shell environment, and plugins:
+Clone the repository to `~/dotfiles` and run `./setup.sh` for end-to-end unattended provisioning on **Ubuntu/Debian** or **Arch Linux**:
 
 ```bash
+git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./setup.sh
 ```
 
-`setup.sh` **automatically detects your Linux distribution** (Ubuntu/Debian vs Arch Linux), elevates `sudo` once at the beginning, keeps authentication alive in the background, and executes the complete setup unattended.
+`setup.sh` automatically detects your distro, installs system & Wayland packages, builds/installs **Quickshell**, **Caelestia Shell**, and **gpu-screen-recorder**, applies custom Caelestia QML patches, links all Stow packages, installs fonts & Catppuccin cursors, initializes your default wallpaper + dynamic Material You dark scheme, and configures GRUB.
 
-### Advanced Usage & Options
-
-You can also run distribution-specific wrappers or pass flags:
+### Setup Flags & Health Check
 
 ```bash
-# Explicit OS selection
-./setup.sh --os ubuntu     # or: ./setup_ubuntu.sh
-./setup.sh --os arch       # or: ./setup_arch.sh
-
-# Run health check & configuration audit (dry-run/doctor)
-./setup.sh --check         # or: ./setup.sh -c
-
-# Specify custom GRUB theme resolution (default: 1080p)
-./setup.sh --screen 2k     # 1080p, 2k, 4k, ultrawide
-
-# Display help
-./setup.sh --help
+./setup.sh --os ubuntu     # Force Ubuntu / Debian provisioning
+./setup.sh --os arch       # Force Arch Linux provisioning
+./setup.sh --screen 2k     # Set WhiteSur GRUB theme resolution (1080p, 2k, 4k)
+./setup.sh --check         # Run Dotfiles Doctor (58-point health check)
 ```
 
-## Manual Installation
+---
 
-To manage individual dotfile packages modularly with GNU Stow:
+## Manual Stow Linking
 
-### Install stow
-
-```bash
-brew install stow  # or: sudo apt install stow / sudo pacman -S stow
-```
-
-### Using SSH
-
-```bash
-git clone git@github.com:Sudharshan1409/dotfiles.git ~/dotfiles
-```
-
-### Using HTTPS
-
-```bash
-git clone https://github.com/Sudharshan1409/dotfiles.git ~/dotfiles
-```
-
-### Apply configurations
-
-Use `stow` to link specific configurations:
+To link individual packages manually via GNU Stow:
 
 ```bash
 cd ~/dotfiles
-stow zsh hypr waybar
+stow backgrounds bat caelestia ghostty git hypr lazygit nvim rofi starship tmux yazi zellij zsh
 ```
 
-To link all Linux configurations:
+---
 
-```bash
-cd ~/dotfiles
-stow backgrounds bat ghostty git hypr kitty lazygit nvim rofi starship swaync tmux walker waybar wezterm wofi yazi zellij zsh
-```
+## Key Highlights & Essential Shortcuts
 
-## System Dependencies
-
-Some configurations (like Hyprland scripts) rely on external tools.
-
-### Hyprland OCR (Screenshot to Text)
-Required for the OCR script (`Super+Shift+T`).
-
-**Arch Linux:**
-```bash
-sudo pacman -S tesseract tesseract-data-eng grim slurp wl-clipboard
-```
-
-**Ubuntu / Debian:**
-```bash
-sudo apt install tesseract-ocr tesseract-ocr-eng grim slurp wl-clipboard
-```
-
-### Hypr-Expose (Visual Workspace Overview)
-Required for the Mission Control style overview (`Super+Grave`). This requires compiling plugins.
-
-1. **Install Dependencies:**
-   - **Arch:** `sudo pacman -S cmake make cpio pkg-config hyprland-headers`
-   - **Ubuntu:** `sudo apt install cmake build-essential pkg-config` (ensure headers are present)
-
-2. **Run Install Script:**
-   ```bash
-   ~/.config/hypr/scripts/install_hyprexpo.sh
-   ```
+| Shortcut / Gesture | Action |
+| :--- | :--- |
+| `Super + Space` | Open Caelestia Launcher (`Ctrl + H/J/K/L` Vim navigation, `>settings`, power actions) |
+| `Super + D` / `3-Finger Swipe Down` | Toggle Caelestia Dashboard (media, CPU/GPU/RAM/battery, weather) |
+| `Super + Ctrl + ,` | Open Caelestia Nexus Settings (centered floating window) |
+| `Super + Ctrl + W` / `Super + Ctrl + Shift + W` | Wallpaper picker / Random wallpaper + live Material You recolouring |
+| `Super + Shift + S` / `Super + Print` / `Print` | Caelestia freeze-screen AreaPicker (hover window to snap or drag region -> Satty / Clipboard) |
+| `Super + Alt + R` / `Super + Alt + Shift + R` | Hardware-accelerated screen recorder (`gpu-screen-recorder` via Caelestia) |
+| `Super + .` | Emoji & Nerd Font glyph picker |
+| `Super + Ctrl + V` | Clipboard history |
+| `Super + S` / `Super + Alt + M` / `Super + Alt + T` | Terminal, Spotify (`special:music`), and `btop` (`special:sysmon`) scratchpads |
+| `Super + Alt + G` / `Super + Alt + F` | Game Mode / Focus Mode |
+| `Super + /` | Searchable interactive Keybinding & Gesture Cheat Sheet |
+| `3-Finger Swipe Left/Right` | Live 1:1 touchpad workspace switching |

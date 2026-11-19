@@ -52,15 +52,18 @@ hl.bind(
 	{ repeating = true, locked = true }
 )
 
--- Screenshot Shortcuts
+-- Screenshot Shortcuts (Caelestia AreaPicker + Satty)
 
+-- Print: Full focused monitor capture -> Satty editor
 hl.bind("Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot_screen_edit.sh"))
 
-hl.bind(KeyCombo(buttons.mainMod, buttons.print), hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot_window_edit.sh"))
+-- Super + Print: Freeze screen, snap window or drag region -> copy directly to clipboard
+hl.bind(KeyCombo(buttons.mainMod, buttons.print), hl.dsp.exec_cmd("caelestia shell picker openFreezeClip"))
 
+-- Super + Shift + Print / Super + Shift + S: Freeze screen, snap window or drag region -> Satty editor
 hl.bind(
 	KeyCombo(buttons.mainMod, buttons.shift, buttons.print),
-	hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot_edit.sh")
+	hl.dsp.exec_cmd("caelestia shell picker openFreeze")
 )
 
-hl.bind(KeyCombo(buttons.mainMod, buttons.shift, "S"), hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot_edit.sh"))
+hl.bind(KeyCombo(buttons.mainMod, buttons.shift, "S"), hl.dsp.exec_cmd("caelestia shell picker openFreeze"))
