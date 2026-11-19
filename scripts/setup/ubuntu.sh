@@ -760,6 +760,10 @@ tr.setdefault("enabled", True)
 tr.setdefault("base", 0.85)
 tr.setdefault("layers", 0.4)
 
+border = shell_d.setdefault("border", {})
+border.setdefault("thickness", 6)
+border.setdefault("rounding", 20)
+
 gen = shell_d.setdefault("general", {})
 apps = gen.setdefault("apps", {})
 apps.setdefault("terminal", ["ghostty", "--gtk-single-instance=true", "--shell-integration-features=ssh-env"])
