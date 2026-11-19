@@ -742,6 +742,19 @@ bar_tray = shell_d.setdefault("bar", {}).setdefault("tray", {})
 bar_tray.setdefault("background", True)
 bar_tray.setdefault("recolour", True)
 
+bar_aw = shell_d.setdefault("bar", {}).setdefault("activeWindow", {})
+bar_aw.setdefault("compact", True)
+
+shell_d["bar"].setdefault("statusIcons", [
+    {"id": "lockStatus", "enabled": True},
+    {"id": "audio", "enabled": True},
+    {"id": "microphone", "enabled": True},
+    {"id": "kbLayout", "enabled": False},
+    {"id": "network", "enabled": True},
+    {"id": "bluetooth", "enabled": True},
+    {"id": "battery", "enabled": True},
+])
+
 tr = shell_d.setdefault("appearance", {}).setdefault("transparency", {})
 tr.setdefault("enabled", True)
 tr.setdefault("base", 0.85)
