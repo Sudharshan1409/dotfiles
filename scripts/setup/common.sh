@@ -6,21 +6,20 @@
 setup_common_stow() {
     step_header "Verifying GNU Stow dotfiles linking"
     STOW_PACKAGES=(
-        bash
-        zsh
-        git
-        tmux
-        nvim
-        wezterm
-        ghostty
-        alacritty
-        hypr
+        backgrounds
+        bat
         caelestia
+        ghostty
+        git
+        hypr
+        lazygit
+        nvim
         rofi
-        wlogout
-        btop
-        fastfetch
+        starship
+        tmux
         yazi
+        zellij
+        zsh
     )
 
     cd "$DOTFILES_DIR"
@@ -169,10 +168,53 @@ setup_common_yazi() {
 }
 
 setup_common_picture_dirs() {
-    step_header "Verifying user picture directories"
+    step_header "Verifying user media directories"
+    mkdir -p "$HOME/Pictures/Pics"
     mkdir -p "$HOME/Pictures/Screenshots"
-    mkdir -p "$HOME/Pictures/Wallpapers"
-    log_ok "Created ~/Pictures/Screenshots and ~/Pictures/Wallpapers"
+    mkdir -p "$HOME/Videos/Recordings"
+    log_ok "Verified ~/Pictures/Pics, ~/Pictures/Screenshots, and ~/Videos/Recordings"
+}
+
+setup_common_desktop_theme() {
+    step_header "Verifying Catppuccin cursors & initial Caelestia theme"
+
+    # 1. Install Catppuccin Mocha Dark cursors idempotently
+    local CURSOR_DIR="$HOME/.local/share/icons/catppuccin-mocha-dark-cursors"
+    if [ -d "$CURSOR_DIR" ] || [ -d "$HOME/.icons/catppuccin-mocha-dark-cursors" ]; then
+        log_skip "Catppuccin Mocha Dark cursors are already installed"
+    else
+        log_info "Downloading Catppuccin Mocha Dark cursor theme..."
+        mkdir -p "$HOME/.local/share/icons" "$HOME/.icons"
+        local CURSOR_ZIP
+        CURSOR_ZIP="$(mktemp --suffix=.zip)"
+        if curl -fsSL "https://github.com/catppuccin/cursors/releases/latest/download/catppuccin-mocha-dark-cursors.zip" -o "$CURSOR_ZIP"; then
+            python3 -m zipfile -e "$CURSOR_ZIP" "$HOME/.local/share/icons"
+            ln -sfn "$CURSOR_DIR" "$HOME/.icons/catppuccin-mocha-dark-cursors"
+            log_ok "Installed Catppuccin Mocha Dark cursors"
+        else
+            log_warn "Could not download Catppuccin Mocha Dark cursors"
+        fi
+        rm -f "$CURSOR_ZIP"
+    fi
+
+    # 2. Initialize Caelestia wallpaper & dynamic dark palette on first boot
+    export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
+    if command -v caelestia >/dev/null 2>&1; then
+        if [ ! -f "$HOME/.local/state/caelestia/wallpaper/path.txt" ] && [ -d "$HOME/.config/backgrounds" ]; then
+            local INIT_WALL="$HOME/.config/backgrounds/Fantasy-Lake3.png"
+            if [ ! -f "$INIT_WALL" ]; then
+                INIT_WALL="$(find -L "$HOME/.config/backgrounds" -maxdepth 1 -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) | sort | head -n 1)"
+            fi
+            if [ -n "$INIT_WALL" ] && [ -f "$INIT_WALL" ]; then
+                log_info "Initializing default wallpaper ($(basename "$INIT_WALL")) & dynamic dark palette..."
+                CAELESTIA_WALLPAPERS_DIR="$HOME/.config/backgrounds" caelestia wallpaper -f "$INIT_WALL" -n -N >/dev/null 2>&1 || true
+                caelestia scheme set -n dynamic -m dark >/dev/null 2>&1 || true
+                log_ok "Initialized Caelestia wallpaper and dynamic dark scheme"
+            fi
+        else
+            log_skip "Caelestia wallpaper & color scheme state already initialized"
+        fi
+    fi
 }
 
 setup_common_permissions() {

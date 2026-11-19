@@ -87,11 +87,15 @@ section_header "2. Symlink Integrity (GNU Stow)"
 CHECK_LINKS=(
     "$HOME/.config/hypr:$DOTFILES_DIR/hypr/.config/hypr"
     "$HOME/.config/caelestia:$DOTFILES_DIR/caelestia/.config/caelestia"
+    "$HOME/.config/backgrounds:$DOTFILES_DIR/backgrounds/.config/backgrounds"
+    "$HOME/.config/ghostty:$DOTFILES_DIR/ghostty/.config/ghostty"
     "$HOME/.config/nvim:$DOTFILES_DIR/nvim/.config/nvim"
     "$HOME/.config/rofi:$DOTFILES_DIR/rofi/.config/rofi"
+    "$HOME/.config/starship:$DOTFILES_DIR/starship/.config/starship"
     "$HOME/.zshrc:$DOTFILES_DIR/zsh/.zshrc"
     "$HOME/.config/tmux:$DOTFILES_DIR/tmux/.config/tmux"
     "$HOME/.config/yazi:$DOTFILES_DIR/yazi/.config/yazi"
+    "$HOME/.config/zellij:$DOTFILES_DIR/zellij/.config/zellij"
 )
 
 for pair in "${CHECK_LINKS[@]}"; do

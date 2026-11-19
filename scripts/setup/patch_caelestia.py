@@ -112,6 +112,110 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
             sys_p.write_text(s.replace(target, replacement, 1))
             changed = True
 
+    # 7. Add direct 'caelestia shell wallpaper picker' IPC handler in services/Wallpapers.qml
+    wall_p = cael_dir / "services/Wallpapers.qml"
+    if wall_p.exists():
+        w = wall_p.read_text()
+        if "openPickerRequested" not in w:
+            w = w.replace(
+                "    property bool showPreview: false\n",
+                "    property bool showPreview: false\n    property bool openPickerRequested: false\n",
+                1,
+            )
+            w = w.replace(
+                '        target: "wallpaper"',
+                '''        function picker(): void {
+            const screenState = ShellState.forActive();
+            if (!screenState)
+                return;
+            if (screenState.launcher) {
+                const search = ShellState.componentsForActive()?.find("launcherSearch", null);
+                if (search && search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)) {
+                    screenState.launcher = false;
+                    return;
+                }
+                if (search) {
+                    search.text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                    search.forceActiveFocus();
+                    return;
+                }
+            }
+            root.openPickerRequested = true;
+            screenState.launcher = true;
+        }
+
+        target: "wallpaper"''',
+                1,
+            )
+            wall_p.write_text(w)
+            changed = True
+
+    # 8. Add Left/Right arrow navigation & openPickerRequested support in modules/launcher/Content.qml
+    cont_p = cael_dir / "modules/launcher/Content.qml"
+    if cont_p.exists():
+        c = cont_p.read_text()
+        cont_changed = False
+        if "onLeftPressed" not in c:
+            c = c.replace(
+                "        Keys.onDownPressed: list.currentList?.incrementCurrentIndex()",
+                """        Keys.onDownPressed: list.currentList?.incrementCurrentIndex()
+        Keys.onLeftPressed: event => {
+            if (list.showWallpapers) {
+                list.currentList?.decrementCurrentIndex();
+                event.accepted = true;
+            } else {
+                event.accepted = false;
+            }
+        }
+        Keys.onRightPressed: event => {
+            if (list.showWallpapers) {
+                list.currentList?.incrementCurrentIndex();
+                event.accepted = true;
+            } else {
+                event.accepted = false;
+            }
+        }""",
+                1,
+            )
+            cont_changed = True
+        if "openPickerRequested" not in c:
+            c = c.replace(
+                '        objectName: "launcherSearch"',
+                '        objectName: "launcherSearch"\n        text: Wallpapers.openPickerRequested ? `${GlobalConfig.launcher.actionPrefix}wallpaper ` : ""',
+                1,
+            )
+            c = c.replace(
+                """        Component.onCompleted: forceActiveFocus()
+
+        Connections {
+            function onLauncherChanged(): void {
+                if (!root.screenState.launcher)
+                    search.text = "";
+            }""",
+                """        Component.onCompleted: {
+            if (Wallpapers.openPickerRequested) {
+                text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                Wallpapers.openPickerRequested = false;
+            }
+            forceActiveFocus();
+        }
+
+        Connections {
+            function onLauncherChanged(): void {
+                if (!root.screenState.launcher) {
+                    search.text = "";
+                } else if (Wallpapers.openPickerRequested) {
+                    Wallpapers.openPickerRequested = false;
+                    search.text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                }
+            }""",
+                1,
+            )
+            cont_changed = True
+        if cont_changed:
+            cont_p.write_text(c)
+            changed = True
+
     return changed
 
 
