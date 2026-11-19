@@ -236,6 +236,10 @@ bar_clock = shell_d.setdefault("bar", {}).setdefault("clock", {})
 bar_clock.setdefault("background", True)
 bar_clock.setdefault("showDate", True)
 
+bar_tray = shell_d.setdefault("bar", {}).setdefault("tray", {})
+bar_tray.setdefault("background", True)
+bar_tray.setdefault("recolour", True)
+
 tr = shell_d.setdefault("appearance", {}).setdefault("transparency", {})
 tr.setdefault("enabled", True)
 tr.setdefault("base", 0.85)
