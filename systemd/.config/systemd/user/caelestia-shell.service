@@ -6,6 +6,11 @@ After=graphical-session.target
 
 [Service]
 Type=simple
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_CURRENT_DESKTOP=Hyprland
+Environment=XDG_SESSION_DESKTOP=Hyprland
+Environment=ELECTRON_OZONE_PLATFORM_HINT=wayland
+Environment=OZONE_PLATFORM=wayland
 ExecStart=/bin/sh -c 'export PATH="$HOME/.local/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"; export CAELESTIA_WALLPAPERS_DIR="$HOME/.config/backgrounds"; [ -f /usr/local/lib/caelestia/version ] && export CAELESTIA_LIB_DIR="/usr/local/lib/caelestia"; exec qs -c caelestia -n'
 Restart=always
 RestartSec=1

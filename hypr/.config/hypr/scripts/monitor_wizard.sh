@@ -434,7 +434,7 @@ restore_previous_state() {
         if [ -n "$target_src" ] && [ -f "$target_src" ]; then
             cp "$BACKUP_GEN" "$HOME/.config/hypr/monitors_gen.lua"
         else
-            echo "# Reverted to previous runtime state" > "$HOME/.config/hypr/monitors_gen.lua"
+            echo "-- Reverted to previous runtime state" > "$HOME/.config/hypr/monitors_gen.lua"
         fi
         rm -f "$BACKUP_GEN"
     else
@@ -449,7 +449,7 @@ restore_previous_state() {
 # Trap unexpected termination during preview
 trap 'restore_previous_state' INT TERM
 
-# Build preview monitor configuration lines
+# Build preview monitor configuration lines (Hyprland Lua)
 PREVIEW_CONF_LINES=""
 for idx in $(seq 0 $((NUM_MONITORS - 1))); do
     p="${ORDERED_PORTS[$idx]}"
@@ -459,19 +459,25 @@ for idx in $(seq 0 $((NUM_MONITORS - 1))); do
     sc="${CHOSEN_SCALE[$idx]}"
     label="${ORDERED_LABELS[$idx]}"
 
-    PREVIEW_CONF_LINES="${PREVIEW_CONF_LINES}# $label ($p)
-monitor = $p, $res@$hz, $pos, $sc
+    PREVIEW_CONF_LINES="${PREVIEW_CONF_LINES}-- $label ($p)
+hl.monitor({
+    output = \"$p\",
+    mode = \"$res@$hz\",
+    position = \"$pos\",
+    scale = \"$sc\",
+})
+
 "
 done
 
 # Write temporary preview file and reload Hyprland atomically
 cat > "$PREVIEW_FILE" << PREVIEW_EOF
-# Description: Temporary Preview created by Monitor Setup Wizard
+-- Description: Temporary Preview created by Monitor Setup Wizard
 $PREVIEW_CONF_LINES
 PREVIEW_EOF
 
 log "Applying live preview layout atomically via .preview.lua..."
-echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/preview.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
+echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/.preview.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
 hyprctl reload
 hyprctl dismissnotify 10 2>/dev/null || true
 
@@ -563,7 +569,7 @@ PROFILE_NAME=$(echo "$PROFILE_INPUT" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' |
 
 PROFILE_FILE="$CONFIG_DIR/$PROFILE_NAME.lua"
 
-# Generate monitor configuration lines
+# Generate monitor configuration lines (Hyprland Lua)
 MONITOR_CONF_LINES=""
 for idx in $(seq 0 $((NUM_MONITORS - 1))); do
     p="${ORDERED_PORTS[$idx]}"
@@ -572,8 +578,14 @@ for idx in $(seq 0 $((NUM_MONITORS - 1))); do
     pos="${POS_X[$idx]}x${POS_Y[$idx]}"
     sc="${CHOSEN_SCALE[$idx]}"
     label="${ORDERED_LABELS[$idx]}"
-    MONITOR_CONF_LINES="${MONITOR_CONF_LINES}# $label ($p)
-monitor = $p, $res@$hz, $pos, $sc
+    MONITOR_CONF_LINES="${MONITOR_CONF_LINES}-- $label ($p)
+hl.monitor({
+    output = \"$p\",
+    mode = \"$res@$hz\",
+    position = \"$pos\",
+    scale = \"$sc\",
+})
+
 "
 done
 
@@ -582,24 +594,23 @@ WORKSPACE_CONF_LINES=""
 for ws in {1..9}; do
     mon_idx=$(( (ws - 1) % NUM_MONITORS ))
     target_p="${ORDERED_PORTS[$mon_idx]}"
-    WORKSPACE_CONF_LINES="${WORKSPACE_CONF_LINES}workspace=${ws},monitor:${target_p}
+    WORKSPACE_CONF_LINES="${WORKSPACE_CONF_LINES}hl.workspace_rule({ workspace = \"${ws}\", monitor = \"${target_p}\" })
 "
 done
 
 # Write the profile file
 cat > "$PROFILE_FILE" << PROFILE_EOF
-# Description: Custom profile created by Monitor Setup Wizard on $(date)
-# Fingerprint: $(get_monitor_fingerprint)
+-- Description: Custom profile created by Monitor Setup Wizard on $(date)
+-- Fingerprint: $(get_monitor_fingerprint)
 
-# --- Monitor Configuration ---
-# Configured with anti-blur fractional scaling and logical coordinate math:
+-- --- Monitor Configuration ---
+-- Configured with anti-blur fractional scaling and logical coordinate math:
 $MONITOR_CONF_LINES
-# --- Workspace Assignments ---
-# Round-robin distribution for 9 workspaces
+-- --- Workspace Assignments ---
+-- Round-robin distribution for 9 workspaces
 $WORKSPACE_CONF_LINES
-# --- Additional Rules ---
-# Add any window rules or special configurations here
-
+-- --- Additional Rules ---
+-- Add any window rules or special configurations here
 PROFILE_EOF
 
 log "Profile saved to $PROFILE_FILE"

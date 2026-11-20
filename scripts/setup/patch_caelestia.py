@@ -455,6 +455,7 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
         ("WorkspaceOverview.qml", "modules/workspaceoverview/WorkspaceOverview.qml"),
         ("ClipboardModal.qml", "modules/clipboard/ClipboardModal.qml"),
         ("NightLight.qml", "services/NightLight.qml"),
+        ("ProfilePic.qml", "modules/lock/center/ProfilePic.qml"),
     ]
     for src_name, rel_dst in custom_modules:
         src_p = assets_dir / src_name
@@ -519,6 +520,78 @@ def patch_tree(cael_dir: Path, assets_dir: Path) -> bool:
                 sh = sh.replace("    AreaPicker {}", f"    AreaPicker {{}}\n    {mod_inst}", 1)
         if sh != sh_orig:
             shell_p.write_text(sh)
+            changed = True
+
+    # 12. Balance Lock Screen Center.qml margins for taller portrait ProfilePic & top-align Dashboard User.qml avatar
+    lock_center_p = cael_dir / "modules/lock/Center.qml"
+    if lock_center_p.exists():
+        lc = lock_center_p.read_text()
+        old_lc = """    ProfilePic {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
+        Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
+        centerWidth: root.centerWidth
+    }"""
+        new_lc = """    ProfilePic {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Tokens.spacing.large * root.centerScale
+        Layout.bottomMargin: Tokens.spacing.medium * root.centerScale
+        centerWidth: root.centerWidth
+    }"""
+        if old_lc in lc:
+            lock_center_p.write_text(lc.replace(old_lc, new_lc, 1))
+            changed = True
+
+    dash_user_p = cael_dir / "modules/dashboard/dash/User.qml"
+    if dash_user_p.exists():
+        du = dash_user_p.read_text()
+        old_du_1 = """            Visual {
+                id: pfp
+
+                anchors.fill: parent
+                source: `${Paths.home}/.face`
+            }"""
+        old_du_2 = """            VisualSource {
+                id: pfpVis
+
+                source: `${Paths.home}/.face`
+                fillMode: VisualSource.PreserveAspectCrop
+                sizeSource: pfp
+            }
+
+            Image {
+                id: pfp
+
+                readonly property bool ready: status === Image.Ready
+
+                anchors.fill: parent
+                source: pfpVis.imagePath
+                sourceSize: pfpVis.sourceSize
+                asynchronous: true
+                smooth: true
+                mipmap: true
+                fillMode: Image.PreserveAspectCrop
+                verticalAlignment: Image.AlignTop
+            }"""
+        new_du = """            Image {
+                id: pfp
+
+                readonly property bool ready: status === Image.Ready
+
+                anchors.fill: parent
+                source: `file://${Paths.home}/.face`
+                asynchronous: true
+                cache: false
+                smooth: true
+                mipmap: true
+                fillMode: Image.PreserveAspectCrop
+                verticalAlignment: Image.AlignTop
+            }"""
+        if old_du_1 in du:
+            dash_user_p.write_text(du.replace(old_du_1, new_du, 1))
+            changed = True
+        elif old_du_2 in du:
+            dash_user_p.write_text(du.replace(old_du_2, new_du, 1))
             changed = True
 
     return changed

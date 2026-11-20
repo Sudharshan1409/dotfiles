@@ -148,7 +148,7 @@ show_profile_menu() {
     while IFS= read -r profile; do
         [ -z "$profile" ] && continue
         # Get profile description if exists
-        local desc=$(grep "^# Description:" "$CONFIG_DIR/$profile.lua" 2>/dev/null | sed 's/^# Description: //')
+        local desc=$(grep -E "^(--|#) Description:" "$CONFIG_DIR/$profile.lua" 2>/dev/null | head -n 1 | sed -E 's/^(--|#) Description: //')
         local tag="  ${profile}"
         if [ "$profile" = "$active_profile" ]; then
             tag="● ${profile} [Active]"
@@ -195,7 +195,7 @@ generate_workspace_assignments() {
     for ws in {1..9}; do
         # Get monitor for this workspace (round-robin)
         local monitor=$(echo "$monitors" | sed -n "$(( (ws - 1) % monitor_count + 1 ))p")
-        workspace_assignments="${workspace_assignments}workspace=${ws},monitor:${monitor}
+        workspace_assignments="${workspace_assignments}hl.workspace_rule({ workspace = \"${ws}\", monitor = \"${monitor}\" })
 "
     done
     
@@ -228,29 +228,26 @@ Please choose a different name." \
         return
     fi
     
-    # Get current monitor configuration
+    # Get current monitor configuration (Hyprland Lua)
     local monitor_config=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | 
-        "monitor = \(.name), \(.width)x\(.height)@\(.refreshRate | floor), \(.x)x\(.y), \(.scale)"')
+        "hl.monitor({\n    output = \"\(.name)\",\n    mode = \"\(.width)x\(.height)@\(.refreshRate | floor)\",\n    position = \"\(.x)x\(.y)\",\n    scale = \"\(.scale)\",\n})\n"')
     
     # Generate workspace assignments for 9 workspaces
     local workspace_config=$(generate_workspace_assignments)
     
     # Create profile
     cat > "$CONFIG_DIR/$name.lua" << EOF
-# Description: Quick-saved profile created on $(date)
-# Fingerprint: $(get_monitor_fingerprint)
+-- Description: Quick-saved profile created on $(date)
+-- Fingerprint: $(get_monitor_fingerprint)
 
-# --- Monitor Configuration ---
-# Auto-generated from current setup
+-- --- Monitor Configuration ---
+-- Auto-generated from current setup
 $monitor_config
-
-# --- Workspace Assignments ---
-# Round-robin distribution for 9 workspaces
+-- --- Workspace Assignments ---
+-- Round-robin distribution for 9 workspaces
 $workspace_config
-
-# --- Additional Rules ---
-# Add any window rules or special configurations here
-
+-- --- Additional Rules ---
+-- Add any window rules or special configurations here
 EOF
     
     # Apply the profile immediately (apply_profile will send the notification)
@@ -770,16 +767,7 @@ The profile may have been deleted or renamed." \
     # 1. Update the sourced configuration file atomically
     echo "dofile(os.getenv(\"HOME\") .. \"/.config/hypr/monitors/$profile_name.lua\")" > "$HOME/.config/hypr/monitors_gen.lua"
     
-    # 2. Directly applying monitors via hyprctl is disabled for lua, using hyprctl reload
-    hyprctl reload >/dev/null 2>&1
-
-    # 3. Directly apply workspace assignments
-    while IFS= read -r line; do
-        local ws_rule=$(echo "$line" | sed 's/^[ \t]*workspace[ \t]*=[ \t]*//')
-        [ -n "$ws_rule" ] && hyprctl repl 'hl.exec_cmd("keyword workspace '$ws_rule'")' >/dev/null 2>&1
-    done < <(grep -E '^[ \t]*workspace[ \t]*=' "$conf_file")
-    
-    # 4. Trigger Hyprland full reload to ensure rules and state synchronize
+    # 2. Reload Hyprland so hl.monitor() and hl.workspace_rule() apply atomically
     hyprctl reload >/dev/null 2>&1
     
     # 5. Cache this profile for this fingerprint

@@ -6,8 +6,8 @@ hl.on("hyprland.start", function()
 -- Propagate Wayland & Hyprland session variables to D-Bus and systemd --user,
 -- then launch self-healing Caelestia Shell & Cliphist watchdog services
     hl.exec_cmd(
-        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE CAELESTIA_WALLPAPERS_DIR CAELESTIA_LIB_DIR PATH && "
-        .. "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE CAELESTIA_WALLPAPERS_DIR CAELESTIA_LIB_DIR PATH && "
+        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE ELECTRON_OZONE_PLATFORM_HINT OZONE_PLATFORM DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE CAELESTIA_WALLPAPERS_DIR CAELESTIA_LIB_DIR PATH && "
+        .. "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE ELECTRON_OZONE_PLATFORM_HINT OZONE_PLATFORM DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE CAELESTIA_WALLPAPERS_DIR CAELESTIA_LIB_DIR PATH && "
         .. "systemctl --user daemon-reload && "
         .. "systemctl --user restart caelestia-shell.service cliphist.service"
     )

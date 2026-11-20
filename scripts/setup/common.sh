@@ -249,6 +249,27 @@ EOF
         printf 'color_theme = "caelestia"\ntheme_background = False\n' > "$HOME/.config/btop/btop.conf"
     fi
 
+    # Ensure Brave / Chromium browsers run natively on Wayland (fixes tiny 1.0x XWayland DPI on 4K fractional scale)
+    local BRAVE_FLAGS="--ozone-platform=wayland --enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer"
+    printf '%s\n' "--ozone-platform=wayland" "--enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer" > "$HOME/.config/brave-flags.conf"
+    for desk in brave-browser.desktop com.brave.Browser.desktop; do
+        if [ -f "/usr/share/applications/$desk" ]; then
+            mkdir -p "$HOME/.local/share/applications"
+            sed "s|Exec=/usr/bin/brave-browser-stable|Exec=/usr/bin/brave-browser-stable $BRAVE_FLAGS|g" \
+                "/usr/share/applications/$desk" > "$HOME/.local/share/applications/$desk"
+        fi
+    done
+    if [ -x /usr/bin/brave-browser-stable ]; then
+        mkdir -p "$HOME/.local/bin"
+        for bin_name in brave brave-browser brave-browser-stable; do
+            cat > "$HOME/.local/bin/$bin_name" << EOF
+#!/usr/bin/env bash
+exec /usr/bin/brave-browser-stable $BRAVE_FLAGS "\$@"
+EOF
+            chmod +x "$HOME/.local/bin/$bin_name"
+        done
+    fi
+
     # 3. Initialize Caelestia wallpaper & dynamic dark palette on first boot
     export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
     if command -v caelestia >/dev/null 2>&1; then
